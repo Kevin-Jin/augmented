@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -20,11 +19,11 @@ import org.newdawn.slick.util.ResourceLoader;
 public class Game {
 	private static final int WIDTH = 800, HEIGHT = 600;
 
-	private final FrameRateState s;
+	private final FrameRateState frameRateState;
 	private final Input input;
 
 	public Game() {
-		s = new FrameRateState(new DecimalFormat("0.0"));
+		frameRateState = new FrameRateState(new DecimalFormat("0.0"));
 		input = new Input();
 	}
 
@@ -68,9 +67,9 @@ public class Game {
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
 		SoundCache.setSound("bgm", loadOgg("resources/bgm"));
 
-		FontCache.setFont("fps", new TrueTypeFont(new Font("Arial", Font.PLAIN, 12), true));
-
 		SoundCache.getSound("bgm").playAsMusic(1, 1, true);
+
+		FontCache.setFont("fps", new TrueTypeFont(new Font("Arial", Font.PLAIN, 12), true));
 	}
 
 	public void unloadContent() {
@@ -101,9 +100,9 @@ public class Game {
 	}
 
 	public void update(double tDelta) {
-		s.addFrame();
-		if (s.getElapsedSecondsSinceLastReset() > 1)
-			s.reset();
+		frameRateState.addFrame();
+		if (frameRateState.getElapsedSecondsSinceLastReset() > 1)
+			frameRateState.reset();
 
 		input.update();
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
@@ -117,6 +116,6 @@ public class Game {
 	public void draw() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		drawMouse();
-		FontCache.getFont("fps").drawString(0, 0, s.getDisplayFps());
+		FontCache.getFont("fps").drawString(0, 0, frameRateState.getDisplayFps());
 	}
 }
