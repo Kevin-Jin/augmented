@@ -39,11 +39,15 @@ public class MapState {
 	private static final int RIGHT_WALL_VISIBLE_PIXELS = 20;
 
 	private LevelLayout layout;
-	//private final Player player;
-	//private final SortedMap<Byte, Entity> entities;
+	private final Player player;
+	private final SortedMap<Byte, Entity> entities;
 	private final SortedMap<Byte, ZAxisLayer> layers;
+	private byte nextEntityId;
 
 	public MapState(Drawable... overlays) {
+		player = new Player();
+
+		entities = new TreeMap<Byte, Entity>();
 		layers = new TreeMap<Byte, ZAxisLayer>();
 
 		layers.put(ZAxisLayer.FAR_BACKGROUND, new ZAxisLayer(0.25f));
@@ -67,7 +71,11 @@ public class MapState {
 
 		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
 
-		//todo: populate entities from layout
+		entities.clear();
+		nextEntityId = 0;
+		entities.put(Byte.valueOf(nextEntityId++), player);
+		for (Entity ent : entities.values())
+			layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(ent.getDrawables());
 	}
 
 	public Rectangle getCameraBounds() {

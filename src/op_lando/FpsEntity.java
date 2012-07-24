@@ -19,7 +19,7 @@ public class FpsEntity extends CornerOriginedDrawable {
 
 	@Override
 	public Texture getTexture() {
-		return TextureCache.getTexture("empty");
+		return TextureCache.getTexture("spacer");
 	}
 
 	@Override

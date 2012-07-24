@@ -61,6 +61,10 @@ public class Game {
 		return TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(name + ".png"));
 	}
 
+	private Texture loadGif(String name) throws IOException {
+		return TextureLoader.getTexture("GIF", ResourceLoader.getResourceAsStream(name + ".gif"));
+	}
+
 	private Audio loadWav(String name) throws IOException {
 		return AudioLoader.getAudio("WAV", ResourceLoader.getResourceAsStream(name + ".wav"));
 	}
@@ -71,7 +75,7 @@ public class Game {
 
 	public void loadContent() throws IOException {
 		TextureCache.setTexture("mouse", loadPng("resources/cursor2"));
-		TextureCache.setTexture("empty", loadPng("resources/empty"));
+		TextureCache.setTexture("spacer", loadGif("resources/spacer"));
 		TextureCache.setTexture("platform", loadPng("resources/platform"));
 
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
@@ -145,7 +149,7 @@ public class Game {
 						DrawableOverlayText caption = ent.getCaption();
 						if (caption != null) {
 							Point pos = caption.getRelativePosition();
-							caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage());
+							caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage(), ent.getTint());
 						}
 					}
 					GL11.glPopMatrix();
