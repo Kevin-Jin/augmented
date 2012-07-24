@@ -6,6 +6,7 @@ import op_lando.resources.FontCache;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.util.Point;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
 public class FpsEntity extends AbstractDrawable {
@@ -25,6 +26,11 @@ public class FpsEntity extends AbstractDrawable {
 	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("spacer");
+	}
+
+	@Override
+	public Color getTint() {
+		return Color.yellow;
 	}
 
 	@Override

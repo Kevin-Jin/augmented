@@ -24,6 +24,7 @@ import op_lando.resources.TextureCache;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -40,6 +41,9 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Game {
 	private static final boolean DEBUG = true;
+	private static final boolean FULLSCREEN = false;
+	private static final boolean VSYNC = true;
+	public static final int TARGET_FPS = 1200; //VSYNC must be false for this to have an effect
 	private static final int WIDTH = 800, HEIGHT = 600;
 
 	private final Input input;
@@ -56,10 +60,26 @@ public class Game {
 	}
 
 	public void glInit() throws LWJGLException {
-		Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+		DisplayMode[] modes = Display.getAvailableDisplayModes();
+		DisplayMode mode = null;
+		if (FULLSCREEN) {
+			int freq = Display.getDesktopDisplayMode().getFrequency();
+			int colorDepth = Display.getDesktopDisplayMode().getBitsPerPixel();
+			for (int i = 0; i < modes.length && mode == null; i++) {
+				mode = modes[i];
+				if (mode.getWidth() == WIDTH && mode.getHeight() == HEIGHT && mode.getFrequency() == freq && mode.getBitsPerPixel() == colorDepth)
+					Display.setFullscreen(true);
+				else
+					mode = null;
+			}
+		}
+		if (mode == null)
+			mode = new DisplayMode(WIDTH, HEIGHT);
+		Display.setDisplayMode(mode);
 		Display.create();
-		Display.setVSyncEnabled(true);
-		//Mouse.setGrabbed(true);
+		Display.setVSyncEnabled(VSYNC);
+
+		Mouse.setGrabbed(true);
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_CULL_FACE);

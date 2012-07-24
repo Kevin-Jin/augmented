@@ -19,7 +19,7 @@ public class Launch {
 			g.draw();
 
 			Display.update();
-			Display.sync(60);
+			Display.sync(Game.TARGET_FPS);
 		}
 		g.unloadContent();
 		Display.destroy();
