@@ -2,7 +2,7 @@ package op_lando;
 
 import org.newdawn.slick.opengl.Texture;
 
-public class CursorEntity extends CornerOriginedDrawable {
+public class CursorEntity extends AbstractDrawable {
 	private Input state;
 
 	public CursorEntity(Input input) {

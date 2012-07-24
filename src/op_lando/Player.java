@@ -10,6 +10,14 @@ public class Player extends CompoundEntity {
 	private JetpackFire flame;
 	private TractorBeam beam;
 
+	public Player() {
+		body = new AvatarBody();
+		legs = new AvatarLegs();
+		arm = new AvatarArm();
+		flame = new JetpackFire();
+		beam = new TractorBeam();
+	}
+
 	@Override
 	public Collection<SimpleEntity> getDrawables() {
 		return Arrays.asList(body, legs, arm, flame, beam);

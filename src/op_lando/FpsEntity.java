@@ -3,7 +3,7 @@ package op_lando;
 import org.lwjgl.util.Point;
 import org.newdawn.slick.opengl.Texture;
 
-public class FpsEntity extends CornerOriginedDrawable {
+public class FpsEntity extends AbstractDrawable {
 	private FrameRateState state;
 	private int yPos;
 

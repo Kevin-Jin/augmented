@@ -6,9 +6,19 @@ import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 
 public abstract class AbstractDrawable implements Drawable {
+	protected final Vector2f getBottomLeftCorner() {
+		return new Vector2f(0, 0);
+	}
+
+	protected final Vector2f getCenter() {
+		return new Vector2f(getWidth() / 2f, getHeight() / 2f);
+	}
+
 	public abstract Position getPosition();
 
-	public abstract Vector2f getOrigin();
+	public Vector2f getOrigin() {
+		return getBottomLeftCorner();
+	}
 
 	public Vector2f getDrawPosition() {
 		return new Vector2f((float) getPosition().getX() + getOrigin().getX() * getScale().getX(), (float) getPosition().getY() - getOrigin().getY() * -getScale().getY() + getHeight());
@@ -45,7 +55,7 @@ public abstract class AbstractDrawable implements Drawable {
 	}
 
 	@Override
-	public Matrix4f getTransformationMatrix() {
+	public final Matrix4f getTransformationMatrix() {
 		return new Matrix4f()
 				.translate(new Vector2f(getDrawPosition()))
 				.rotate(getRotation(), new Vector3f(0, 0, 1))

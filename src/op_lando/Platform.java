@@ -3,7 +3,7 @@ package op_lando;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
-public class Platform extends CornerOriginedDrawable {
+public class Platform extends CollidableDrawable {
 	private final double x1, x2, y1, y2;
 
 	public Platform(double x1, double x2, double y1, double y2) {

@@ -2,6 +2,7 @@ package op_lando;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -84,5 +85,9 @@ public class MapState {
 
 	public SortedMap<Byte, ZAxisLayer> getLayers() {
 		return layers;
+	}
+
+	public Collection<Entity> getEntities() {
+		return entities.values();
 	}
 }

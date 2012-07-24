@@ -10,4 +10,6 @@ public interface Entity {
 	boolean flipHorizontally();
 
 	float getRotation();
+
+	void update(double tDelta);
 }

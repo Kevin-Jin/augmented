@@ -13,7 +13,7 @@ public class Launch {
 		long last = System.currentTimeMillis(), now;
 		while (!Display.isCloseRequested()) {
 			now = System.currentTimeMillis();
-			g.update((last - now) / 1000d);
+			g.update((now - last) / 1000d);
 			last = now;
 
 			g.draw();

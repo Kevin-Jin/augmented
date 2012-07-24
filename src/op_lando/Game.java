@@ -77,6 +77,19 @@ public class Game {
 		TextureCache.setTexture("mouse", loadPng("resources/cursor2"));
 		TextureCache.setTexture("spacer", loadGif("resources/spacer"));
 		TextureCache.setTexture("platform", loadPng("resources/platform"));
+		TextureCache.setTexture("body", loadPng("resources/body"));
+		TextureCache.setTexture("arm", loadPng("resources/arm"));
+		TextureCache.setTexture("legsRest", loadPng("resources/anim_legs/legsRest"));
+		TextureCache.setTexture("legs1", loadPng("resources/anim_legs/legs1"));
+		TextureCache.setTexture("legs2", loadPng("resources/anim_legs/legs2"));
+		TextureCache.setTexture("legs3", loadPng("resources/anim_legs/legs3"));
+		TextureCache.setTexture("legs4", loadPng("resources/anim_legs/legs4"));
+		TextureCache.setTexture("legs5", loadPng("resources/anim_legs/legs5"));
+		TextureCache.setTexture("flame1", loadPng("resources/anim_flame/flame1"));
+		TextureCache.setTexture("flame2", loadPng("resources/anim_flame/flame2"));
+		TextureCache.setTexture("flame3", loadPng("resources/anim_flame/flame3"));
+		TextureCache.setTexture("flame4", loadPng("resources/anim_flame/flame4"));
+		TextureCache.setTexture("beam", loadPng("resources/beam"));
 
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
 		SoundCache.setSound("bgm", loadOgg("resources/bgm"));
@@ -105,6 +118,8 @@ public class Game {
 			SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
 		if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			SoundCache.getSound("beam").stop();
+		for (Entity ent : map.getEntities())
+			ent.update(tDelta);
 		camera.lookAt(new Position(0, 0));
 
 		AudioLoader.update();
