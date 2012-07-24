@@ -63,8 +63,8 @@ public class Polygon {
 
 	public void transform(Matrix4f affineTransform) {
 		for (int i = 0; i < numOfVertices; ++i)
-			vertices[i] = new Vector2f(Matrix4f.transform(affineTransform, new Vector4f(vertices[i].getX(), vertices[i].getY(), 0, 0), null));
-		center = new Vector2f(Matrix4f.transform(affineTransform, new Vector4f(center.getX(), center.getY(), 0, 0), null));
+			vertices[i] = new Vector2f(Matrix4f.transform(affineTransform, new Vector4f(vertices[i].getX(), vertices[i].getY(), 1, 1), null));
+		center = new Vector2f(Matrix4f.transform(affineTransform, new Vector4f(center.getX(), center.getY(), 1, 1), null));
 		calculateEdges();
 	}
 

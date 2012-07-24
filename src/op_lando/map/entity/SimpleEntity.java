@@ -8,8 +8,8 @@ import op_lando.map.Drawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
 
-public abstract class SimpleEntity extends CollidableDrawable implements Entity {
-	private Position pos;
+public abstract class SimpleEntity extends CollidableDrawable implements DrawableEntity {
+	private final Position pos;
 
 	protected SimpleEntity(BoundingPolygon boundPoly) {
 		super(boundPoly, boundPoly);
@@ -18,7 +18,7 @@ public abstract class SimpleEntity extends CollidableDrawable implements Entity 
 
 	@Override
 	public void update(double tDelta) {
-		//TODO: recalculate transformedBoundPoly using getTransformationMatrix()
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 	}
 
 	@Override
@@ -29,5 +29,11 @@ public abstract class SimpleEntity extends CollidableDrawable implements Entity 
 	@Override
 	public Position getPosition() {
 		return pos;
+	}
+
+	@Override
+	public void setPosition(Position pos) {
+		this.pos.setX(pos.getX());
+		this.pos.setY(pos.getY());
 	}
 }

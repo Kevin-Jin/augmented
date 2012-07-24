@@ -1,13 +1,16 @@
 package op_lando.map.entity.player;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.CompoundEntity;
 import op_lando.map.entity.Direction;
-import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
 
-public class Player extends CompoundEntity {
+public class Player extends CompoundEntity<PlayerPart> {
+	private final List<AuxiliaryEntity<PlayerPart>> allAuxiliaries;
 	private AvatarBody body;
 	private AvatarLegs legs;
 	private AvatarArm arm;
@@ -15,16 +18,25 @@ public class Player extends CompoundEntity {
 	private TractorBeam beam;
 
 	public Player() {
-		body = new AvatarBody();
+		body = new AvatarBody(this);
 		legs = new AvatarLegs();
 		arm = new AvatarArm();
 		flame = new JetpackFire();
 		beam = new TractorBeam();
+
+		List<AuxiliaryEntity<PlayerPart>> parts = new ArrayList<AuxiliaryEntity<PlayerPart>>(4);
+		parts.add(legs);
+		parts.add(arm);
+		parts.add(flame);
+		parts.add(beam);
+		allAuxiliaries = Collections.unmodifiableList(parts);
+
+		partsConstructed();
 	}
 
 	@Override
-	public Collection<SimpleEntity> getDrawables() {
-		return Arrays.asList(body, legs, arm, flame, beam);
+	public List<? extends AuxiliaryEntity<PlayerPart>> getAuxiliaries() {
+		return allAuxiliaries;
 	}
 
 	@Override
@@ -50,5 +62,12 @@ public class Player extends CompoundEntity {
 
 	public void move(Direction dir) {
 		
+	}
+
+	public void lookAt(Position pos) {
+		float realRot = body.lookAt(pos);
+		arm.setRotation(realRot);
+		beam.setRotation(realRot);
+		flame.setRotation(body.getRotation());
 	}
 }

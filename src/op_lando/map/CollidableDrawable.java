@@ -2,7 +2,7 @@ package op_lando.map;
 
 import op_lando.map.collisions.BoundingPolygon;
 
-public abstract class CollidableDrawable extends AbstractDrawable {
+public abstract class CollidableDrawable extends AbstractDrawable implements Collidable {
 	protected final BoundingPolygon baseBoundPoly;
 	protected BoundingPolygon transformedBoundPoly;
 
@@ -11,6 +11,7 @@ public abstract class CollidableDrawable extends AbstractDrawable {
 		transformedBoundPoly = boundPoly;
 	}
 
+	@Override
 	public BoundingPolygon getBoundingPolygon() {
 		return transformedBoundPoly;
 	}

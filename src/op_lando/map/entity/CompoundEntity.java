@@ -1,18 +1,46 @@
 package op_lando.map.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
 
-public abstract class CompoundEntity implements Entity {
-	protected abstract Entity getBody();
+public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
+	private List<DrawableEntity> drawables;
+	private BoundingPolygon universal;
+
+	protected abstract BodyEntity<E> getBody();
+
+	protected abstract Collection<? extends AuxiliaryEntity<E>> getAuxiliaries();
+
+	protected void partsConstructed() {
+		drawables = new ArrayList<DrawableEntity>(getAuxiliaries().size() + 1);
+		drawables.add(getBody());
+		drawables.addAll(getAuxiliaries());
+		drawables = Collections.unmodifiableList(drawables);
+
+		BoundingPolygon[] all = new BoundingPolygon[drawables.size()];
+		for (int i = 0; i < all.length; i++)
+			all[i] = drawables.get(i).getBoundingPolygon();
+		universal = new BoundingPolygon(all);
+	}
 
 	@Override
-	public abstract Collection<? extends SimpleEntity> getDrawables();
+	public List<DrawableEntity> getDrawables() {
+		return drawables;
+	}
 
 	@Override
 	public Position getPosition() {
 		return getBody().getPosition();
+	}
+
+	@Override
+	public void setPosition(Position pos) {
+		getBody().setPosition(pos);
 	}
 
 	@Override
@@ -27,7 +55,12 @@ public abstract class CompoundEntity implements Entity {
 
 	@Override
 	public void update(double tDelta) {
-		for (Entity child : getDrawables())
+		getBody().update(tDelta);
+		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
+			child.setFlip(getBody().flipHorizontally());
 			child.update(tDelta);
+		}
+		getBody().setBoundingPolygon(universal);
 	}
 }

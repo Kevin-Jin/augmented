@@ -10,6 +10,8 @@ public interface Entity {
 
 	Position getPosition();
 
+	void setPosition(Position pos);
+
 	boolean flipHorizontally();
 
 	float getRotation();

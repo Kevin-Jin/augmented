@@ -158,6 +158,7 @@ public class Game {
 			SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
 		if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			SoundCache.getSound("beam").stop();
+		map.getPlayer().lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		for (Entity ent : map.getEntities())
 			ent.update(tDelta);
 		camera.lookAt(new Position(0, 0));
