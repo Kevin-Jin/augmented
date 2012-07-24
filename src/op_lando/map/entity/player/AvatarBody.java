@@ -9,6 +9,7 @@ import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.BodyEntity;
 import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 import op_lando.resources.TextureCache;
 
@@ -119,16 +120,18 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public void update(double tDelta, Input input) {
+	public void update(double tDelta, Input input, Camera camera) {
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
-			getPosition().setX(getPosition().getX() - 10);
+			getPosition().setX(getPosition().getX() - 100);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
-			getPosition().setX(getPosition().getX() + 10);
+			getPosition().setX(getPosition().getX() + 100);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
-			getPosition().setY(getPosition().getY() - 10);
+			getPosition().setY(getPosition().getY() - 100);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
-			getPosition().setY(getPosition().getY() + 10);
-		super.update(tDelta, input);
+			getPosition().setY(getPosition().getY() + 100);
+		camera.lookAt(parent.getPosition());
+		parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+
 		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
 			entry.getValue().set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
@@ -144,6 +147,8 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		} finally {
 			rot = lastRot;
 		}
+
+		super.update(tDelta, input, camera);
 	}
 
 	@Override

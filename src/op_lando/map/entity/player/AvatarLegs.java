@@ -5,6 +5,7 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 
 import org.lwjgl.input.Keyboard;
@@ -43,12 +44,13 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	}
 
 	@Override
-	public void update(double tDelta, Input input) {
-		super.update(tDelta, input);
+	public void update(double tDelta, Input input, Camera camera) {
 		if ((input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)) || input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D))) && onGround())
 			animation.update(tDelta);
 		else
 			animation.reset();
+
+		super.update(tDelta, input, camera);
 	}
 
 	@Override

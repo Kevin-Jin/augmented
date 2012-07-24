@@ -5,6 +5,7 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 
 import org.lwjgl.input.Keyboard;
@@ -74,11 +75,12 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public void update(double tDelta, Input input) {
-		super.update(tDelta, input);
+	public void update(double tDelta, Input input, Camera camera) {
 		visible = input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && !isEmpty();
 		if (visible)
 			animation.update(tDelta);
+
+		super.update(tDelta, input, camera);
 	}
 
 	@Override

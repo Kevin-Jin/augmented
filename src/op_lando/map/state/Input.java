@@ -50,7 +50,7 @@ public class Input {
 				downKeys.add(Integer.valueOf(Keyboard.getEventKey()));
 			else
 				downKeys.remove(Integer.valueOf(Keyboard.getEventKey()));
-			updatedKeys.add(Integer.valueOf(Mouse.getEventButton()));
+			updatedKeys.add(Integer.valueOf(Keyboard.getEventKey()));
 		}
 	}
 

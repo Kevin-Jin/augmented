@@ -12,7 +12,6 @@ import op_lando.map.DrawableOverlayText;
 import op_lando.map.FpsEntity;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.Entity;
-import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.FrameRateState;
 import op_lando.map.state.Input;
@@ -154,10 +153,8 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
-		map.getPlayer().lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		for (Entity ent : map.getEntities())
-			ent.update(tDelta, input);
-		camera.lookAt(map.getPlayer().getPosition());
+			ent.update(tDelta, input, camera);
 
 		AudioLoader.update();
 	}

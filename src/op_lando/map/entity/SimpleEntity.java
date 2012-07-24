@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import op_lando.map.CollidableDrawable;
-import op_lando.map.Drawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 
 public abstract class SimpleEntity extends CollidableDrawable implements DrawableEntity {
@@ -18,12 +18,12 @@ public abstract class SimpleEntity extends CollidableDrawable implements Drawabl
 	}
 
 	@Override
-	public void update(double tDelta, Input input) {
+	public void update(double tDelta, Input input, Camera camera) {
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 	}
 
 	@Override
-	public Collection<? extends Drawable> getDrawables() {
+	public Collection<? extends DrawableEntity> getDrawables() {
 		return Collections.singleton(this);
 	}
 

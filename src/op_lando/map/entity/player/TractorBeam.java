@@ -1,14 +1,19 @@
 package op_lando.map.entity.player;
 
+import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 import op_lando.resources.SoundCache;
 import op_lando.resources.TextureCache;
 
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.Texture;
 
 public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerPart> {
@@ -16,6 +21,8 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 
 	private float rot;
 	private float length;
+	private CollidableDrawable selected;
+	private Vector2f pointInSelected;
 
 	public TractorBeam() {
 		super(new BoundingPolygon(new Polygon[] {
@@ -50,10 +57,16 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			length = 0;
 	}
 
-	@Override
-	public void update(double tDelta, Input input) {
-		super.update(tDelta, input);
+	public Position getBeamHit() {
+		return new Position(Matrix4f.transform(selected.getTransformationMatrix(), new Vector4f(pointInSelected.getX(), pointInSelected.getY(), 1, 1), null));
+	}
 
+	public void setBeamHit(Position value) {
+		pointInSelected = new Vector2f(Matrix4f.transform(Matrix4f.invert(selected.getTransformationMatrix(), null), value.asVector4f(), null));
+	}
+
+	@Override
+	public void update(double tDelta, Input input, Camera camera) {
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();
 		else if (input.heldButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
@@ -62,6 +75,8 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			beginRetract();
 		else if (getLength() > 0)
 			retract(tDelta);
+
+		super.update(tDelta, input, camera);
 	}
 
 	@Override
