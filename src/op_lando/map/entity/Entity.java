@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import op_lando.map.Drawable;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Input;
 
 public interface Entity {
 	Collection<? extends Drawable> getDrawables();
@@ -16,5 +17,5 @@ public interface Entity {
 
 	float getRotation();
 
-	void update(double tDelta);
+	void update(double tDelta, Input input);
 }

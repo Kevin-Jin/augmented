@@ -39,9 +39,9 @@ public class MapState {
 		}
 	}
 
-	private static final int FLOOR_VISIBLE_PIXELS = 200;
+	private static final int FLOOR_VISIBLE_PIXELS = 20;
 	private static final int CEILING_VISIBLE_PIXELS = 20;
-	private static final int LEFT_WALL_VISIBLE_PIXELS = 200;
+	private static final int LEFT_WALL_VISIBLE_PIXELS = 20;
 	private static final int RIGHT_WALL_VISIBLE_PIXELS = 20;
 
 	private LevelLayout layout;

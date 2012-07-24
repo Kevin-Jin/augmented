@@ -7,6 +7,7 @@ import java.util.List;
 
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Input;
 
 public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	private List<DrawableEntity> drawables;
@@ -54,12 +55,12 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	}
 
 	@Override
-	public void update(double tDelta) {
-		getBody().update(tDelta);
+	public void update(double tDelta, Input input) {
+		getBody().update(tDelta, input);
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
 			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 			child.setFlip(getBody().flipHorizontally());
-			child.update(tDelta);
+			child.update(tDelta, input);
 		}
 		getBody().setBoundingPolygon(universal);
 	}

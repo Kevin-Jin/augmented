@@ -9,8 +9,10 @@ import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.BodyEntity;
 import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Input;
 import op_lando.resources.TextureCache;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.ReadableVector2f;
 import org.lwjgl.util.vector.Vector2f;
@@ -57,7 +59,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 		EnumMap<PlayerPart, Vector2f> attachPoints = new EnumMap<PlayerPart, Vector2f>(PlayerPart.class);
 		attachPoints.put(PlayerPart.ARM, new Vector2f(26, 55));
-		attachPoints.put(PlayerPart.LEGS, new Vector2f(8, 50));
+		attachPoints.put(PlayerPart.LEGS, new Vector2f(8, 132));
 		attachPoints.put(PlayerPart.FIRE, new Vector2f(5, 64));
 		baseAttachPoints = Collections.unmodifiableMap(attachPoints);
 		transformedAttachPoints = new EnumMap<PlayerPart, Vector2f>(PlayerPart.class);
@@ -117,8 +119,16 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public void update(double tDelta) {
-		super.update(tDelta);
+	public void update(double tDelta, Input input) {
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
+			getPosition().setX(getPosition().getX() - 10);
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
+			getPosition().setX(getPosition().getX() + 10);
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
+			getPosition().setY(getPosition().getY() - 10);
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
+			getPosition().setY(getPosition().getY() + 10);
+		super.update(tDelta, input);
 		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
 			entry.getValue().set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
@@ -129,8 +139,8 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		try {
 			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
 			if (flipHorizontally)
-				coord.setX(coord.getX() - 7);
-			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(coord.getX(), coord.getY(), 0, 0), null));
+				coord.setX(coord.getX() + 48);
+			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
 		} finally {
 			rot = lastRot;
 		}

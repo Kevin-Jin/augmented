@@ -5,7 +5,9 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.state.Input;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.Texture;
 
@@ -35,10 +37,18 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		flipHorizontally = flip;
 	}
 
+	private boolean onGround() {
+		//TODO: implement
+		return true;
+	}
+
 	@Override
-	public void update(double tDelta) {
-		super.update(tDelta);
-		animation.update(tDelta);
+	public void update(double tDelta, Input input) {
+		super.update(tDelta, input);
+		if ((input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)) || input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D))) && onGround())
+			animation.update(tDelta);
+		else
+			animation.reset();
 	}
 
 	@Override

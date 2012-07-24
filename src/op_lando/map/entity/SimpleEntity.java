@@ -7,6 +7,7 @@ import op_lando.map.CollidableDrawable;
 import op_lando.map.Drawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Input;
 
 public abstract class SimpleEntity extends CollidableDrawable implements DrawableEntity {
 	private final Position pos;
@@ -17,7 +18,7 @@ public abstract class SimpleEntity extends CollidableDrawable implements Drawabl
 	}
 
 	@Override
-	public void update(double tDelta) {
+	public void update(double tDelta, Input input) {
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 	}
 

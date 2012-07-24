@@ -154,14 +154,10 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
-		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
-			SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
-		if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
-			SoundCache.getSound("beam").stop();
 		map.getPlayer().lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		for (Entity ent : map.getEntities())
-			ent.update(tDelta);
-		camera.lookAt(new Position(0, 0));
+			ent.update(tDelta, input);
+		camera.lookAt(map.getPlayer().getPosition());
 
 		AudioLoader.update();
 	}
