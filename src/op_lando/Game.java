@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 
+import op_lando.map.CollidableDrawable;
 import op_lando.map.CursorEntity;
 import op_lando.map.Drawable;
 import op_lando.map.DrawableOverlayText;
 import op_lando.map.FpsEntity;
+import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.Entity;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
@@ -27,6 +29,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Point;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -35,6 +39,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 public class Game {
+	private static final boolean DEBUG = true;
 	private static final int WIDTH = 800, HEIGHT = 600;
 
 	private final Input input;
@@ -109,7 +114,7 @@ public class Game {
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
 		SoundCache.setSound("bgm", loadOgg("resources/bgm"));
 
-		FontCache.setFont("fps", new TrueTypeFont(new Font("Arial", Font.PLAIN, 12), true));
+		FontCache.setFont("fps", new TrueTypeFont(new Font("Arial", Font.PLAIN, 14), true));
 
 		LevelCache.initialize();
 
@@ -147,45 +152,52 @@ public class Game {
 		for (MapState.ZAxisLayer layer : map.getLayers().values()) {
 			Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
 
-			GL11.glPushMatrix();
-			{
-				GL11.glLoadMatrix(buf);
+			for (Drawable ent : layer.getDrawables()) {
+				Texture texture = ent.getTexture();
 
-				for (Drawable ent : layer.getDrawables()) {
-					Texture texture = ent.getTexture();
+				buf.clear();
+				Matrix4f.mul(viewMatrix, ent.getTransformationMatrix(), null).store(buf);
+				buf.flip();
 
-					buf.clear();
-					Matrix4f.mul(viewMatrix, ent.getTransformationMatrix(), null).store(buf);
-					buf.flip();
+				ent.getTint().bind();
+				texture.bind();
 
-					ent.getTint().bind();
-					texture.bind();
-
-					GL11.glPushMatrix();
+				GL11.glPushMatrix();
+				{
+					GL11.glLoadMatrix(buf);
+					GL11.glBegin(GL11.GL_QUADS);
 					{
-						GL11.glLoadMatrix(buf);
-						GL11.glBegin(GL11.GL_QUADS);
-						{
-							GL11.glTexCoord2f(0, 0);
-							GL11.glVertex2f(0, 0);
-							GL11.glTexCoord2f(texture.getWidth(), 0);
-							GL11.glVertex2f(texture.getImageWidth(), 0);
-							GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
-							GL11.glVertex2f(texture.getImageWidth(), texture.getImageHeight());
-							GL11.glTexCoord2f(0, texture.getHeight());
-							GL11.glVertex2f(0, texture.getImageHeight());
-						}
-						GL11.glEnd();
-						DrawableOverlayText caption = ent.getCaption();
-						if (caption != null) {
-							Point pos = caption.getRelativePosition();
-							caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage(), ent.getTint());
+						GL11.glTexCoord2f(0, 0);
+						GL11.glVertex2f(0, 0);
+						GL11.glTexCoord2f(texture.getWidth(), 0);
+						GL11.glVertex2f(texture.getImageWidth(), 0);
+						GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+						GL11.glVertex2f(texture.getImageWidth(), texture.getImageHeight());
+						GL11.glTexCoord2f(0, texture.getHeight());
+						GL11.glVertex2f(0, texture.getImageHeight());
+					}
+					GL11.glEnd();
+
+					if (DEBUG && ent instanceof CollidableDrawable) {
+						GL11.glDisable(GL11.GL_TEXTURE_2D);
+						Color.green.bind();
+						for (Polygon p : ((CollidableDrawable) ent).getUntransformedBoundingPolygon().getPolygons()) {
+							GL11.glBegin(GL11.GL_LINE_LOOP);
+							Vector2f[] vertices = p.getVertices();
+							for (int i = 0; i < vertices.length; i++)
+								GL11.glVertex2f(vertices[i].getX(), vertices[i].getY());
+							GL11.glEnd();
 						}
 					}
-					GL11.glPopMatrix();
+
+					DrawableOverlayText caption = ent.getCaption();
+					if (caption != null) {
+						Point pos = caption.getRelativePosition();
+						caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage(), ent.getTint());
+					}
 				}
+				GL11.glPopMatrix();
 			}
-			GL11.glPopMatrix();
 		}
 	}
 

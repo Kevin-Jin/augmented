@@ -1,8 +1,11 @@
 package op_lando.map;
 
+import op_lando.map.collisions.BoundingPolygon;
+import op_lando.map.collisions.Polygon;
 import op_lando.map.physicquantity.Position;
 import op_lando.resources.TextureCache;
 
+import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
@@ -10,6 +13,21 @@ public class Platform extends CollidableDrawable {
 	private final double x1, x2, y1, y2;
 
 	public Platform(double x1, double x2, double y1, double y2) {
+		super(new BoundingPolygon(new Polygon[] {
+			new Polygon(new Vector2f[] {
+				new Vector2f((float) 0, (float) 3),
+				new Vector2f((float) 3, (float) 3),
+				new Vector2f((float) 3, (float) 0),
+				new Vector2f((float) 0, (float) 0)
+			})
+		}), new BoundingPolygon(new Polygon[] {
+			new Polygon(new Vector2f[] {
+				new Vector2f((float) x1, (float) y1),
+				new Vector2f((float) x2, (float) y1),
+				new Vector2f((float) x2, (float) y2),
+				new Vector2f((float) x1, (float) y2)
+			})
+		}));
 		this.x1 = x1;
 		this.x2 = x2;
 		this.y1 = y1;

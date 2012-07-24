@@ -53,7 +53,7 @@ public class LevelCache {
 		// right wall, for exit
 		footholds.put(Byte.valueOf((byte) 13), new Platform(1650, 1951, 800, 0));*/
 
-		footholds.put(Byte.valueOf((byte) 0), new Platform(0, 10, -20, 0));
+		footholds.put(Byte.valueOf((byte) 0), new Platform(0, 700, 20, 0));
 
 		return new LevelLayout(width, height, footholds, new Position(100, 100), -400, -400, "mid1", "scrollingWindowBg", "mainBg", Double.POSITIVE_INFINITY);
 	}
