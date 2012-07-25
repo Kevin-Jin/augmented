@@ -133,6 +133,8 @@ public class Game {
 		TextureCache.setTexture("flame3", loadPng("resources/anim_flame/flame3"));
 		TextureCache.setTexture("flame4", loadPng("resources/anim_flame/flame4"));
 		TextureCache.setTexture("beam", loadPng("resources/beam"));
+		TextureCache.setTexture("scrollingWindowBg", loadPng("resources/scrollingBg"));
+		TextureCache.setTexture("mainBg", loadPng("resources/mainBg"));
 
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
 		SoundCache.setSound("bgm", loadOgg("resources/bgm"));

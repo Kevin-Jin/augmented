@@ -11,8 +11,10 @@ import java.util.TreeMap;
 
 import op_lando.map.CollidableDrawable;
 import op_lando.map.Drawable;
+import op_lando.map.DrawableTexture;
 import op_lando.map.entity.Entity;
 import op_lando.map.entity.player.Player;
+import op_lando.map.physicquantity.Position;
 import op_lando.resources.LevelLayout;
 
 public class MapState {
@@ -74,14 +76,14 @@ public class MapState {
 	public void setLayout(LevelLayout layout) {
 		this.layout = layout;
 
+		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();
+		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getOutsideBackground(), new Position(0, 0)));
+		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().clear();
+		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getInsideBackground(), new Position(0, 0)));
+
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().clear();
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(layout.getPlatforms());
 		collidables.addAll(layout.getPlatforms());
-
-		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();
-		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().clear();
-
-		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
 
 		entities.clear();
 		nextEntityId = 0;
@@ -91,6 +93,9 @@ public class MapState {
 			collidables.addAll(ent.getDrawables());
 		}
 
+		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
+
+		player.setPosition(layout.getStartPosition());
 		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
 			@Override
 			public int compare(CollidableDrawable a, CollidableDrawable b) {
