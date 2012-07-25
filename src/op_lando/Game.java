@@ -160,10 +160,12 @@ public class Game {
 		//movability (lower collidables array index)
 		for (int j = i + 1; j < collidables.length; j++) {
 			if (!visited.contains(Integer.valueOf(i << 16 | j)) && collidables[j].isVisible()) {
-				CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[j].getBoundingPolygon(), collidables[i].getBoundingPolygon());
+				//call Collidable.collision on the more movable Collidable since
+				//it will most likely be the one that moves
+				CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[i].getBoundingPolygon(), collidables[j].getBoundingPolygon());
 				if (result.collision()) {
-					result.getCollisionInformation().setCollidedWith(collidables[j]);
-					collidables[i].collision(result.getCollisionInformation(), collidablesList);
+					result.getCollisionInformation().setCollidedWith(collidables[i]);
+					collidables[j].collision(result.getCollisionInformation(), collidablesList);
 					recur.add(Integer.valueOf(j));
 				}
 				visited.add(Integer.valueOf(i << 16 | j));

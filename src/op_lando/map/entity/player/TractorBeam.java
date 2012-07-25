@@ -1,7 +1,11 @@
 package op_lando.map.entity.player;
 
+import java.util.List;
+
+import op_lando.map.Collidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
+import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
@@ -66,6 +70,16 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
+		Collidable other = collisionInfo.getCollidedWith();
+		if (other instanceof CollidableDrawable && !(other instanceof AvatarBody)) {
+			//TODO: implement
+			System.out.println("SELECT " + other);
+		}
+		return true;
+	}
+
+	@Override
 	public int getMovabilityIndex() {
 		return 0;
 	}
@@ -73,6 +87,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return null;
+	}
+
+	@Override
+	public void recalculateSelfBoundingPolygon() {
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 	}
 
 	@Override

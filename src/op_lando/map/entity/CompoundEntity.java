@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.util.vector.Vector2f;
+
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
@@ -22,6 +24,13 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		drawables.add(getBody());
 		drawables.addAll(getAuxiliaries());
 		drawables = Collections.unmodifiableList(drawables);
+	}
+
+	public void updateChildPositionsAndPolygons(Vector2f delta) {
+		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
+			child.setPosition(new Position(child.getPosition().getX() + delta.getX(), child.getPosition().getY() + delta.getY()));
+			child.recalculateSelfBoundingPolygon();
+		}
 	}
 
 	@Override

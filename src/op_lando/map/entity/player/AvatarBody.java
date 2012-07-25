@@ -2,9 +2,12 @@ package op_lando.map.entity.player;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
+import op_lando.map.Collidable;
 import op_lando.map.collisions.BoundingPolygon;
+import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.BodyEntity;
 import op_lando.map.entity.SimpleEntity;
@@ -68,6 +71,18 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			transformedAttachPoints.put(entry.getKey(), new Vector2f(entry.getValue()));
 
 		parentBoundPoly = getSelfBoundingPolygon();
+	}
+
+	@Override
+	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
+		//TODO: fix collision fighting between legs polygon and body (self) polygon
+		//when a thin Collidable goes between body and legs. Setting Y component
+		//of attachPoints.get(PlayerPart.LEGS) to 126 or lower seems to prevent
+		//it from happening, but is ugly.
+		boolean movedSelf = super.collision(collisionInfo, otherCollidables);
+		if (movedSelf)
+			parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());
+		return movedSelf;
 	}
 
 	@Override

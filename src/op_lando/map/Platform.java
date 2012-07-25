@@ -5,6 +5,7 @@ import java.util.List;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
+import op_lando.map.entity.player.TractorBeam;
 import op_lando.map.physicquantity.Position;
 import op_lando.resources.TextureCache;
 
@@ -55,9 +56,15 @@ public class Platform extends CollidableDrawable {
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInformation, List<Collidable> collidablesList) {
-		//TODO: implement
-		System.out.println(this + " collided with "+ collisionInformation.getCollidedWith());
+	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
+		Collidable other = collisionInfo.getCollidedWith();
+		if (other instanceof TractorBeam) {
+			collisionInfo.setCollidedWith(this);
+			collisionInfo.negateMinimumTranslationVector();
+			other.collision(collisionInfo, otherCollidables);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -68,11 +75,6 @@ public class Platform extends CollidableDrawable {
 	@Override
 	public int getMovabilityIndex() {
 		return 0;
-	}
-
-	@Override
-	public int compareTo(Collidable other) {
-		return this.getMovabilityIndex() - other.getMovabilityIndex();
 	}
 
 	@Override

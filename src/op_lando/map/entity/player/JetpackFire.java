@@ -84,6 +84,11 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		return super.getBoundingPolygon();
 	}
 
+	@Override
+	public void recalculateSelfBoundingPolygon() {
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
 	private boolean isEmpty() {
 		//TODO: implement
 		return false;

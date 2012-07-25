@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -90,7 +91,12 @@ public class MapState {
 			collidables.addAll(ent.getDrawables());
 		}
 
-		Collections.sort(collidables);
+		Collections.sort(collidables, new Comparator<Collidable>() {
+			@Override
+			public int compare(Collidable a, Collidable b) {
+				return a.getMovabilityIndex() - b.getMovabilityIndex();
+			}
+		});
 	}
 
 	public Rectangle getCameraBounds() {

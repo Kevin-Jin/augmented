@@ -53,6 +53,11 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		return super.getBoundingPolygon();
 	}
 
+	@Override
+	public void recalculateSelfBoundingPolygon() {
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
 	private boolean onGround() {
 		//TODO: implement
 		return true;
