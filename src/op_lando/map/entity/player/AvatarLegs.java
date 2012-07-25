@@ -29,6 +29,11 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	}
 
 	@Override
+	public int getMovabilityIndex() {
+		return 1;
+	}
+
+	@Override
 	public boolean flipHorizontally() {
 		return flipHorizontally;
 	}

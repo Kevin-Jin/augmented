@@ -1,6 +1,9 @@
 package op_lando.map;
 
+import java.util.List;
+
 import op_lando.map.collisions.BoundingPolygon;
+import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.physicquantity.Position;
 import op_lando.resources.TextureCache;
@@ -15,9 +18,10 @@ public class Platform extends CollidableDrawable {
 	public Platform(double x1, double x2, double y1, double y2) {
 		super(new BoundingPolygon(new Polygon[] {
 			new Polygon(new Vector2f[] {
-				new Vector2f((float) 0, (float) 3),
-				new Vector2f((float) 3, (float) 3),
-				new Vector2f((float) 3, (float) 0),
+				//assert dimension of platform texture is 2x2
+				new Vector2f((float) 0, (float) 2),
+				new Vector2f((float) 2, (float) 2),
+				new Vector2f((float) 2, (float) 0),
 				new Vector2f((float) 0, (float) 0)
 			})
 		}), new BoundingPolygon(new Polygon[] {
@@ -48,6 +52,21 @@ public class Platform extends CollidableDrawable {
 
 	public double getBottomY() {
 		return y2;
+	}
+
+	@Override
+	public void collision(CollisionInformation collisionInformation, List<Collidable> collidablesList) {
+		//TODO: implement
+	}
+
+	@Override
+	public boolean isVisible() {
+		return true;
+	}
+
+	@Override
+	public int getMovabilityIndex() {
+		return 0;
 	}
 
 	@Override

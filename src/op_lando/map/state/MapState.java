@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import op_lando.map.Collidable;
 import op_lando.map.Drawable;
 import op_lando.map.entity.Entity;
 import op_lando.map.entity.player.Player;
@@ -48,6 +49,7 @@ public class MapState {
 	private final Player player;
 	private final SortedMap<Byte, Entity> entities;
 	private final SortedMap<Byte, ZAxisLayer> layers;
+	private final List<Collidable> collidables;
 	private byte nextEntityId;
 
 	public MapState(Drawable... overlays) {
@@ -55,6 +57,7 @@ public class MapState {
 
 		entities = new TreeMap<Byte, Entity>();
 		layers = new TreeMap<Byte, ZAxisLayer>();
+		collidables = new ArrayList<Collidable>();
 
 		layers.put(ZAxisLayer.FAR_BACKGROUND, new ZAxisLayer(0.25f));
 		layers.put(ZAxisLayer.MAIN_BACKGROUND, new ZAxisLayer(0.5f));
@@ -80,8 +83,10 @@ public class MapState {
 		entities.clear();
 		nextEntityId = 0;
 		entities.put(Byte.valueOf(nextEntityId++), player);
-		for (Entity ent : entities.values())
+		for (Entity ent : entities.values()) {
 			layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(ent.getDrawables());
+			collidables.addAll(ent.getDrawables());
+		}
 	}
 
 	public Rectangle getCameraBounds() {
@@ -94,6 +99,10 @@ public class MapState {
 
 	public Collection<Entity> getEntities() {
 		return entities.values();
+	}
+
+	public List<Collidable> getCollidables() {
+		return collidables;
 	}
 
 	public Player getPlayer() {

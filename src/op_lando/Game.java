@@ -4,13 +4,17 @@ import java.awt.Font;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
+import java.util.List;
 
+import op_lando.map.Collidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.CursorEntity;
 import op_lando.map.Drawable;
 import op_lando.map.DrawableOverlayText;
 import op_lando.map.FpsEntity;
+import op_lando.map.collisions.CollisionResult;
 import op_lando.map.collisions.Polygon;
+import op_lando.map.collisions.PolygonCollision;
 import op_lando.map.entity.Entity;
 import op_lando.map.state.Camera;
 import op_lando.map.state.FrameRateState;
@@ -155,6 +159,29 @@ public class Game {
 		input.update();
 		for (Entity ent : map.getEntities())
 			ent.update(tDelta, input, camera);
+		//TODO: have all Collidables define a movability index. When two Collidables
+		//have a movability of 0, neither move. When one has a higher movability,
+		//that object will be displaced when collided. When two have the same
+		//movability and it is not 0, the one with the higher Y coordinate will
+		//be displaced.
+		//fetch all trees of chained translation polygon collides. collide Collidable
+		//with lowest movability with a directly colliding Collidable of the next
+		//lowest movability. Then loop over directly colliding Collidables over
+		//movability ascending and have them do the same.
+		//platforms have movability of 0, player 1, boxes 2
+		List<Collidable> collidablesList = map.getCollidables();
+		Collidable[] collidables = collidablesList.toArray(new Collidable[collidablesList.size()]);
+		for (int i = 0; i < collidables.length - 1; i++) {
+			for (int j = i + 1; j < collidables.length; j++) {
+				if (collidables[i].isVisible() && collidables[j].isVisible()) {
+					CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[j].getBoundingPolygon(), collidables[i].getBoundingPolygon());
+					if (result.collision()) {
+						result.getCollisionInformation().setCollidedWith(collidables[j]);
+						collidables[i].collision(result.getCollisionInformation(), collidablesList);
+					}
+				}
+			}
+		}
 
 		AudioLoader.update();
 	}

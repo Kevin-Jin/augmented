@@ -40,6 +40,11 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	}
 
 	@Override
+	public int getMovabilityIndex() {
+		return 1;
+	}
+
+	@Override
 	public Vector2f getDrawPosition() {
 		return new Vector2f(flipHorizontally ? (float) (getPosition().getX() + getOrigin().getX() * getScale().getX() - getWidth() * Math.cos(rot)) : ((float) getPosition().getX() + getOrigin().getX() * getScale().getX()), flipHorizontally ? (float) (getPosition().getY() - getOrigin().getY() * -getScale().getY() - getWidth() * Math.sin(rot)) : (float) getPosition().getY() - getOrigin().getY() * -getScale().getY());
 	}

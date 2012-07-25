@@ -66,6 +66,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public int getMovabilityIndex() {
+		return 1;
+	}
+
+	@Override
 	public void update(double tDelta, Input input, Camera camera) {
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();

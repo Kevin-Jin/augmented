@@ -71,6 +71,11 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
+	public int getMovabilityIndex() {
+		return 1;
+	}
+
+	@Override
 	public Vector2f getOrigin() {
 		return new Vector2f(getTexture().getImageWidth() / 2f, baseAttachPoints.get(PlayerPart.ARM).getY() + parent.getArm().getUntransformedBeamAttachPoint().getY());
 	}
@@ -122,13 +127,13 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	@Override
 	public void update(double tDelta, Input input, Camera camera) {
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
-			getPosition().setX(getPosition().getX() - 100);
+			getPosition().setX(getPosition().getX() - 10);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
-			getPosition().setX(getPosition().getX() + 100);
+			getPosition().setX(getPosition().getX() + 10);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
-			getPosition().setY(getPosition().getY() - 100);
+			getPosition().setY(getPosition().getY() - 10);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
-			getPosition().setY(getPosition().getY() + 100);
+			getPosition().setY(getPosition().getY() + 10);
 		camera.lookAt(parent.getPosition());
 		parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 

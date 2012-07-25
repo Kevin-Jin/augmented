@@ -31,6 +31,11 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public int getMovabilityIndex() {
+		return 1;
+	}
+
+	@Override
 	public Vector2f getOrigin() {
 		return new Vector2f(getTexture().getImageWidth() / 2f, 0);
 	}
