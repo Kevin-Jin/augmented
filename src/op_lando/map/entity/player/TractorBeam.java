@@ -21,10 +21,12 @@ import org.newdawn.slick.opengl.Texture;
 
 public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerPart> {
 	private static final float SHOOT_VELOCITY = 1000f; //pixels per second
+	private final int[] TOP_VERTEX_INDEX = { 0, 0 };
+	private final int[] BOTTOM_VERTEX_INDEX = { 0, 1 };
 
 	private float rot;
 	private float length;
-	private CollidableDrawable selected;
+	private CollidableDrawable selection;
 	private Vector2f pointInSelected;
 
 	public TractorBeam() {
@@ -47,33 +49,93 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	private void extend(double tDelta) {
-		length += SHOOT_VELOCITY * tDelta;
+		if (selection == null)
+			length += SHOOT_VELOCITY * tDelta;
+		else
+			length = (float) Math.sqrt(Math.pow(getPosition().getX() - getBeamHit().getX(), 2) + Math.pow(getPosition().getY() - getBeamHit().getY(), 2));
 	}
 
 	private void beginRetract() {
+		selection = null;
 		SoundCache.getSound("beam").stop();
 	}
 
 	private void retract(double tDelta) {
+		selection = null;
 		length -= SHOOT_VELOCITY * tDelta;
 		if (length < 0)
 			length = 0;
 	}
 
-	public Position getBeamHit() {
-		return new Position(Matrix4f.transform(selected.getTransformationMatrix(), new Vector4f(pointInSelected.getX(), pointInSelected.getY(), 1, 1), null));
+	public boolean isBeamHit() {
+		return selection != null;
 	}
 
-	public void setBeamHit(Position value) {
-		pointInSelected = new Vector2f(Matrix4f.transform(Matrix4f.invert(selected.getTransformationMatrix(), null), value.asVector4f(), null));
+	public Position getBeamHit() {
+		return new Position(Matrix4f.transform(selection.getTransformationMatrix(), new Vector4f(pointInSelected.getX(), pointInSelected.getY(), 1, 1), null));
+	}
+
+	private void setBeamHit(Position value) {
+		pointInSelected = new Vector2f(Matrix4f.transform(Matrix4f.invert(selection.getTransformationMatrix(), null), value.asVector4f(), null));
+	}
+
+	private Position getTopCornerPosition() {
+		return new Position(transformedBoundPoly.getPolygons()[TOP_VERTEX_INDEX[0]].getVertices()[TOP_VERTEX_INDEX[1]]);
+	}
+
+	private Position getBottomCornerPosition() {
+		return new Position(transformedBoundPoly.getPolygons()[BOTTOM_VERTEX_INDEX[0]].getVertices()[BOTTOM_VERTEX_INDEX[1]]);
 	}
 
 	@Override
 	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		CollidableDrawable other = collisionInfo.getCollidedWith();
-		if (!(other instanceof AvatarBody)) {
-			//TODO: implement
-			System.out.println("SELECT " + other);
+		if (selection != other && !(other instanceof AvatarBody)) {
+			Position pos = getPosition();
+			Position hitPos = new Position(pos.getX() + length * Math.cos(rot), pos.getY() + length * Math.sin(rot));
+			selection = other;
+			Vector2f hitPosVector = hitPos.asVector();
+			Vector2f lengthVector = Vector2f.sub(hitPosVector, getPosition().asVector(), null);
+			if (!other.getBoundingPolygon().isPointInsideBoundingPolygon(hitPosVector) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getBottomCornerPosition().asVector(), lengthVector, null)) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getTopCornerPosition().asVector(), lengthVector, null))) {
+				// our beam overextends to the collided entity (the front of the
+				// beam does not actually hit the collided entity), so trim it
+				// assert that either the bottom or the top edge of the beam had
+				// to have intersected one of the edges of the collided entity
+
+				// find the intersection of the line that travels in between the
+				// two edges of the beam, and the closest edge of the collided
+				// entity though center of beam's front does not necessarily
+				// have to intersect with the collided entity, if it does, we
+				// can make the grabbing process smoother and less "jumpy"
+				// because we change the angle of the player less
+				Vector2f polygonEdgeIntersect = other.getBoundingPolygon().closestPoint(getPosition(), hitPos);
+				if (!Float.isNaN(polygonEdgeIntersect.getX()) && !Float.isNaN(polygonEdgeIntersect.getY())) {
+					// an intersection was made
+					hitPos = new Position(polygonEdgeIntersect);
+					length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+				} else {
+					// if our center line did not intersect, find the
+					// intersection of the bottom edge of the beam and the
+					// closest edge of the collided entity
+					polygonEdgeIntersect = other.getBoundingPolygon().closestPoint(getBottomCornerPosition(), new Position(Vector2f.add(transformedBoundPoly.getPolygons()[BOTTOM_VERTEX_INDEX[0]].getVertices()[BOTTOM_VERTEX_INDEX[1]], lengthVector, null)));
+					if (!Float.isNaN(polygonEdgeIntersect.getX()) && !Float.isNaN(polygonEdgeIntersect.getY())) {
+						// an intersection was made
+						hitPos = new Position(polygonEdgeIntersect);
+						length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+					} else {
+						// if neither our bottom edge nor center line
+						// intersected, find the intersection of the top edge of
+						// the beam and the closest edge of the collided entity
+						polygonEdgeIntersect = other.getBoundingPolygon().closestPoint(getTopCornerPosition(), new Position(Vector2f.add(transformedBoundPoly.getPolygons()[TOP_VERTEX_INDEX[0]].getVertices()[TOP_VERTEX_INDEX[1]], lengthVector, null)));
+						if (!Float.isNaN(polygonEdgeIntersect.getX()) && !Float.isNaN(polygonEdgeIntersect.getY())) {
+							// an intersection was made
+							hitPos = new Position(polygonEdgeIntersect);
+							length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+						}
+					}
+				}
+			}
+			setBeamHit(hitPos);
 		}
 		return true;
 	}

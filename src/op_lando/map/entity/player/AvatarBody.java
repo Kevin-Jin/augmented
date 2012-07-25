@@ -151,7 +151,10 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
 			getPosition().setY(getPosition().getY() + 10);
 		camera.lookAt(parent.getPosition());
-		parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+		if (parent.getBeam().isBeamHit())
+			parent.lookAt(parent.getBeam().getBeamHit());
+		else
+			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 
 		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
