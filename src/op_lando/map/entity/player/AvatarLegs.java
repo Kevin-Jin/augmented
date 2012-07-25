@@ -43,6 +43,16 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		flipHorizontally = flip;
 	}
 
+	@Override
+	public BoundingPolygon getBoundingPolygon() {
+		return new BoundingPolygon(new Polygon[0]);
+	}
+
+	@Override
+	public BoundingPolygon getSelfBoundingPolygon() {
+		return super.getBoundingPolygon();
+	}
+
 	private boolean onGround() {
 		//TODO: implement
 		return true;

@@ -4,7 +4,10 @@ import java.awt.Font;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import op_lando.map.Collidable;
 import op_lando.map.CollidableDrawable;
@@ -151,15 +154,27 @@ public class Game {
 		SoundCache.flush();
 	}
 
-	public void update(double tDelta) {
-		frameRateState.addFrame();
-		if (frameRateState.getElapsedSecondsSinceLastReset() > 1)
-			frameRateState.reset();
+	private void findHits(Collidable[] collidables, List<Collidable> collidablesList, int i, Set<Integer> visited) {
+		List<Integer> recur = new ArrayList<Integer>();
+		//assert we already handled collisions with Collidables of lower
+		//movability (lower collidables array index)
+		for (int j = i + 1; j < collidables.length; j++) {
+			if (!visited.contains(Integer.valueOf(i << 16 | j)) && collidables[j].isVisible()) {
+				CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[j].getBoundingPolygon(), collidables[i].getBoundingPolygon());
+				if (result.collision()) {
+					result.getCollisionInformation().setCollidedWith(collidables[j]);
+					collidables[i].collision(result.getCollisionInformation(), collidablesList);
+					recur.add(Integer.valueOf(j));
+				}
+				visited.add(Integer.valueOf(i << 16 | j));
+			}
+		}
+		for (Integer index : recur)
+			findHits(collidables, collidablesList, index.intValue(), visited);
+	}
 
-		input.update();
-		for (Entity ent : map.getEntities())
-			ent.update(tDelta, input, camera);
-		//TODO: have all Collidables define a movability index. When two Collidables
+	private void detectAndHandleCollisions() {
+		//have all Collidables define a movability index. When two Collidables
 		//have a movability of 0, neither move. When one has a higher movability,
 		//that object will be displaced when collided. When two have the same
 		//movability and it is not 0, the one with the higher Y coordinate will
@@ -168,20 +183,27 @@ public class Game {
 		//with lowest movability with a directly colliding Collidable of the next
 		//lowest movability. Then loop over directly colliding Collidables over
 		//movability ascending and have them do the same.
-		//platforms have movability of 0, player 1, boxes 2
+		//platforms & beam have movability of 0, switches 1, player 2, boxes 3
+		//collidablesList is sorted by movability ascending
 		List<Collidable> collidablesList = map.getCollidables();
 		Collidable[] collidables = collidablesList.toArray(new Collidable[collidablesList.size()]);
-		for (int i = 0; i < collidables.length - 1; i++) {
-			for (int j = i + 1; j < collidables.length; j++) {
-				if (collidables[i].isVisible() && collidables[j].isVisible()) {
-					CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[j].getBoundingPolygon(), collidables[i].getBoundingPolygon());
-					if (result.collision()) {
-						result.getCollisionInformation().setCollidedWith(collidables[j]);
-						collidables[i].collision(result.getCollisionInformation(), collidablesList);
-					}
-				}
-			}
-		}
+		//first 2 bytes are left collidable's index, last 2 bytes are right's
+		//hopefully we don't have more than 65535 Collidables in the map
+		Set<Integer> visited = new HashSet<Integer>();
+		for (int i = 0; i < collidables.length - 1; i++)
+			if (collidables[i].isVisible())
+				findHits(collidables, collidablesList, i, visited);
+	}
+
+	public void update(double tDelta) {
+		frameRateState.addFrame();
+		if (frameRateState.getElapsedSecondsSinceLastReset() > 1)
+			frameRateState.reset();
+
+		input.update();
+		for (Entity ent : map.getEntities())
+			ent.update(tDelta, input, camera);
+		detectAndHandleCollisions();
 
 		AudioLoader.update();
 	}

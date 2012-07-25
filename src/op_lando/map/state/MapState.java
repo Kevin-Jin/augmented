@@ -3,6 +3,7 @@ package op_lando.map.state;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -74,6 +75,7 @@ public class MapState {
 
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().clear();
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(layout.getPlatforms());
+		collidables.addAll(layout.getPlatforms());
 
 		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();
 		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().clear();
@@ -87,6 +89,8 @@ public class MapState {
 			layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(ent.getDrawables());
 			collidables.addAll(ent.getDrawables());
 		}
+
+		Collections.sort(collidables);
 	}
 
 	public Rectangle getCameraBounds() {

@@ -12,7 +12,6 @@ import op_lando.map.state.Input;
 
 public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	private List<DrawableEntity> drawables;
-	private BoundingPolygon universal;
 
 	protected abstract BodyEntity<E> getBody();
 
@@ -23,11 +22,6 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		drawables.add(getBody());
 		drawables.addAll(getAuxiliaries());
 		drawables = Collections.unmodifiableList(drawables);
-
-		BoundingPolygon[] all = new BoundingPolygon[drawables.size()];
-		for (int i = 0; i < all.length; i++)
-			all[i] = drawables.get(i).getBoundingPolygon();
-		universal = new BoundingPolygon(all);
 	}
 
 	@Override
@@ -57,12 +51,18 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 
 	@Override
 	public void update(double tDelta, Input input, Camera camera) {
+		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
+
 		getBody().update(tDelta, input, camera);
+		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
+			polygons.add(getBody().getSelfBoundingPolygon());
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
 			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 			child.setFlip(getBody().flipHorizontally());
 			child.update(tDelta, input, camera);
+			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
+				polygons.add(child.getSelfBoundingPolygon());
 		}
-		getBody().setBoundingPolygon(universal);
+		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 }

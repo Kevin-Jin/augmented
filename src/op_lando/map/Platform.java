@@ -57,6 +57,7 @@ public class Platform extends CollidableDrawable {
 	@Override
 	public void collision(CollisionInformation collisionInformation, List<Collidable> collidablesList) {
 		//TODO: implement
+		System.out.println(this + " collided with "+ collisionInformation.getCollidedWith());
 	}
 
 	@Override
@@ -67,6 +68,11 @@ public class Platform extends CollidableDrawable {
 	@Override
 	public int getMovabilityIndex() {
 		return 0;
+	}
+
+	@Override
+	public int compareTo(Collidable other) {
+		return this.getMovabilityIndex() - other.getMovabilityIndex();
 	}
 
 	@Override

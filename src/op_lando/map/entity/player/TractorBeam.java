@@ -67,7 +67,12 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 
 	@Override
 	public int getMovabilityIndex() {
-		return 1;
+		return 0;
+	}
+
+	@Override
+	public BoundingPolygon getSelfBoundingPolygon() {
+		return null;
 	}
 
 	@Override

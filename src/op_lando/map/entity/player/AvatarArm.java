@@ -69,6 +69,16 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	}
 
 	@Override
+	public BoundingPolygon getBoundingPolygon() {
+		return new BoundingPolygon(new Polygon[0]);
+	}
+
+	@Override
+	public BoundingPolygon getSelfBoundingPolygon() {
+		return super.getBoundingPolygon();
+	}
+
+	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("arm");
 	}

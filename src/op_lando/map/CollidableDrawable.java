@@ -17,11 +17,17 @@ public abstract class CollidableDrawable extends AbstractDrawable implements Col
 	@Override
 	public void collision(CollisionInformation collisionInformation, List<Collidable> collidablesList) {
 		//TODO: implement
+		System.out.println(this + " collided with "+ collisionInformation.getCollidedWith());
 	}
 
 	@Override
 	public boolean isVisible() {
 		return getWidth() != 0 && getHeight() != 0;
+	}
+
+	@Override
+	public int compareTo(Collidable other) {
+		return this.getMovabilityIndex() - other.getMovabilityIndex();
 	}
 
 	@Override

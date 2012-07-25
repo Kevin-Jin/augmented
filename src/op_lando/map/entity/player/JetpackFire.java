@@ -74,6 +74,16 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		flipHorizontally = flip;
 	}
 
+	@Override
+	public BoundingPolygon getBoundingPolygon() {
+		return new BoundingPolygon(new Polygon[0]);
+	}
+
+	@Override
+	public BoundingPolygon getSelfBoundingPolygon() {
+		return super.getBoundingPolygon();
+	}
+
 	private boolean isEmpty() {
 		//TODO: implement
 		return false;
