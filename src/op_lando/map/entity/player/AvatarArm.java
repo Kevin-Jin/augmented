@@ -98,6 +98,6 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	}
 
 	public Vector2f getBeamAttachPoint() {
-		return new Vector2f(Matrix4f.transform(getTransformationMatrix(), new Vector4f(BEAM_SOURCE.getX(), BEAM_SOURCE.getY(), 1, 1), null));
+		return new Vector2f(Matrix4f.transform(getWorldMatrix(), new Vector4f(BEAM_SOURCE.getX(), BEAM_SOURCE.getY(), 1, 1), null));
 	}
 }

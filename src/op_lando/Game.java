@@ -11,10 +11,10 @@ import java.util.Set;
 
 import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
-import op_lando.map.CursorEntity;
+import op_lando.map.CursorOverlay;
 import op_lando.map.Drawable;
 import op_lando.map.DrawableOverlayText;
-import op_lando.map.FpsEntity;
+import op_lando.map.FpsOverlay;
 import op_lando.map.collisions.CollisionResult;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.collisions.PolygonCollision;
@@ -62,7 +62,7 @@ public class Game {
 		camera = new Camera(WIDTH, HEIGHT);
 		frameRateState = new FrameRateState(new DecimalFormat("0.0"));
 
-		map = new MapState(new FpsEntity(frameRateState, HEIGHT), new CursorEntity(input));
+		map = new MapState(new FpsOverlay(frameRateState, HEIGHT), new CursorOverlay(input));
 	}
 
 	public void glInit() throws LWJGLException {
@@ -87,19 +87,16 @@ public class Game {
 
 		Mouse.setGrabbed(true);
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_CULL_FACE);
-
 		GL11.glClearColor(100f / 255, 149f / 255, 237f / 255, 255f / 255); //cornflower blue
 		GL11.glEnable(GL11.GL_BLEND); //enable alpha blending
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, WIDTH, 0, HEIGHT, -1, 1);
+
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
@@ -185,7 +182,7 @@ public class Game {
 		//CollidableDrawable of the next lowest movability. Then loop over
 		//the directly colliding CollidableDrawables in order of movability
 		//ascending and have them do the same.
-		//platforms & beam have movability of 0, switches 1, player 2, boxes 3
+		//platforms, switches, and beam have movability of 0, player 1, boxes 2
 
 		//map.getCollidables() is sorted by movability ascending
 		List<CollidableDrawable> collidablesList = map.getCollidables();
@@ -222,7 +219,8 @@ public class Game {
 				Texture texture = ent.getTexture();
 
 				buf.clear();
-				Matrix4f.mul(viewMatrix, ent.getTransformationMatrix(), null).store(buf);
+				//multiply view matrix and world matrix to get modelview matrix
+				Matrix4f.mul(viewMatrix, ent.getWorldMatrix(), null).store(buf);
 				buf.flip();
 
 				ent.getTint().bind();

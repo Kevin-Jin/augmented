@@ -9,11 +9,11 @@ import org.lwjgl.util.Point;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
-public class FpsEntity extends AbstractDrawable {
+public class FpsOverlay extends AbstractDrawable {
 	private FrameRateState state;
 	private int yPos;
 
-	public FpsEntity(FrameRateState fps, int yPos) {
+	public FpsOverlay(FrameRateState fps, int yPos) {
 		state = fps;
 		this.yPos = yPos;
 	}

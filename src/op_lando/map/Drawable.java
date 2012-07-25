@@ -7,7 +7,7 @@ import org.newdawn.slick.opengl.Texture;
 public interface Drawable {
 	Texture getTexture();
 
-	Matrix4f getTransformationMatrix();
+	Matrix4f getWorldMatrix();
 
 	Color getTint();
 

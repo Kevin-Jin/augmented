@@ -57,7 +57,7 @@ public abstract class AbstractDrawable implements Drawable {
 	}
 
 	@Override
-	public final Matrix4f getTransformationMatrix() {
+	public final Matrix4f getWorldMatrix() {
 		return new Matrix4f()
 				.translate(new Vector2f(getDrawPosition()))
 				.rotate(getRotation(), new Vector3f(0, 0, 1))

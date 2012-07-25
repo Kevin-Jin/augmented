@@ -6,10 +6,10 @@ import op_lando.resources.TextureCache;
 
 import org.newdawn.slick.opengl.Texture;
 
-public class CursorEntity extends AbstractDrawable {
+public class CursorOverlay extends AbstractDrawable {
 	private Input state;
 
-	public CursorEntity(Input input) {
+	public CursorOverlay(Input input) {
 		state = input;
 	}
 

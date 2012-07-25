@@ -95,7 +95,7 @@ public class Polygon {
 	}
 
 	public static Polygon transformPolygon(Polygon p, Drawable drawable) {
-		return transformPolygon(p, drawable.getTransformationMatrix());
+		return transformPolygon(p, drawable.getWorldMatrix());
 	}
 
 	@Override

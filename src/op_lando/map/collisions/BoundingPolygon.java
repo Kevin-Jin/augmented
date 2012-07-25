@@ -42,7 +42,7 @@ public class BoundingPolygon {
 	public static BoundingPolygon transformBoundingPolygon(BoundingPolygon boundingPoly, Drawable drawable) {
 		Polygon[] oldPolygons = boundingPoly.polygons;
 		Polygon[] polygons = new Polygon[oldPolygons.length];
-		Matrix4f m = drawable.getTransformationMatrix();
+		Matrix4f m = drawable.getWorldMatrix();
 		for (int i = 0; i < polygons.length; ++i)
 			polygons[i] = Polygon.transformPolygon(oldPolygons[i], m);
 		return new BoundingPolygon(polygons);

@@ -72,11 +72,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	public Position getBeamHit() {
-		return new Position(Matrix4f.transform(selection.getTransformationMatrix(), new Vector4f(pointInSelected.getX(), pointInSelected.getY(), 1, 1), null));
+		return new Position(Matrix4f.transform(selection.getWorldMatrix(), new Vector4f(pointInSelected.getX(), pointInSelected.getY(), 1, 1), null));
 	}
 
 	private void setBeamHit(Position value) {
-		pointInSelected = new Vector2f(Matrix4f.transform(Matrix4f.invert(selection.getTransformationMatrix(), null), value.asVector4f(), null));
+		pointInSelected = new Vector2f(Matrix4f.transform(Matrix4f.invert(selection.getWorldMatrix(), null), value.asVector4f(), null));
 	}
 
 	private Position getTopCornerPosition() {
@@ -165,6 +165,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			beginRetract();
 		else if (getLength() > 0)
 			retract(tDelta);
+		if (selection != null && selection.getMovabilityIndex() != 0) {
+			//TODO: drag
+			//set angle of velocity from selection's current pos to mouse cursor
+			//and use very high magnitude (magnitude of translation * 60?)
+		}
 
 		super.update(tDelta, input, camera);
 	}

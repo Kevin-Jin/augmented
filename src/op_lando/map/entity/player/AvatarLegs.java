@@ -65,6 +65,11 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 
 	@Override
 	public void update(double tDelta, Input input, Camera camera) {
+		//TODO: maybe instead of restoring all jump time when we hit a
+		//completely horizontal collidable that either is or contacts a platform,
+		//just recharge jump time gradually as long as we are (in)directly
+		//touching a platform, as long as angle of colliding surface is less
+		//than 45 degrees from horizontal?
 		if ((input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)) || input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D))) && onGround())
 			animation.update(tDelta);
 		else

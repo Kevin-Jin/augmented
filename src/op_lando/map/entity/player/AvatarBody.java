@@ -78,8 +78,16 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
 		//when a thin CollidableDrawable goes between body and legs. Basically can't
 		//have any horizontal platforms that are thinner than the legs are high.
-		//also fix player being able to be inside a platform for a frame when
-		//moving into it when rotation is not zero
+
+		//TODO: fix arm rotation based on position of body's origin before
+		//collision handling (I think - just try walking horizontally into the
+		//edge of a platform when cursor Y is not the same as origin Y. the arm
+		//points in the wrong direction as long as A or D are held)
+
+		//TODO: fix being able to go inside a platform when moving a concave
+		//vertex of the Player (e.g. connection between antenna and head,
+		//perpendicular arm and legs, or perpendicular arm and head) diagonally
+		//into one of the platform's corners 
 		boolean movedSelf = super.collision(collisionInfo, otherCollidables);
 		if (movedSelf)
 			parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());
@@ -102,7 +110,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	public float lookAt(Position pos) {
-		ReadableVector2f rotateAbout = Matrix4f.transform(getTransformationMatrix(), new Vector4f(getOrigin().getX(), getOrigin().getY(), 1, 1), null);
+		ReadableVector2f rotateAbout = Matrix4f.transform(getWorldMatrix(), new Vector4f(getOrigin().getX(), getOrigin().getY(), 1, 1), null);
 		double y = pos.getY() - rotateAbout.getY();
 		double x = pos.getX() - rotateAbout.getX();
 		double realRot = Math.atan2(y, x);
@@ -142,6 +150,9 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 	@Override
 	public void update(double tDelta, Input input, Camera camera) {
+		//TODO: have left and right walking velocity have the same angle as the
+		//colliding surface below so magnitude is constant even if we are
+		//walking up a slope.
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
 			getPosition().setX(getPosition().getX() - 10);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
@@ -158,7 +169,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
-			entry.getValue().set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
+			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
 		}
 
 		double lastRot = rot;
@@ -167,7 +178,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
 			if (flipHorizontally)
 				coord.setX(coord.getX() + 48);
-			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getTransformationMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
+			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getWorldMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
 		} finally {
 			rot = lastRot;
 		}
