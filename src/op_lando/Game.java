@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import op_lando.map.Collidable;
+import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.CursorEntity;
 import op_lando.map.Drawable;
@@ -154,43 +154,44 @@ public class Game {
 		SoundCache.flush();
 	}
 
-	private void findHits(Collidable[] collidables, List<Collidable> collidablesList, int i, Set<Integer> visited) {
-		List<Integer> recur = new ArrayList<Integer>();
-		//assert we already handled collisions with Collidables of lower
+	private void findHits(CollidableDrawable[] collidables, List<CollidableDrawable> collidablesList, int i, Set<Integer> visited) {
+		List<Integer> directHits = new ArrayList<Integer>();
+		//assert we already handled collisions with CollidableDrawables of lower
 		//movability (lower collidables array index)
 		for (int j = i + 1; j < collidables.length; j++) {
 			if (!visited.contains(Integer.valueOf(i << 16 | j)) && collidables[j].isVisible()) {
-				//call Collidable.collision on the more movable Collidable since
-				//it will most likely be the one that moves
+				//call CollidableDrawable.collision on the more movable
+				//one since it will most likely be the one that moves
 				CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[i].getBoundingPolygon(), collidables[j].getBoundingPolygon());
 				if (result.collision()) {
 					result.getCollisionInformation().setCollidedWith(collidables[i]);
 					collidables[j].collision(result.getCollisionInformation(), collidablesList);
-					recur.add(Integer.valueOf(j));
+					directHits.add(Integer.valueOf(j));
 				}
 				visited.add(Integer.valueOf(i << 16 | j));
 			}
 		}
-		for (Integer index : recur)
+		for (Integer index : directHits)
 			findHits(collidables, collidablesList, index.intValue(), visited);
 	}
 
 	private void detectAndHandleCollisions() {
-		//have all Collidables define a movability index. When two Collidables
-		//have a movability of 0, neither move. When one has a higher movability,
-		//that object will be displaced when collided. When two have the same
-		//movability and it is not 0, the one with the higher Y coordinate will
-		//be displaced.
-		//fetch all trees of chained translation polygon collides. collide Collidable
-		//with lowest movability with a directly colliding Collidable of the next
-		//lowest movability. Then loop over directly colliding Collidables over
-		//movability ascending and have them do the same.
+		//When a CollidableDrawable has a higher movability than another, that
+		//one will be displaced in collision.  When both have movability of 0,
+		//neither move. When both have the same non-zero movability, the one
+		//with the higher Y coordinate will be displaced.
+		//find all trees of chained translation polygon collisions. Collide
+		//CollidableDrawable with lowest movability with a directly colliding
+		//CollidableDrawable of the next lowest movability. Then loop over
+		//the directly colliding CollidableDrawables in order of movability
+		//ascending and have them do the same.
 		//platforms & beam have movability of 0, switches 1, player 2, boxes 3
-		//collidablesList is sorted by movability ascending
-		List<Collidable> collidablesList = map.getCollidables();
-		Collidable[] collidables = collidablesList.toArray(new Collidable[collidablesList.size()]);
+
+		//map.getCollidables() is sorted by movability ascending
+		List<CollidableDrawable> collidablesList = map.getCollidables();
+		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
 		//first 2 bytes are left collidable's index, last 2 bytes are right's
-		//hopefully we don't have more than 65535 Collidables in the map
+		//hopefully we don't have more than 65535 CollidableDrawables in the map
 		Set<Integer> visited = new HashSet<Integer>();
 		for (int i = 0; i < collidables.length - 1; i++)
 			if (collidables[i].isVisible())
@@ -243,10 +244,10 @@ public class Game {
 					}
 					GL11.glEnd();
 
-					if (DEBUG && ent instanceof CollidableDrawable) {
+					if (DEBUG && ent instanceof AbstractCollidable) {
 						GL11.glDisable(GL11.GL_TEXTURE_2D);
 						Color.green.bind();
-						for (Polygon p : ((CollidableDrawable) ent).getUntransformedBoundingPolygon().getPolygons()) {
+						for (Polygon p : ((AbstractCollidable) ent).getUntransformedBoundingPolygon().getPolygons()) {
 							GL11.glBegin(GL11.GL_LINE_LOOP);
 							Vector2f[] vertices = p.getVertices();
 							for (int i = 0; i < vertices.length; i++)

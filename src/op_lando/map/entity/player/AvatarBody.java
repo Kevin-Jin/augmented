@@ -5,7 +5,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import op_lando.map.Collidable;
+import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
@@ -74,11 +74,12 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
+	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
-		//when a thin Collidable goes between body and legs. Setting Y component
-		//of attachPoints.get(PlayerPart.LEGS) to 126 or lower seems to prevent
-		//it from happening, but is ugly.
+		//when a thin CollidableDrawable goes between body and legs. Basically can't
+		//have any horizontal platforms that are thinner than the legs are high.
+		//also fix player being able to be inside a platform for a frame when
+		//moving into it when rotation is not zero
 		boolean movedSelf = super.collision(collisionInfo, otherCollidables);
 		if (movedSelf)
 			parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());

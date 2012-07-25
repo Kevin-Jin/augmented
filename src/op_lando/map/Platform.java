@@ -13,7 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
-public class Platform extends CollidableDrawable {
+public class Platform extends AbstractCollidable {
 	private final double x1, x2, y1, y2;
 
 	public Platform(double x1, double x2, double y1, double y2) {
@@ -56,8 +56,8 @@ public class Platform extends CollidableDrawable {
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
-		Collidable other = collisionInfo.getCollidedWith();
+	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		CollidableDrawable other = collisionInfo.getCollidedWith();
 		if (other instanceof TractorBeam) {
 			collisionInfo.setCollidedWith(this);
 			collisionInfo.negateMinimumTranslationVector();

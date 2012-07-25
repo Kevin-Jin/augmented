@@ -1,8 +1,7 @@
 package op_lando.map.entity;
 
-import op_lando.map.Collidable;
-import op_lando.map.Drawable;
+import op_lando.map.CollidableDrawable;
 
-public interface DrawableEntity extends Entity, Drawable, Collidable {
+public interface DrawableEntity extends Entity, CollidableDrawable {
 
 }

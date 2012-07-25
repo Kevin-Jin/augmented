@@ -1,27 +1,16 @@
 package op_lando.map;
 
+import java.util.List;
+
 import op_lando.map.collisions.BoundingPolygon;
+import op_lando.map.collisions.CollisionInformation;
 
-public abstract class CollidableDrawable extends AbstractDrawable implements Collidable {
-	protected final BoundingPolygon baseBoundPoly;
-	protected BoundingPolygon transformedBoundPoly;
+public interface CollidableDrawable extends Drawable {
+	BoundingPolygon getBoundingPolygon();
 
-	protected CollidableDrawable(BoundingPolygon baseBoundPoly, BoundingPolygon boundPoly) {
-		this.baseBoundPoly = baseBoundPoly;
-		transformedBoundPoly = boundPoly;
-	}
+	boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables);
 
-	@Override
-	public boolean isVisible() {
-		return getWidth() != 0 && getHeight() != 0;
-	}
+	boolean isVisible();
 
-	@Override
-	public BoundingPolygon getBoundingPolygon() {
-		return transformedBoundPoly;
-	}
-
-	public BoundingPolygon getUntransformedBoundingPolygon() {
-		return baseBoundPoly;
-	}
+	int getMovabilityIndex();
 }

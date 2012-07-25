@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import op_lando.map.Collidable;
+import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
@@ -15,7 +15,7 @@ import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 
-public abstract class SimpleEntity extends CollidableDrawable implements DrawableEntity {
+public abstract class SimpleEntity extends AbstractCollidable implements DrawableEntity {
 	private final Position pos;
 
 	protected SimpleEntity(BoundingPolygon boundPoly) {
@@ -24,8 +24,8 @@ public abstract class SimpleEntity extends CollidableDrawable implements Drawabl
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
-		Collidable other = collisionInfo.getCollidedWith();
+	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		CollidableDrawable other = collisionInfo.getCollidedWith();
 		if (other instanceof TractorBeam) {
 			collisionInfo.setCollidedWith(this);
 			collisionInfo.negateMinimumTranslationVector();

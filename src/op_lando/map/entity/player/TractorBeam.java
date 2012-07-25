@@ -2,7 +2,6 @@ package op_lando.map.entity.player;
 
 import java.util.List;
 
-import op_lando.map.Collidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
@@ -70,9 +69,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<Collidable> otherCollidables) {
-		Collidable other = collisionInfo.getCollidedWith();
-		if (other instanceof CollidableDrawable && !(other instanceof AvatarBody)) {
+	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		CollidableDrawable other = collisionInfo.getCollidedWith();
+		if (!(other instanceof AvatarBody)) {
 			//TODO: implement
 			System.out.println("SELECT " + other);
 		}

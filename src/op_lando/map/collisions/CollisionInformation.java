@@ -1,14 +1,14 @@
 package op_lando.map.collisions;
 
-import op_lando.map.Collidable;
+import op_lando.map.CollidableDrawable;
 
 import org.lwjgl.util.vector.Vector2f;
 
 public class CollisionInformation {
 	private Vector2f minTranslation, surface;
-	private Collidable otherCollidable;
+	private CollidableDrawable otherCollidable;
 
-	public CollisionInformation(Vector2f minTranslation, Vector2f surface, Collidable collidedWith) {
+	public CollisionInformation(Vector2f minTranslation, Vector2f surface, CollidableDrawable collidedWith) {
 		this.minTranslation = minTranslation;
 		this.surface = surface;
 	}
@@ -25,11 +25,11 @@ public class CollisionInformation {
 		return surface;
 	}
 
-	public Collidable getCollidedWith() {
+	public CollidableDrawable getCollidedWith() {
 		return otherCollidable;
 	}
 
-	public void setCollidedWith(Collidable collidables) {
+	public void setCollidedWith(CollidableDrawable collidables) {
 		otherCollidable = collidables;
 	}
 

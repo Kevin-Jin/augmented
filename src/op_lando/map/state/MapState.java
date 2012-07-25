@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import op_lando.map.Collidable;
+import op_lando.map.CollidableDrawable;
 import op_lando.map.Drawable;
 import op_lando.map.entity.Entity;
 import op_lando.map.entity.player.Player;
@@ -51,7 +51,7 @@ public class MapState {
 	private final Player player;
 	private final SortedMap<Byte, Entity> entities;
 	private final SortedMap<Byte, ZAxisLayer> layers;
-	private final List<Collidable> collidables;
+	private final List<CollidableDrawable> collidables;
 	private byte nextEntityId;
 
 	public MapState(Drawable... overlays) {
@@ -59,7 +59,7 @@ public class MapState {
 
 		entities = new TreeMap<Byte, Entity>();
 		layers = new TreeMap<Byte, ZAxisLayer>();
-		collidables = new ArrayList<Collidable>();
+		collidables = new ArrayList<CollidableDrawable>();
 
 		layers.put(ZAxisLayer.FAR_BACKGROUND, new ZAxisLayer(0.25f));
 		layers.put(ZAxisLayer.MAIN_BACKGROUND, new ZAxisLayer(0.5f));
@@ -91,9 +91,9 @@ public class MapState {
 			collidables.addAll(ent.getDrawables());
 		}
 
-		Collections.sort(collidables, new Comparator<Collidable>() {
+		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
 			@Override
-			public int compare(Collidable a, Collidable b) {
+			public int compare(CollidableDrawable a, CollidableDrawable b) {
 				return a.getMovabilityIndex() - b.getMovabilityIndex();
 			}
 		});
@@ -111,7 +111,7 @@ public class MapState {
 		return entities.values();
 	}
 
-	public List<Collidable> getCollidables() {
+	public List<CollidableDrawable> getCollidables() {
 		return collidables;
 	}
 
