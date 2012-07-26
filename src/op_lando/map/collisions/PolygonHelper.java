@@ -47,15 +47,24 @@ public class PolygonHelper {
 	}
 
 	public static Polygon polygonRepresentingTranslation(Polygon startPoly, Vector2f translation) {
+		//TODO: totally breaks when startPoly and endPoly collide
+		if (translation.getX() == 0 && translation.getY() == 0)
+			return startPoly;
+
+		Polygon endPoly = createPolygon(startPoly, translation);
 		Vector2f[] preimage = startPoly.getVertices();
 		List<Vector2f> ret = new ArrayList<Vector2f>();
-		boolean noEdgesParallelWithTranslation = true;
-		for (int i = 0; i < preimage.length && noEdgesParallelWithTranslation; i++)
-			if (startPoly.getEdges()[i].y / startPoly.getEdges()[i].x == translation.y / translation.x)
-				noEdgesParallelWithTranslation = false;
 
-		if (noEdgesParallelWithTranslation) {
-			Polygon endPoly = createPolygon(startPoly, translation);
+		//convex polygons can at most have two parallel edges
+		int numEdgesParallel = 0;
+		int[] edgesParallelWithTranslation = new int[2];
+		for (int i = 0; i < preimage.length && numEdgesParallel < 2; i++)
+			if (startPoly.getEdges()[i].x == 0 && translation.x == 0 || startPoly.getEdges()[i].y / startPoly.getEdges()[i].x == translation.y / translation.x)
+				edgesParallelWithTranslation[numEdgesParallel++] = i;
+
+		//TODO: these two cases have striking parallels. maybe there is some
+		//way to elegantly merge them.
+		if (numEdgesParallel == 0) {
 			//start from a preimage point. if the line segment from the preimage
 			//point to its corresponding image point does not intersect either
 			//the preimage or image polygons (besides at the vertices/endpoints),
@@ -66,7 +75,7 @@ public class PolygonHelper {
 			//continue connecting adjacent vertices B' in the same direction
 			//until the line segment from B' to B only intersects the preimage
 			//and image polygons at vertices/endpoints. Connect B' to B and then
-			//connect adjacent preimage vertices in the OPPOSITE direction that
+			//connect adjacent preimage vertices in the same direction that
 			//you went in the image. continue connecting until you hook back up
 			//with A.
 			for (int i = 0; i < preimage.length; i++) {
@@ -92,66 +101,58 @@ public class PolygonHelper {
 					} while (intersects(line, startPoly, endPoly));
 					do {
 						ret.add(preimage[i]);
-						i = positiveMod(i - direction, preimage.length);
+						i = positiveMod(i + direction, preimage.length);
 					} while (i != start);
 					break;
 				}
 			}
 		} else {
-			int halfVertices = (preimage.length + 1) / 2; //ceiling of half of vertex count
-			//find points of preimage closest in direction of translation
-			//we can substitute finding the smallest 'halfVertices' slopes
-			//between the center and each preimage vertex by testing which
-			//vertices are closest to the same image vertex.
-			Vector2f imageVertex = Vector2f.add(preimage[0], translation, null);
-			Vector2f[] sortedPreimageCopy = new Vector2f[preimage.length];
-			System.arraycopy(preimage, 0, sortedPreimageCopy, 0, preimage.length);
-			//helps us order sortedPreimageCopy by vertex order after the
-			//closest 'halfVertices' vertices have been moved to the front of
-			//the array
-			int[] indexMap = new int[preimage.length];
-			for (int i = 0; i < preimage.length; i++)
-				indexMap[i] = i;
-			//only move the first 'halfVertices' vertices, sorted by distance to
-			//imageVertex, to the front of sortedPreimageCopy
-			for (int i = 0; i < halfVertices; i++) {
-				int swap = i;
-				float minLength = Vector2f.sub(sortedPreimageCopy[i], imageVertex, null).lengthSquared();
-				for (int j = i + 1; j < sortedPreimageCopy.length; j++) {
-					float length2 = Vector2f.sub(sortedPreimageCopy[j], imageVertex, null).lengthSquared();
-					if (length2 < minLength) {
-						swap = j;
-						minLength = length2;
+			Vector2f[] endPoints = new Vector2f[4];
+			int[] vertexIndices = new int[2];
+			for (int i = 0; i < numEdgesParallel; i++) {
+				int edgeIndex = edgesParallelWithTranslation[i];
+				Vector2f[] verts = new Vector2f[] { preimage[edgeIndex], preimage[positiveMod(edgeIndex + 1, preimage.length)] };
+				Vector2f imageVert = Vector2f.add(verts[0], translation, null);
+				if (Vector2f.sub(verts[0], imageVert, null).lengthSquared() > Vector2f.sub(verts[1], imageVert, null).lengthSquared()) {
+					endPoints[i * 2] = verts[0];
+					endPoints[i * 2 + 1] = Vector2f.add(verts[1], translation, null);
+					vertexIndices[i] = edgeIndex;
+				} else {
+					endPoints[i * 2] = verts[1];
+					endPoints[i * 2 + 1] = Vector2f.add(verts[0], translation, null);
+					vertexIndices[i] = edgeIndex + 1;
+				}
+			}
+			if (numEdgesParallel == 1) {
+				int usedEdge = edgesParallelWithTranslation[0];
+				for (int i = 0; i < preimage.length; i++) {
+					if (i != usedEdge && i != usedEdge + 1) {
+						Vector2f[] line = preimageToImage(preimage[i], translation);
+						if (!intersects(line, startPoly, endPoly)) {
+							endPoints[2] = line[0];
+							endPoints[3] = line[1];
+							vertexIndices[1] = i;
+							break;
+						}
 					}
 				}
-				if (swap != i) {
-					Vector2f temp = sortedPreimageCopy[swap];
-					sortedPreimageCopy[swap] = sortedPreimageCopy[i];
-					sortedPreimageCopy[i] = temp;
-					int temp2 = indexMap[swap];
-					indexMap[swap] = indexMap[i];
-					indexMap[i] = temp2;
-				}
 			}
-			//selection sort first 'halfVertices' vertices by vertex index
-			for (int i = 0; i < halfVertices - 1; i++) {
-				int swap = i;
-				for (int j = i + 1; j < halfVertices; j++)
-					if (indexMap[j] < indexMap[swap])
-						swap = j;
-				if (swap != i) {
-					Vector2f temp = sortedPreimageCopy[swap];
-					sortedPreimageCopy[swap] = sortedPreimageCopy[i];
-					sortedPreimageCopy[i] = temp;
-					int temp2 = indexMap[swap];
-					indexMap[swap] = indexMap[i];
-					indexMap[i] = temp2;
-				}
-			}
-			for (int i = 0; i < halfVertices; i++)
-				ret.add(sortedPreimageCopy[i]);
-			for (int i = halfVertices - 1; i >= 0; i--)
-				ret.add(Vector2f.add(sortedPreimageCopy[i], translation, null));
+			ret.add(endPoints[0]);
+			ret.add(endPoints[1]);
+			int i = vertexIndices[0];
+			Vector2f[] line;
+			Vector2f[] lineAdd = preimageToImage(preimage[positiveMod(i + 1, preimage.length)], translation);
+			Vector2f[] lineSub = preimageToImage(preimage[positiveMod(i - 1, preimage.length)], translation);
+			int direction = (int) Math.signum(Vector2f.sub(lineAdd[1], preimage[i], null).lengthSquared() - Vector2f.sub(lineSub[1], preimage[i], null).lengthSquared());
+			do {
+				i = positiveMod(i + direction, preimage.length);
+				line = preimageToImage(preimage[i], translation);
+				ret.add(line[1]);
+			} while (!equal(line[1], endPoints[3]));
+			do {
+				ret.add(preimage[i]);
+				i = positiveMod(i + direction, preimage.length);
+			} while (i != vertexIndices[0]);
 		}
 		return new Polygon(ret.toArray(new Vector2f[ret.size()]));
 	}
