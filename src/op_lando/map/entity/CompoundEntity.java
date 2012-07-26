@@ -44,6 +44,11 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	}
 
 	@Override
+	public void move(Direction to) {
+		getBody().move(to);
+	}
+
+	@Override
 	public Position getPosition() {
 		return getBody().getPosition();
 	}

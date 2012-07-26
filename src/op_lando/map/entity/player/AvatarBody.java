@@ -12,12 +12,13 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.BodyEntity;
+import op_lando.map.entity.Direction;
 import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 import op_lando.map.state.MapState;
-import op_lando.resources.EntityPhysicalBehavior;
+import op_lando.resources.EntityKinematics;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.input.Keyboard;
@@ -35,7 +36,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	private double rot;
 	private boolean flipHorizontally;
 	private BoundingPolygon parentBoundPoly;
-	private double remainingJump;
 	private boolean canJump;
 
 	public AvatarBody(Player parent) {
@@ -64,7 +64,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 				new Vector2f(9, 65),
 				new Vector2f(1, 65)
 			})
-		}), new EntityPhysicalBehavior(100, 200, -400, 150, 800, 1.7));
+		}), new EntityKinematics(100, 200, -400, 150, 800, 1.7));
 
 		this.parent = parent;
 
@@ -166,26 +166,18 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
-		//TODO: have left and right walking velocity have the same angle as the
-		//colliding surface below so magnitude is constant even if we are
-		//walking up a slope.
+		canJump = remainingJump > 0;
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
-			vel.setX(Math.max(vel.getX() - tDelta * physics.getWalkAcceleration(), -physics.getMaxWalkVelocity()));
-		else if (vel.getX() < 0) //friction/air resistance
-			vel.setX(Math.min(vel.getX() - tDelta * physics.getStopDeceleration(), 0));
+			move(Direction.LEFT);
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
-			vel.setX(Math.min(vel.getX() + tDelta * physics.getWalkAcceleration(), physics.getMaxWalkVelocity()));
-		else if (vel.getX() > 0) //friction/air resistance
-			vel.setX(Math.max(vel.getX() + tDelta * physics.getStopDeceleration(), 0));
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && (canJump = remainingJump > 0)) {
-			vel.setY(Math.min(vel.getY() + tDelta * physics.getJetPackAcceleration(), physics.getJetPackMaxVelocity()));
-			if (vel.getY() > 0)
-				remainingJump -= tDelta;
-		}
-		//gravity
-		vel.setY(Math.max(vel.getY() + map.getGravitationalFieldStrength() * tDelta, map.getTerminalVelocity()));
+			move(Direction.RIGHT);
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
+			move(Direction.UP);
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
+			move(Direction.DOWN);
+		super.preCollisionsUpdate(tDelta, input, camera, map);
 
-		pos.add(vel.getX() * tDelta, vel.getY() * tDelta);
+		flatSurfaces.clear();
 
 		camera.lookAt(parent.getPosition());
 		if (parent.getBeam().isBeamHit())
@@ -197,10 +189,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
 			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
 		}
-		flatSurfaces.clear();
-
-		super.preCollisionsUpdate(tDelta, input, camera, map);
-
 		double lastRot = rot;
 		rot = 0;
 		try {
@@ -228,7 +216,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		for (CollidableDrawable test : flatSurfaces) {
 			if (hitPlatform(log, test)) {
-				remainingJump = physics.getMaxJumpTime();
+				remainingJump = motionProperties.getMaxJumpTime();
 				break;
 			}
 		}

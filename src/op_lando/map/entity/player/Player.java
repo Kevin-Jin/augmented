@@ -6,7 +6,6 @@ import java.util.List;
 
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.CompoundEntity;
-import op_lando.map.entity.Direction;
 import op_lando.map.physicquantity.Position;
 
 public class Player extends CompoundEntity<PlayerPart> {
@@ -58,10 +57,6 @@ public class Player extends CompoundEntity<PlayerPart> {
 
 	public TractorBeam getBeam() {
 		return beam;
-	}
-
-	public void move(Direction dir) {
-		
 	}
 
 	public void lookAt(Position pos) {

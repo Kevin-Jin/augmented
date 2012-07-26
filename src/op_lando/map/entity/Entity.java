@@ -14,6 +14,8 @@ import op_lando.map.state.MapState;
 public interface Entity {
 	Collection<? extends DrawableEntity> getDrawables();
 
+	void move(Direction to);
+
 	Position getPosition();
 
 	void setPosition(Position pos);

@@ -217,15 +217,15 @@ public class Game {
 		for (MapState.ZAxisLayer layer : map.getLayers().values()) {
 			Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
 
-			for (Drawable ent : layer.getDrawables()) {
-				Texture texture = ent.getTexture();
+			for (Drawable drawable : layer.getDrawables()) {
+				Texture texture = drawable.getTexture();
 
 				buf.clear();
 				//multiply view matrix and world matrix to get modelview matrix
-				Matrix4f.mul(viewMatrix, ent.getWorldMatrix(), null).store(buf);
+				Matrix4f.mul(viewMatrix, drawable.getWorldMatrix(), null).store(buf);
 				buf.flip();
 
-				ent.getTint().bind();
+				drawable.getTint().bind();
 				texture.bind();
 
 				GL11.glPushMatrix();
@@ -244,10 +244,10 @@ public class Game {
 					}
 					GL11.glEnd();
 
-					if (DEBUG && ent instanceof AbstractCollidable) {
+					if (DEBUG && drawable instanceof AbstractCollidable) {
 						GL11.glDisable(GL11.GL_TEXTURE_2D);
 						Color.green.bind();
-						for (Polygon p : ((AbstractCollidable) ent).getUntransformedBoundingPolygon().getPolygons()) {
+						for (Polygon p : ((AbstractCollidable) drawable).getUntransformedBoundingPolygon().getPolygons()) {
 							GL11.glBegin(GL11.GL_LINE_LOOP);
 							Vector2f[] vertices = p.getVertices();
 							for (int i = 0; i < vertices.length; i++)
@@ -256,10 +256,10 @@ public class Game {
 						}
 					}
 
-					DrawableOverlayText caption = ent.getCaption();
+					DrawableOverlayText caption = drawable.getCaption();
 					if (caption != null) {
 						Point pos = caption.getRelativePosition();
-						caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage(), ent.getTint());
+						caption.getFont().drawString(pos.getX(), pos.getY(), caption.getMessage(), drawable.getTint());
 					}
 				}
 				GL11.glPopMatrix();
