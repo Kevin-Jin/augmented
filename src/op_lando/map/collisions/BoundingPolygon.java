@@ -56,7 +56,7 @@ public class BoundingPolygon {
 		return false;
 	}
 
-	private static Vector2f findIntersection(Vector2f pointA1, Vector2f pointA2, Vector2f pointB1, Vector2f pointB2) {
+	public static Vector2f findIntersection(Vector2f pointA1, Vector2f pointA2, Vector2f pointB1, Vector2f pointB2) {
 		float ua = (pointB2.getX() - pointB1.getX()) * (pointA1.getY() - pointB1.getY()) - (pointB2.getY() - pointB1.getY()) * (pointA1.getX() - pointB1.getX());
 		float ub = (pointA2.getX() - pointA1.getX()) * (pointA1.getY() - pointB1.getY()) - (pointA2.getY() - pointA1.getY()) * (pointA1.getX() - pointB1.getX());
 		float denominator = (pointB2.getY() - pointB1.getY()) * (pointA2.getX() - pointA1.getX()) - (pointB2.getX() - pointB1.getX()) * (pointA2.getY() - pointA1.getY());
