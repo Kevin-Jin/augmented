@@ -38,6 +38,16 @@ public class Position {
 		this.y = newY;
 	}
 
+	public void set(Position pos) {
+		x = pos.getX();
+		y = pos.getY();
+	}
+
+	public void add(double deltaX, double deltaY) {
+		x += deltaX;
+		y += deltaY;
+	}
+
 	public Vector2f asVector() {
 		return new Vector2f((float) x, (float) y);
 	}

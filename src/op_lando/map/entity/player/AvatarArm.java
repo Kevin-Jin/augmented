@@ -36,7 +36,7 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 				new Vector2f(35, 20),
 				new Vector2f(32, 17)
 			})
-		}));
+		}), null);
 	}
 
 	@Override

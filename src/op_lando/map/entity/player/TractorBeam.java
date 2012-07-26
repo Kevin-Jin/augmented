@@ -11,6 +11,7 @@ import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
+import op_lando.map.state.MapState;
 import op_lando.resources.SoundCache;
 import op_lando.resources.TextureCache;
 
@@ -24,12 +25,13 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	private final int[] TOP_VERTEX_INDEX = { 0, 0 };
 	private final int[] BOTTOM_VERTEX_INDEX = { 0, 1 };
 
+	private final Player parent;
 	private float rot;
 	private float length;
 	private CollidableDrawable selection;
 	private Vector2f pointInSelected;
 
-	public TractorBeam() {
+	public TractorBeam(Player parent) {
 		super(new BoundingPolygon(new Polygon[] {
 			new Polygon(new Vector2f[] {
 				new Vector2f(0, 0),
@@ -37,7 +39,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				new Vector2f(210, 18),
 				new Vector2f(210, 0)
 			})
-		}));
+		}), null);
+
+		this.parent = parent;
 	}
 
 	private float getLength() {
@@ -88,9 +92,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		CollidableDrawable other = collisionInfo.getCollidedWith();
-		if (selection != other && !(other instanceof AvatarBody)) {
+		if (selection != other && other != parent.getBody()) {
 			Position pos = getPosition();
 			Position hitPos = new Position(pos.getX() + length * Math.cos(rot), pos.getY() + length * Math.sin(rot));
 			selection = other;
@@ -137,12 +141,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			}
 			setBeamHit(hitPos);
 		}
-		return true;
 	}
 
 	@Override
 	public int getMovabilityIndex() {
-		return 0;
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
@@ -156,7 +159,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public void update(double tDelta, Input input, Camera camera) {
+	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();
 		else if (input.heldButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
@@ -171,7 +174,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			//and use very high magnitude (magnitude of translation * 60?)
 		}
 
-		super.update(tDelta, input, camera);
+		super.preCollisionsUpdate(tDelta, input, camera, map);
 	}
 
 	@Override

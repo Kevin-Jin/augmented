@@ -7,6 +7,7 @@ import org.newdawn.slick.TrueTypeFont;
 
 //silly Slick2D devs deprecated TrueTypeFont but Slick-Util packagers never
 //included the UnicodeFont class...
+@SuppressWarnings("deprecation")
 public class FontCache {
 	private static final Map<String, TrueTypeFont> loaded = new HashMap<String, TrueTypeFont>();
 

@@ -3,47 +3,58 @@ package op_lando.map.entity;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.lwjgl.util.vector.Vector2f;
+import java.util.Map;
+import java.util.Set;
 
 import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
-import op_lando.map.entity.player.TractorBeam;
+import op_lando.map.physicquantity.Acceleration;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.physicquantity.Velocity;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
+import op_lando.map.state.MapState;
+import op_lando.resources.EntityPhysicalBehavior;
+
+import org.lwjgl.util.vector.Vector2f;
 
 public abstract class SimpleEntity extends AbstractCollidable implements DrawableEntity {
-	private final Position pos;
+	protected final Position pos;
+	protected final Velocity vel;
+	protected final Acceleration accel;
+	protected final EntityPhysicalBehavior physics;
 
-	protected SimpleEntity(BoundingPolygon boundPoly) {
+	//TODO: load EntityPhysicalBehavior from a cache?
+	protected SimpleEntity(BoundingPolygon boundPoly, EntityPhysicalBehavior quantities) {
 		super(boundPoly, boundPoly);
 		pos = new Position();
+		vel = new Velocity();
+		accel = new Acceleration();
+		physics = quantities;
 	}
 
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
-		CollidableDrawable other = collisionInfo.getCollidedWith();
-		if (other instanceof TractorBeam) {
-			collisionInfo.setCollidedWith(this);
-			collisionInfo.negateMinimumTranslationVector();
-			other.collision(collisionInfo, otherCollidables);
-			return false;
-		} else {
-			Vector2f negationVector = collisionInfo.getMinimumTranslationVector();
-			pos.setX(pos.getX() + negationVector.getX());
-			pos.setY(pos.getY() + negationVector.getY());
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		Vector2f negationVector = collisionInfo.getMinimumTranslationVector();
+		pos.add(negationVector.getX(), negationVector.getY());
+		if (negationVector.getY() >= 0 && collisionInfo.getCollidingSurface().getY() == 0)
+			vel.setY(0);
+		else if (negationVector.getY() < 0 && collisionInfo.getCollidingSurface().getY() == 0)
+			vel.setY(0);
 
-			transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-		}
-		return true;
-	}
-
-	@Override
-	public void update(double tDelta, Input input, Camera camera) {
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
+	@Override
+	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
+	@Override
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
+		
 	}
 
 	@Override
@@ -58,7 +69,6 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 
 	@Override
 	public void setPosition(Position pos) {
-		this.pos.setX(pos.getX());
-		this.pos.setY(pos.getY());
+		this.pos.set(pos);
 	}
 }

@@ -8,7 +8,7 @@ public class CollisionInformation {
 	private Vector2f minTranslation, surface;
 	private CollidableDrawable otherCollidable;
 
-	public CollisionInformation(Vector2f minTranslation, Vector2f surface, CollidableDrawable collidedWith) {
+	public CollisionInformation(Vector2f minTranslation, Vector2f surface) {
 		this.minTranslation = minTranslation;
 		this.surface = surface;
 	}
@@ -31,6 +31,13 @@ public class CollisionInformation {
 
 	public void setCollidedWith(CollidableDrawable collidables) {
 		otherCollidable = collidables;
+	}
+
+	public CollisionInformation complement(CollidableDrawable opposite) {
+		CollisionInformation other = new CollisionInformation(new Vector2f(minTranslation), surface);
+		other.setCollidedWith(opposite);
+		other.negateMinimumTranslationVector();
+		return other;
 	}
 
 	@Override

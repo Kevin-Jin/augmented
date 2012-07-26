@@ -3,6 +3,7 @@ package op_lando.map;
 import org.lwjgl.util.Point;
 import org.newdawn.slick.TrueTypeFont;
 
+@SuppressWarnings("deprecation")
 public class DrawableOverlayText {
 	private Point relativePosition;
 	private TrueTypeFont font;

@@ -4,9 +4,10 @@ import java.awt.Font;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import op_lando.map.AbstractCollidable;
@@ -15,6 +16,7 @@ import op_lando.map.CursorOverlay;
 import op_lando.map.Drawable;
 import op_lando.map.DrawableOverlayText;
 import op_lando.map.FpsOverlay;
+import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.CollisionResult;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.collisions.PolygonCollision;
@@ -45,6 +47,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+@SuppressWarnings("deprecation")
 public class Game {
 	private static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
@@ -137,6 +140,7 @@ public class Game {
 		TextureCache.setTexture("mainBg", loadPng("resources/mainBg"));
 
 		SoundCache.setSound("beam", loadWav("resources/BeamSound"));
+		SoundCache.setSound("jetpack", loadWav("resources/Jetpack"));
 		SoundCache.setSound("bgm", loadOgg("resources/bgm"));
 
 		FontCache.setFont("fps", new TrueTypeFont(new Font("Arial", Font.PLAIN, 14), true));
@@ -153,48 +157,42 @@ public class Game {
 		SoundCache.flush();
 	}
 
-	private void findHits(CollidableDrawable[] collidables, List<CollidableDrawable> collidablesList, int i, Set<Integer> visited) {
-		List<Integer> directHits = new ArrayList<Integer>();
-		//assert we already handled collisions with CollidableDrawables of lower
-		//movability (lower collidables array index)
-		for (int j = i + 1; j < collidables.length; j++) {
-			if (!visited.contains(Integer.valueOf(i << 16 | j)) && collidables[j].isVisible()) {
-				//call CollidableDrawable.collision on the more movable
-				//one since it will most likely be the one that moves
-				CollisionResult result = PolygonCollision.boundingPolygonCollision(collidables[i].getBoundingPolygon(), collidables[j].getBoundingPolygon());
-				if (result.collision()) {
-					result.getCollisionInformation().setCollidedWith(collidables[i]);
-					collidables[j].collision(result.getCollisionInformation(), collidablesList);
-					directHits.add(Integer.valueOf(j));
-				}
-				visited.add(Integer.valueOf(i << 16 | j));
-			}
-		}
-		for (Integer index : directHits)
-			findHits(collidables, collidablesList, index.intValue(), visited);
-	}
-
-	private void detectAndHandleCollisions() {
-		//When a CollidableDrawable has a higher movability than another, that
-		//one will be displaced in collision.  When both have movability of 0,
-		//neither move. When both have the same non-zero movability, the one
-		//with the higher Y coordinate will be displaced.
-		//find all trees of chained translation polygon collisions. Collide
-		//CollidableDrawable with lowest movability with a directly colliding
-		//CollidableDrawable of the next lowest movability. Then loop over
-		//the directly colliding CollidableDrawables in order of movability
-		//ascending and have them do the same.
-		//platforms, switches, and beam have movability of 0, player 1, boxes 2
-
-		//map.getCollidables() is sorted by movability ascending
+	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions() {
+		//map.getCollidables() is sorted by movability, y coordinate ascending
 		List<CollidableDrawable> collidablesList = map.getCollidables();
 		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
-		//first 2 bytes are left collidable's index, last 2 bytes are right's
-		//hopefully we don't have more than 65535 CollidableDrawables in the map
-		Set<Integer> visited = new HashSet<Integer>();
-		for (int i = 0; i < collidables.length - 1; i++)
-			if (collidables[i].isVisible())
-				findHits(collidables, collidablesList, i, visited);
+		Map<CollidableDrawable, Set<CollisionInformation>> log = new HashMap<CollidableDrawable, Set<CollisionInformation>>();
+		CollidableDrawable a, b;
+		Set<CollisionInformation> aAll, bAll;
+		for (int i = 0; i < collidables.length - 1; i++) {
+			a = collidables[i];
+			if (a.isVisible()) {
+				for (int j = i + 1; j < collidables.length; j++) {
+					b = collidables[j];
+					if (b.isVisible()) {
+						CollisionResult result = PolygonCollision.boundingPolygonCollision(a.getBoundingPolygon(), b.getBoundingPolygon());
+						if (result.collision()) {
+							result.getCollisionInformation().setCollidedWith(a);
+							b.collision(result.getCollisionInformation(), collidablesList);
+
+							aAll = log.get(a);
+							if (aAll == null) {
+								aAll = new HashSet<CollisionInformation>();
+								log.put(a, aAll);
+							}
+							bAll = log.get(b);
+							if (bAll == null) {
+								bAll = new HashSet<CollisionInformation>();
+								log.put(b, bAll);
+							}
+							bAll.add(result.getCollisionInformation());
+							aAll.add(result.getCollisionInformation().complement(b));
+						}
+					}
+				}
+			}
+		}
+		return log;
 	}
 
 	public void update(double tDelta) {
@@ -204,8 +202,10 @@ public class Game {
 
 		input.update();
 		for (Entity ent : map.getEntities())
-			ent.update(tDelta, input, camera);
-		detectAndHandleCollisions();
+			ent.preCollisionsUpdate(tDelta, input, camera, map);
+		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions();
+		for (Entity ent : map.getEntities())
+			ent.postCollisionsUpdate(tDelta, input, collisions);
 
 		AudioLoader.update();
 	}

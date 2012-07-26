@@ -99,7 +99,10 @@ public class MapState {
 		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
 			@Override
 			public int compare(CollidableDrawable a, CollidableDrawable b) {
-				return a.getMovabilityIndex() - b.getMovabilityIndex();
+				int delta = a.getMovabilityIndex() - b.getMovabilityIndex();
+				if (delta == 0)
+					delta = Double.compare(a.getPosition().getY(), b.getPosition().getY());
+				return delta;
 			}
 		});
 	}
@@ -122,5 +125,13 @@ public class MapState {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public double getGravitationalFieldStrength() {
+		return layout.getGravitationalFieldStrength();
+	}
+
+	public double getTerminalVelocity() {
+		return layout.getTerminalVelocity();
 	}
 }

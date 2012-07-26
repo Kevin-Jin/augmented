@@ -19,10 +19,10 @@ public class Player extends CompoundEntity<PlayerPart> {
 
 	public Player() {
 		body = new AvatarBody(this);
-		legs = new AvatarLegs();
+		legs = new AvatarLegs(this);
 		arm = new AvatarArm();
-		flame = new JetpackFire();
-		beam = new TractorBeam();
+		flame = new JetpackFire(this);
+		beam = new TractorBeam(this);
 
 		List<AuxiliaryEntity<PlayerPart>> parts = new ArrayList<AuxiliaryEntity<PlayerPart>>(4);
 		parts.add(legs);

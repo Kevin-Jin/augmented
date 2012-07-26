@@ -1,7 +1,5 @@
 package op_lando.map.collisions;
 
-import op_lando.map.AbstractCollidable;
-
 import org.lwjgl.util.vector.Vector2f;
 
 public class CollisionResult {
@@ -12,8 +10,8 @@ public class CollisionResult {
 		collided = false;
 	}
 
-	public CollisionResult(Vector2f toNegate, Vector2f surface, AbstractCollidable other) {
-		collisionInfo = new CollisionInformation(toNegate, surface, other);
+	public CollisionResult(Vector2f toNegate, Vector2f surface) {
+		collisionInfo = new CollisionInformation(toNegate, surface);
 		collided = true;
 	}
 

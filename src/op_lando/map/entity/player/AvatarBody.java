@@ -1,9 +1,11 @@
 package op_lando.map.entity.player;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
@@ -14,6 +16,8 @@ import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
+import op_lando.map.state.MapState;
+import op_lando.resources.EntityPhysicalBehavior;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.input.Keyboard;
@@ -27,9 +31,12 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	private final Player parent;
 	private final Map<PlayerPart, Vector2f> baseAttachPoints;
 	private final Map<PlayerPart, Vector2f> transformedAttachPoints;
+	private final List<CollidableDrawable> flatSurfaces;
 	private double rot;
 	private boolean flipHorizontally;
 	private BoundingPolygon parentBoundPoly;
+	private double remainingJump;
+	private boolean canJump;
 
 	public AvatarBody(Player parent) {
 		super(new BoundingPolygon(new Polygon[] {
@@ -57,7 +64,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 				new Vector2f(9, 65),
 				new Vector2f(1, 65)
 			})
-		}));
+		}), new EntityPhysicalBehavior(100, 200, -400, 150, 800, 1.7));
 
 		this.parent = parent;
 
@@ -69,12 +76,21 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		transformedAttachPoints = new EnumMap<PlayerPart, Vector2f>(PlayerPart.class);
 		for (Map.Entry<PlayerPart, Vector2f> entry : attachPoints.entrySet())
 			transformedAttachPoints.put(entry.getKey(), new Vector2f(entry.getValue()));
+		flatSurfaces = new ArrayList<CollidableDrawable>();
 
 		parentBoundPoly = getSelfBoundingPolygon();
 	}
 
+	public boolean canJump() {
+		return canJump;
+	}
+
+	public boolean isWalking() {
+		return !flatSurfaces.isEmpty();
+	}
+
 	@Override
-	public boolean collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
 		//when a thin CollidableDrawable goes between body and legs. Basically can't
 		//have any horizontal platforms that are thinner than the legs are high.
@@ -88,10 +104,10 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		//vertex of the Player (e.g. connection between antenna and head,
 		//perpendicular arm and legs, or perpendicular arm and head) diagonally
 		//into one of the platform's corners 
-		boolean movedSelf = super.collision(collisionInfo, otherCollidables);
-		if (movedSelf)
-			parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());
-		return movedSelf;
+		super.collision(collisionInfo, otherCollidables);
+		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && collisionInfo.getCollidingSurface().getY() == 0)
+			flatSurfaces.add(collisionInfo.getCollidedWith());
+		parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());
 	}
 
 	@Override
@@ -149,18 +165,28 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public void update(double tDelta, Input input, Camera camera) {
+	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		//TODO: have left and right walking velocity have the same angle as the
 		//colliding surface below so magnitude is constant even if we are
 		//walking up a slope.
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
-			getPosition().setX(getPosition().getX() - 10);
+			vel.setX(Math.max(vel.getX() - tDelta * physics.getWalkAcceleration(), -physics.getMaxWalkVelocity()));
+		else if (vel.getX() < 0) //friction/air resistance
+			vel.setX(Math.min(vel.getX() - tDelta * physics.getStopDeceleration(), 0));
 		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
-			getPosition().setX(getPosition().getX() + 10);
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
-			getPosition().setY(getPosition().getY() - 10);
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
-			getPosition().setY(getPosition().getY() + 10);
+			vel.setX(Math.min(vel.getX() + tDelta * physics.getWalkAcceleration(), physics.getMaxWalkVelocity()));
+		else if (vel.getX() > 0) //friction/air resistance
+			vel.setX(Math.max(vel.getX() + tDelta * physics.getStopDeceleration(), 0));
+		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && (canJump = remainingJump > 0)) {
+			vel.setY(Math.min(vel.getY() + tDelta * physics.getJetPackAcceleration(), physics.getJetPackMaxVelocity()));
+			if (vel.getY() > 0)
+				remainingJump -= tDelta;
+		}
+		//gravity
+		vel.setY(Math.max(vel.getY() + map.getGravitationalFieldStrength() * tDelta, map.getTerminalVelocity()));
+
+		pos.add(vel.getX() * tDelta, vel.getY() * tDelta);
+
 		camera.lookAt(parent.getPosition());
 		if (parent.getBeam().isBeamHit())
 			parent.lookAt(parent.getBeam().getBeamHit());
@@ -171,6 +197,9 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			Vector2f base = baseAttachPoints.get(entry.getKey());
 			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
 		}
+		flatSurfaces.clear();
+
+		super.preCollisionsUpdate(tDelta, input, camera, map);
 
 		double lastRot = rot;
 		rot = 0;
@@ -182,8 +211,29 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		} finally {
 			rot = lastRot;
 		}
+	}
 
-		super.update(tDelta, input, camera);
+	private boolean hitPlatform(Map<CollidableDrawable, Set<CollisionInformation>> log, CollidableDrawable root) {
+		if (root.getMovabilityIndex() == 0)
+			return true;
+		for (CollisionInformation info : log.get(root)) {
+			CollidableDrawable other = info.getCollidedWith();
+			if (other != this && hitPlatform(log, other))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
+		for (CollidableDrawable test : flatSurfaces) {
+			if (hitPlatform(log, test)) {
+				remainingJump = physics.getMaxJumpTime();
+				break;
+			}
+		}
+
+		super.postCollisionsUpdate(tDelta, input, log);
 	}
 
 	@Override

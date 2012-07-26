@@ -83,7 +83,7 @@ public class PolygonCollision {
 		if (Vector2f.dot(d, translationAxis) > 0.0f)
 			translationAxis.negate();
 		translationAxis.scale(minIntervalDistance);
-		return new CollisionResult(translationAxis, collisionEdge, null);
+		return new CollisionResult(translationAxis, collisionEdge);
 	}
 
 	private static float intervalDistance(float minA, float maxA, float minB, float maxB) {
