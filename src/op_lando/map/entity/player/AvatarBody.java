@@ -184,6 +184,13 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			parent.lookAt(parent.getBeam().getBeamHit());
 		else
 			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+		//FIXME: it's kinda wasteful how we don't use the transformedBoundPoly
+		//that was updated in super.preCollisionsUpdate. but we need to update
+		//the transformedBoundPoly after rotating, and we can't rotate until
+		//after we update the camera, and we can't update the camera until after
+		//we update our position in super.preCollisionsUpdate. major rethinking
+		//is needed for this method.
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 
 		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
 			Vector2f base = baseAttachPoints.get(entry.getKey());

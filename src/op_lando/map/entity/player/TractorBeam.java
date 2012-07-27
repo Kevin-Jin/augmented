@@ -165,6 +165,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public void addToPosition(double x, double y) {
 		pos.add(x, y);
+		compliantPos.add(x, y);
 	}
 
 	@Override

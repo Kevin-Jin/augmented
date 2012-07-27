@@ -52,8 +52,10 @@ public class Game {
 	private static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
 	private static final boolean VSYNC = true;
-	public static final int TARGET_FPS = 1200; //VSYNC must be false for this to have an effect
+	public static final int TARGET_FPS = 1200; //VSYNC must be false for this to be higher than the monitor refresh rate
 	private static final int WIDTH = 800, HEIGHT = 600;
+
+	private final FloatBuffer matrixBuf;
 
 	private final Input input;
 	private final Camera camera;
@@ -61,6 +63,8 @@ public class Game {
 	private final MapState map;
 
 	public Game() {
+		matrixBuf = BufferUtils.createFloatBuffer(16);
+
 		input = new Input();
 		camera = new Camera(WIDTH, HEIGHT);
 		frameRateState = new FrameRateState(new DecimalFormat("0.0"));
@@ -158,6 +162,10 @@ public class Game {
 	}
 
 	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions() {
+		//TODO: use translation polygon instead of just plain old bounding
+		//polygons once we fix PolygonHelper.polygonRepresentingTranslation.
+		//otherwise we have lots of issues with thin collidables at low FPS.
+
 		//map.getCollidables() is sorted by movability, y coordinate ascending
 		List<CollidableDrawable> collidablesList = map.getCollidables();
 		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
@@ -211,8 +219,6 @@ public class Game {
 	}
 
 	private void drawGame() {
-		FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-
 		// draw world
 		for (MapState.ZAxisLayer layer : map.getLayers().values()) {
 			Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
@@ -220,17 +226,17 @@ public class Game {
 			for (Drawable drawable : layer.getDrawables()) {
 				Texture texture = drawable.getTexture();
 
-				buf.clear();
+				matrixBuf.clear();
 				//multiply view matrix and world matrix to get modelview matrix
-				Matrix4f.mul(viewMatrix, drawable.getWorldMatrix(), null).store(buf);
-				buf.flip();
+				Matrix4f.mul(viewMatrix, drawable.getWorldMatrix(), null).store(matrixBuf);
+				matrixBuf.flip();
 
 				drawable.getTint().bind();
 				texture.bind();
 
 				GL11.glPushMatrix();
 				{
-					GL11.glLoadMatrix(buf);
+					GL11.glLoadMatrix(matrixBuf);
 					GL11.glBegin(GL11.GL_QUADS);
 					{
 						GL11.glTexCoord2f(0, 0);
@@ -244,18 +250,6 @@ public class Game {
 					}
 					GL11.glEnd();
 
-					if (DEBUG && drawable instanceof AbstractCollidable) {
-						GL11.glDisable(GL11.GL_TEXTURE_2D);
-						Color.green.bind();
-						for (Polygon p : ((AbstractCollidable) drawable).getUntransformedBoundingPolygon().getPolygons()) {
-							GL11.glBegin(GL11.GL_LINE_LOOP);
-							Vector2f[] vertices = p.getVertices();
-							for (int i = 0; i < vertices.length; i++)
-								GL11.glVertex2f(vertices[i].getX(), vertices[i].getY());
-							GL11.glEnd();
-						}
-					}
-
 					DrawableOverlayText caption = drawable.getCaption();
 					if (caption != null) {
 						Point pos = caption.getRelativePosition();
@@ -263,6 +257,25 @@ public class Game {
 					}
 				}
 				GL11.glPopMatrix();
+
+				if (DEBUG && drawable instanceof AbstractCollidable) {
+					matrixBuf.clear();
+					viewMatrix.store(matrixBuf);
+					matrixBuf.flip();
+					GL11.glPushMatrix();
+					{
+						GL11.glLoadMatrix(matrixBuf);
+						GL11.glDisable(GL11.GL_TEXTURE_2D);
+						Color.green.bind();
+						for (Polygon p : ((AbstractCollidable) drawable).getBoundingPolygon().getPolygons()) {
+							GL11.glBegin(GL11.GL_LINE_LOOP);
+							Vector2f[] vertices = p.getVertices();
+							for (int i = 0; i < vertices.length; i++)
+								GL11.glVertex2f(vertices[i].getX(), vertices[i].getY());
+							GL11.glEnd();
+						}
+					}
+				}
 			}
 		}
 	}

@@ -32,10 +32,17 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	}
 
 	public void updateChildPositionsAndPolygons(Vector2f delta) {
+		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
+
+		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
+			polygons.add(getBody().getSelfBoundingPolygon());
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
 			child.addToPosition(delta.getX(), delta.getY());
 			child.recalculateSelfBoundingPolygon();
+			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
+				polygons.add(child.getSelfBoundingPolygon());
 		}
+		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 
 	@Override
