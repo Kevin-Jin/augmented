@@ -19,7 +19,7 @@ public class PolygonHelper {
 		for (Polygon polygon : polygons) {
 			Vector2f[] vertices = polygon.getVertices();
 			for (int i = 0; i < vertices.length; i++) {
-				Vector2f intersect = BoundingPolygon.findIntersection(vertices[i], vertices[(i + 1) % vertices.length], line[0], line[1]);
+				Vector2f intersect = BoundingPolygon.findIntersection(vertices[i], vertices[(i + 1) % vertices.length], line[0], line[1], true, false);
 				if (!undefined(intersect) && !equal(intersect, line[0]) && !equal(intersect, line[1]))
 					return true;
 			}
@@ -47,7 +47,6 @@ public class PolygonHelper {
 	}
 
 	public static Polygon polygonRepresentingTranslation(Polygon startPoly, Vector2f translation) {
-		//TODO: totally breaks when startPoly and endPoly collide
 		if (translation.getX() == 0 && translation.getY() == 0)
 			return startPoly;
 

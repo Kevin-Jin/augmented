@@ -56,7 +56,7 @@ public class BoundingPolygon {
 		return false;
 	}
 
-	public static Vector2f findIntersection(Vector2f pointA1, Vector2f pointA2, Vector2f pointB1, Vector2f pointB2) {
+	public static Vector2f findIntersection(Vector2f pointA1, Vector2f pointA2, Vector2f pointB1, Vector2f pointB2, boolean segmentA, boolean segmentB) {
 		float ua = (pointB2.getX() - pointB1.getX()) * (pointA1.getY() - pointB1.getY()) - (pointB2.getY() - pointB1.getY()) * (pointA1.getX() - pointB1.getX());
 		float ub = (pointA2.getX() - pointA1.getX()) * (pointA1.getY() - pointB1.getY()) - (pointA2.getY() - pointA1.getY()) * (pointA1.getX() - pointB1.getX());
 		float denominator = (pointB2.getY() - pointB1.getY()) * (pointA2.getX() - pointA1.getX()) - (pointB2.getX() - pointB1.getX()) * (pointA2.getY() - pointA1.getY());
@@ -67,7 +67,7 @@ public class BoundingPolygon {
 
 			// check if the intersection occurs on the segments, and not some
 			// far distance away
-			if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1)
+			if ((!segmentA || ua >= 0 && ua <= 1) && (!segmentB || ub >= 0 && ub <= 1))
 				return new Vector2f(pointA1.getX() + ua * (pointA2.getX() - pointA1.getX()), pointA1.getY() + ua * (pointA2.getY() - pointA1.getY()));
 		} else {
 			// parallel
@@ -85,7 +85,7 @@ public class BoundingPolygon {
 		for (Polygon p : polygons) {
 			Vector2f intersectPoint;
 			for (int i = 0; i < p.getVertexCount(); i++) {
-				intersectPoint = findIntersection(p.getVertices()[i], Vector2f.add(p.getVertices()[i], p.getEdges()[i], null), source.asVector(), end.asVector());
+				intersectPoint = findIntersection(p.getVertices()[i], Vector2f.add(p.getVertices()[i], p.getEdges()[i], null), source.asVector(), end.asVector(), true, true);
 				if (!Float.isNaN(intersectPoint.getX()) && !Float.isNaN(intersectPoint.getY())) {
 					float distanceSquaredFromThisEdge = Vector2f.sub(intersectPoint, source.asVector(), null).lengthSquared();
 					if (distanceSquaredFromThisEdge < smallestDistanceSquared) {
