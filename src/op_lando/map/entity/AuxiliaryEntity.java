@@ -10,4 +10,6 @@ public interface AuxiliaryEntity<E extends Enum<E>> extends DrawableEntity {
 	BoundingPolygon getSelfBoundingPolygon();
 
 	void recalculateSelfBoundingPolygon();
+
+	void addToPosition(double x, double y);
 }

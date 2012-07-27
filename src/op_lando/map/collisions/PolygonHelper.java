@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class PolygonHelper {
 	private static boolean equal(Vector2f a, Vector2f b) {
-		final float TOLERANCE = 0.001f;
+		final float TOLERANCE = 0.05f;
 		return Math.abs(a.getX() - b.getX()) < TOLERANCE && Math.abs(a.getY() - b.getY()) < TOLERANCE;
 	}
 

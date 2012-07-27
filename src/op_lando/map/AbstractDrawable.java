@@ -22,7 +22,7 @@ public abstract class AbstractDrawable implements Drawable {
 		return getBottomLeftCorner();
 	}
 
-	public Vector2f getDrawPosition() {
+	public final Vector2f getDrawPosition() {
 		return new Vector2f((float) getPosition().getX() + getOrigin().getX() * getScale().getX(), (float) getPosition().getY() - getOrigin().getY() * -getScale().getY() + getHeight());
 	}
 

@@ -28,6 +28,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	private final Player parent;
 	private float rot;
 	private float length;
+	private final Position compliantPos;
 	private CollidableDrawable selection;
 	private Vector2f pointInSelected;
 
@@ -42,10 +43,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		}), null);
 
 		this.parent = parent;
+		compliantPos = new Position();
 	}
 
-	private float getLength() {
-		return length;
+	private void lengthUpdated() {
+		compliantPos.set(pos.getX(), pos.getY() + getOrigin().getY() * -getScale().getY() - getHeight());
 	}
 
 	private void beginExtend() {
@@ -56,7 +58,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		if (selection == null)
 			length += SHOOT_VELOCITY * tDelta;
 		else
-			length = (float) Math.sqrt(Math.pow(getPosition().getX() - getBeamHit().getX(), 2) + Math.pow(getPosition().getY() - getBeamHit().getY(), 2));
+			length = (float) Math.sqrt(Math.pow(pos.getX() - getBeamHit().getX(), 2) + Math.pow(pos.getY() - getBeamHit().getY(), 2));
 	}
 
 	private void beginRetract() {
@@ -95,11 +97,10 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		CollidableDrawable other = collisionInfo.getCollidedWith();
 		if (selection != other && other != parent.getBody()) {
-			Position pos = getPosition();
 			Position hitPos = new Position(pos.getX() + length * Math.cos(rot), pos.getY() + length * Math.sin(rot));
 			selection = other;
 			Vector2f hitPosVector = hitPos.asVector();
-			Vector2f lengthVector = Vector2f.sub(hitPosVector, getPosition().asVector(), null);
+			Vector2f lengthVector = Vector2f.sub(hitPosVector, pos.asVector(), null);
 			if (!other.getBoundingPolygon().isPointInsideBoundingPolygon(hitPosVector) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getBottomCornerPosition().asVector(), lengthVector, null)) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getTopCornerPosition().asVector(), lengthVector, null))) {
 				// our beam overextends to the collided entity (the front of the
 				// beam does not actually hit the collided entity), so trim it
@@ -112,11 +113,12 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				// have to intersect with the collided entity, if it does, we
 				// can make the grabbing process smoother and less "jumpy"
 				// because we change the angle of the player less
-				Vector2f polygonEdgeIntersect = other.getBoundingPolygon().closestPoint(getPosition(), hitPos);
+				Vector2f polygonEdgeIntersect = other.getBoundingPolygon().closestPoint(pos, hitPos);
 				if (!Float.isNaN(polygonEdgeIntersect.getX()) && !Float.isNaN(polygonEdgeIntersect.getY())) {
 					// an intersection was made
 					hitPos = new Position(polygonEdgeIntersect);
 					length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+					lengthUpdated();
 				} else {
 					// if our center line did not intersect, find the
 					// intersection of the bottom edge of the beam and the
@@ -126,6 +128,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 						// an intersection was made
 						hitPos = new Position(polygonEdgeIntersect);
 						length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+						lengthUpdated();
 					} else {
 						// if neither our bottom edge nor center line
 						// intersected, find the intersection of the top edge of
@@ -135,6 +138,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 							// an intersection was made
 							hitPos = new Position(polygonEdgeIntersect);
 							length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+							lengthUpdated();
 						}
 					}
 				}
@@ -159,6 +163,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public void addToPosition(double x, double y) {
+		pos.add(x, y);
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();
@@ -166,13 +175,15 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			extend(tDelta);
 		else if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginRetract();
-		else if (getLength() > 0)
+		else if (length > 0)
 			retract(tDelta);
 		if (selection != null && selection.getMovabilityIndex() != 0) {
 			//TODO: drag
 			//set angle of velocity from selection's current pos to mouse cursor
 			//and use very high magnitude (magnitude of translation * 60?)
+			//make sure to update our length!
 		}
+		lengthUpdated();
 
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 	}
@@ -183,8 +194,8 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public Vector2f getDrawPosition() {
-		return getPosition().asVector();
+	public Position getPosition() {
+		return compliantPos;
 	}
 
 	@Override

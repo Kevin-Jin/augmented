@@ -67,6 +67,11 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	}
 
 	@Override
+	public void addToPosition(double x, double y) {
+		pos.add(x, y);
+	}
+
+	@Override
 	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		//TODO: maybe instead of restoring all jump time when we hit a
 		//completely horizontal collidable that either is or contacts a platform,

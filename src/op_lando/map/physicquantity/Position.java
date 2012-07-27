@@ -43,6 +43,11 @@ public class Position {
 		y = pos.getY();
 	}
 
+	public void set(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public void add(double deltaX, double deltaY) {
 		x += deltaX;
 		y += deltaY;

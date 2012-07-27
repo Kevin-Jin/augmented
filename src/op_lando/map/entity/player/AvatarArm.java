@@ -4,6 +4,7 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -45,8 +46,12 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	}
 
 	@Override
-	public Vector2f getDrawPosition() {
-		return new Vector2f(flipHorizontally ? (float) (getPosition().getX() + getOrigin().getX() * getScale().getX() - getWidth() * Math.cos(rot)) : ((float) getPosition().getX() + getOrigin().getX() * getScale().getX()), flipHorizontally ? (float) (getPosition().getY() - getOrigin().getY() * -getScale().getY() - getWidth() * Math.sin(rot)) : (float) getPosition().getY() - getOrigin().getY() * -getScale().getY());
+	public void setPosition(Position pos) {
+		super.setPosition(pos);
+		if (flipHorizontally)
+			this.pos.add(-getWidth() * Math.cos(rot), -getWidth() * Math.sin(rot) - getHeight());
+		else
+			this.pos.add(0, -getHeight());
 	}
 
 	@Override
@@ -81,6 +86,11 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	@Override
 	public void recalculateSelfBoundingPolygon() {
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
+	@Override
+	public void addToPosition(double x, double y) {
+		pos.add(x, y);
 	}
 
 	@Override

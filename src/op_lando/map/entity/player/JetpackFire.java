@@ -47,11 +47,6 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public Vector2f getDrawPosition() {
-		return getPosition().asVector();
-	}
-
-	@Override
 	public float getWidth() {
 		return visible ? super.getWidth() : 0;
 	}
@@ -96,6 +91,11 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public void addToPosition(double x, double y) {
+		pos.add(x, y);
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		boolean wasVisible = visible;
 		visible = (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump());
@@ -107,6 +107,7 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			if (wasVisible)
 				SoundCache.getSound("jetpack").stop();
 		}
+		pos.add(-getOrigin().getX() * getScale().getX(), -getHeight());
 
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 	}

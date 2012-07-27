@@ -33,7 +33,7 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 
 	public void updateChildPositionsAndPolygons(Vector2f delta) {
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
-			child.getPosition().add(delta.getX(), delta.getY());
+			child.addToPosition(delta.getX(), delta.getY());
 			child.recalculateSelfBoundingPolygon();
 		}
 	}
@@ -76,8 +76,8 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
 			polygons.add(getBody().getSelfBoundingPolygon());
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
-			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 			child.setFlip(getBody().flipHorizontally());
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 			child.preCollisionsUpdate(tDelta, input, camera, map);
 			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
 				polygons.add(child.getSelfBoundingPolygon());
