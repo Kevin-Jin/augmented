@@ -46,6 +46,11 @@ public class PolygonHelper {
 		return new Polygon(vertices);
 	}
 
+	private static boolean equal(float a, float b) {
+		final float TOLERANCE = 0.0001f;
+		return Math.abs(a - b) < TOLERANCE;
+	}
+
 	public static Polygon polygonRepresentingTranslation(Polygon startPoly, Vector2f translation) {
 		if (translation.getX() == 0 && translation.getY() == 0)
 			return startPoly;
@@ -58,7 +63,7 @@ public class PolygonHelper {
 		int numEdgesParallel = 0;
 		int[] edgesParallelWithTranslation = new int[2];
 		for (int i = 0; i < preimage.length && numEdgesParallel < 2; i++)
-			if (startPoly.getEdges()[i].x == 0 && translation.x == 0 || startPoly.getEdges()[i].y / startPoly.getEdges()[i].x == translation.y / translation.x)
+			if (startPoly.getEdges()[i].x == 0 && translation.x == 0 || equal(startPoly.getEdges()[i].y / startPoly.getEdges()[i].x, translation.y / translation.x))
 				edgesParallelWithTranslation[numEdgesParallel++] = i;
 
 		//TODO: these two cases have striking parallels. maybe there is some
@@ -69,35 +74,35 @@ public class PolygonHelper {
 			//the preimage or image polygons (besides at the vertices/endpoints),
 			//connect those vertices. let A be the vertex on the preimage and A'
 			//be the vertex on the image. connect A' to its adjacent image
-			//vertex such that the slope of edge formed is closer to the
-			//direction of translation than if the other vertex was connected.
-			//continue connecting adjacent vertices B' in the same direction
-			//until the line segment from B' to B only intersects the preimage
-			//and image polygons at vertices/endpoints. Connect B' to B and then
-			//connect adjacent preimage vertices in the same direction that
-			//you went in the image. continue connecting until you hook back up
-			//with A.
+			//vertex such that the angle formed between the translation vector
+			//and the vector from A' to the vertex is smaller than that formed
+			//between the translation vector and the vector from A' to the
+			//other adjacent vertex. continue connecting adjacent vertices B' in
+			//the same direction until the line segment from B' to B only
+			//intersects the preimage and image polygons at vertices/endpoints.
+			//Connect B' to B and then connect adjacent preimage vertices in the
+			//same direction that you went in the image. continue connecting
+			//until you hook back up with A.
 			for (int i = 0; i < preimage.length; i++) {
-				Vector2f[] line = preimageToImage(preimage[i], translation);
-				if (!intersects(line, startPoly, endPoly)) {
+				Vector2f[] preimageToImagePoints = preimageToImage(preimage[i], translation);
+				if (!intersects(preimageToImagePoints, startPoly, endPoly)) {
 					int start = i;
-					ret.add(line[0]);
-					ret.add(line[1]);
-					Vector2f[] lineAdd = preimageToImage(preimage[positiveMod(i + 1, preimage.length)], translation);
-					Vector2f[] lineSub = preimageToImage(preimage[positiveMod(i - 1, preimage.length)], translation);
+					ret.add(preimageToImagePoints[0]);
+					ret.add(preimageToImagePoints[1]);
 
-					//we can substitute finding the smaller of the slopes of the
-					//edge between A' and each adjacent vertex by testing which
-					//vertex is farthest from A.
+					//TODO: trig for Vector2f.angle takes too long. somehow use
+					//slopes instead?
+					Vector2f vectorAdd = Vector2f.sub(preimage[positiveMod(i + 1, preimage.length)], preimage[i], null);
+					Vector2f vectorSub = Vector2f.sub(preimage[positiveMod(i - 1, preimage.length)], preimage[i], null);
+					float thetaAdd = Vector2f.angle(translation, vectorAdd);
+					float thetaSub = Vector2f.angle(translation, vectorSub);
+					int direction = (int) Math.signum(thetaSub - thetaAdd);
 
-					//1 if greater indexed adjacent vertex is farther away from
-					//A, -1 if smaller indexed adjacent vertex is farther.
-					int direction = (int) Math.signum(Vector2f.sub(lineAdd[1], line[0], null).lengthSquared() - Vector2f.sub(lineSub[1], line[0], null).lengthSquared());
 					do {
 						i = positiveMod(i + direction, preimage.length);
-						line = preimageToImage(preimage[i], translation);
-						ret.add(line[1]);
-					} while (intersects(line, startPoly, endPoly));
+						preimageToImagePoints = preimageToImage(preimage[i], translation);
+						ret.add(preimageToImagePoints[1]);
+					} while (intersects(preimageToImagePoints, startPoly, endPoly));
 					do {
 						ret.add(preimage[i]);
 						i = positiveMod(i + direction, preimage.length);
@@ -111,15 +116,16 @@ public class PolygonHelper {
 			for (int i = 0; i < numEdgesParallel; i++) {
 				int edgeIndex = edgesParallelWithTranslation[i];
 				Vector2f[] verts = new Vector2f[] { preimage[edgeIndex], preimage[positiveMod(edgeIndex + 1, preimage.length)] };
-				Vector2f imageVert = Vector2f.add(verts[0], translation, null);
-				if (Vector2f.sub(verts[0], imageVert, null).lengthSquared() > Vector2f.sub(verts[1], imageVert, null).lengthSquared()) {
+				//equivalent to (startPoly.getCenter() + endPoly.getCenter()) / 2
+				Vector2f center = Vector2f.add(startPoly.getCenter(), new Vector2f(translation.getX() / 2, translation.getY() / 2), null);
+				if (Vector2f.sub(verts[0], center, null).lengthSquared() > Vector2f.sub(verts[1], center, null).lengthSquared()) {
 					endPoints[i * 2] = verts[0];
 					endPoints[i * 2 + 1] = Vector2f.add(verts[1], translation, null);
 					vertexIndices[i] = edgeIndex;
 				} else {
 					endPoints[i * 2] = verts[1];
 					endPoints[i * 2 + 1] = Vector2f.add(verts[0], translation, null);
-					vertexIndices[i] = edgeIndex + 1;
+					vertexIndices[i] = positiveMod(edgeIndex + 1, preimage.length);
 				}
 			}
 			if (numEdgesParallel == 1) {
@@ -136,18 +142,24 @@ public class PolygonHelper {
 					}
 				}
 			}
-			ret.add(endPoints[0]);
-			ret.add(endPoints[1]);
+			Vector2f[] preimageToImagePoints = endPoints;
 			int i = vertexIndices[0];
-			Vector2f[] line;
-			Vector2f[] lineAdd = preimageToImage(preimage[positiveMod(i + 1, preimage.length)], translation);
-			Vector2f[] lineSub = preimageToImage(preimage[positiveMod(i - 1, preimage.length)], translation);
-			int direction = (int) Math.signum(Vector2f.sub(lineAdd[1], preimage[i], null).lengthSquared() - Vector2f.sub(lineSub[1], preimage[i], null).lengthSquared());
+			ret.add(preimageToImagePoints[0]);
+			ret.add(preimageToImagePoints[1]);
+
+			//TODO: trig for Vector2f.angle takes too long. somehow use slopes
+			//instead?
+			Vector2f vectorAdd = Vector2f.sub(preimage[positiveMod(i + 1, preimage.length)], preimage[i], null);
+			Vector2f vectorSub = Vector2f.sub(preimage[positiveMod(i - 1, preimage.length)], preimage[i], null);
+			float thetaAdd = Vector2f.angle(translation, vectorAdd);
+			float thetaSub = Vector2f.angle(translation, vectorSub);
+			int direction = (int) Math.signum(thetaSub - thetaAdd);
+
 			do {
 				i = positiveMod(i + direction, preimage.length);
-				line = preimageToImage(preimage[i], translation);
-				ret.add(line[1]);
-			} while (!equal(line[1], endPoints[3]));
+				preimageToImagePoints = preimageToImage(preimage[i], translation);
+				ret.add(preimageToImagePoints[1]);
+			} while (!equal(preimageToImagePoints[1], endPoints[3]));
 			do {
 				ret.add(preimage[i]);
 				i = positiveMod(i + direction, preimage.length);
