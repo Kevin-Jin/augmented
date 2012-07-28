@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import op_lando.Game;
 import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
@@ -22,6 +23,8 @@ import op_lando.resources.EntityKinematics;
 import org.lwjgl.util.vector.Vector2f;
 
 public abstract class SimpleEntity extends AbstractCollidable implements DrawableEntity {
+	protected enum UpdateTime { PRE_COLLISIONS, COLLISION, POST_COLLISIONS }
+
 	protected final Position pos;
 	protected final Velocity vel;
 	protected final Acceleration accel;
@@ -38,6 +41,13 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		motionProperties = quantities;
 	}
 
+	@SuppressWarnings("unused")
+	protected void recalculateBoundingPolygon(UpdateTime time, Camera camera, Input input) {
+		if (time == UpdateTime.POST_COLLISIONS && !Game.DEBUG)
+			return;
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+	}
+
 	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		Vector2f negationVector = collisionInfo.getMinimumTranslationVector();
@@ -47,7 +57,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		else if (negationVector.getY() < 0 && collisionInfo.getCollidingSurface().getY() == 0)
 			vel.setY(0);
 
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+		recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
 	}
 
 	@Override
@@ -75,12 +85,12 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 			pos.add(vel.getX() * tDelta, vel.getY() * tDelta);
 		}
 
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
 	}
 
 	@Override
-	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
-		
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
+		recalculateBoundingPolygon(UpdateTime.POST_COLLISIONS, camera, input);
 	}
 
 	@Override

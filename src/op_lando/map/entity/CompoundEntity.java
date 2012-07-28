@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lwjgl.util.vector.Vector2f;
-
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
@@ -29,20 +27,6 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		drawables.add(getBody());
 		drawables.addAll(getAuxiliaries());
 		drawables = Collections.unmodifiableList(drawables);
-	}
-
-	public void updateChildPositionsAndPolygons(Vector2f delta) {
-		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
-
-		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
-			polygons.add(getBody().getSelfBoundingPolygon());
-		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
-			child.addToPosition(delta.getX(), delta.getY());
-			child.recalculateSelfBoundingPolygon();
-			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
-				polygons.add(child.getSelfBoundingPolygon());
-		}
-		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 
 	@Override
@@ -75,6 +59,20 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		return getBody().getRotation();
 	}
 
+	/*public void updateChildrenAfterCollision() {
+		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
+		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
+			polygons.add(getBody().getSelfBoundingPolygon());
+		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
+			child.setFlip(getBody().flipHorizontally());
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
+			child.recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
+			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
+				polygons.add(child.getSelfBoundingPolygon());
+		}
+		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
+	}*/
+
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
@@ -93,8 +91,19 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	}
 
 	@Override
-	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
-		for (Entity component : getDrawables())
-			component.postCollisionsUpdate(tDelta, input, log);
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
+		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
+
+		getBody().postCollisionsUpdate(tDelta, input, log, camera);
+		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
+			polygons.add(getBody().getSelfBoundingPolygon());
+		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
+			child.setFlip(getBody().flipHorizontally());
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
+			child.postCollisionsUpdate(tDelta, input, log, camera);
+			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
+				polygons.add(child.getSelfBoundingPolygon());
+		}
+		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 }

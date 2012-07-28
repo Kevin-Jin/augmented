@@ -10,6 +10,7 @@ import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 
 import org.lwjgl.input.Keyboard;
@@ -62,17 +63,7 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	}
 
 	@Override
-	public void recalculateSelfBoundingPolygon() {
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-	}
-
-	@Override
-	public void addToPosition(double x, double y) {
-		pos.add(x, y);
-	}
-
-	@Override
-	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
 		//TODO: maybe instead of restoring all jump time when we hit a
 		//completely horizontal collidable that either is or contacts a platform,
 		//just recharge jump time gradually as long as we are (in)directly
@@ -83,7 +74,7 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		else
 			animation.reset();
 
-		super.postCollisionsUpdate(tDelta, input, log);
+		super.postCollisionsUpdate(tDelta, input, log, camera);
 	}
 
 	@Override

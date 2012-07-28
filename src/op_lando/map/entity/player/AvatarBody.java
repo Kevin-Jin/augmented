@@ -90,6 +90,37 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
+	protected void recalculateBoundingPolygon(UpdateTime time, Camera camera, Input input) {
+		if (time == UpdateTime.COLLISION)
+			return;
+
+		camera.lookAt(parent.getPosition());
+		if (parent.getBeam().isBeamHit())
+			parent.lookAt(parent.getBeam().getBeamHit());
+		else
+			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+
+		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
+			Vector2f base = baseAttachPoints.get(entry.getKey());
+			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
+		}
+		double lastRot = rot;
+		rot = 0;
+		try {
+			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
+			if (flipHorizontally)
+				coord.setX(coord.getX() + 48);
+			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getWorldMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
+		} finally {
+			rot = lastRot;
+		}
+
+		/*if (time == UpdateTime.COLLISION)
+			parent.updateChildrenAfterCollision();*/
+	}
+
+	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
 		//when a thin CollidableDrawable goes between body and legs. Basically can't
@@ -107,7 +138,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		super.collision(collisionInfo, otherCollidables);
 		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && collisionInfo.getCollidingSurface().getY() == 0)
 			flatSurfaces.add(collisionInfo.getCollidedWith());
-		parent.updateChildPositionsAndPolygons(collisionInfo.getMinimumTranslationVector());
 	}
 
 	@Override
@@ -178,34 +208,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 
 		flatSurfaces.clear();
-
-		camera.lookAt(parent.getPosition());
-		if (parent.getBeam().isBeamHit())
-			parent.lookAt(parent.getBeam().getBeamHit());
-		else
-			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
-		//FIXME: it's kinda wasteful how we don't use the transformedBoundPoly
-		//that was updated in super.preCollisionsUpdate. but we need to update
-		//the transformedBoundPoly after rotating, and we can't rotate until
-		//after we update the camera, and we can't update the camera until after
-		//we update our position in super.preCollisionsUpdate. major rethinking
-		//is needed for this method.
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-
-		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
-			Vector2f base = baseAttachPoints.get(entry.getKey());
-			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
-		}
-		double lastRot = rot;
-		rot = 0;
-		try {
-			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
-			if (flipHorizontally)
-				coord.setX(coord.getX() + 48);
-			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getWorldMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
-		} finally {
-			rot = lastRot;
-		}
 	}
 
 	private boolean hitPlatform(Map<CollidableDrawable, Set<CollisionInformation>> log, CollidableDrawable root) {
@@ -220,7 +222,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log) {
+	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
 		for (CollidableDrawable test : flatSurfaces) {
 			if (hitPlatform(log, test)) {
 				remainingJump = motionProperties.getMaxJumpTime();
@@ -228,7 +230,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			}
 		}
 
-		super.postCollisionsUpdate(tDelta, input, log);
+		super.postCollisionsUpdate(tDelta, input, log, camera);
 	}
 
 	@Override

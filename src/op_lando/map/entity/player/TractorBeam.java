@@ -118,6 +118,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 					// an intersection was made
 					hitPos = new Position(polygonEdgeIntersect);
 					length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+					recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
 					lengthUpdated();
 				} else {
 					// if our center line did not intersect, find the
@@ -128,6 +129,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 						// an intersection was made
 						hitPos = new Position(polygonEdgeIntersect);
 						length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+						recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
 						lengthUpdated();
 					} else {
 						// if neither our bottom edge nor center line
@@ -138,6 +140,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 							// an intersection was made
 							hitPos = new Position(polygonEdgeIntersect);
 							length = (float) Math.sqrt(Math.pow(pos.getX() - hitPos.getX(), 2) + Math.pow(pos.getY() - hitPos.getY(), 2));
+							recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
 							lengthUpdated();
 						}
 					}
@@ -155,17 +158,6 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return null;
-	}
-
-	@Override
-	public void recalculateSelfBoundingPolygon() {
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-	}
-
-	@Override
-	public void addToPosition(double x, double y) {
-		pos.add(x, y);
-		compliantPos.add(x, y);
 	}
 
 	@Override
@@ -197,6 +189,13 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public Position getPosition() {
 		return compliantPos;
+	}
+
+	@Override
+	public void setPosition(Position pos) {
+		super.setPosition(pos);
+		extend(0);
+		lengthUpdated();
 	}
 
 	@Override

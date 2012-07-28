@@ -8,8 +8,4 @@ public interface AuxiliaryEntity<E extends Enum<E>> extends DrawableEntity {
 	void setFlip(boolean flip);
 
 	BoundingPolygon getSelfBoundingPolygon();
-
-	void recalculateSelfBoundingPolygon();
-
-	void addToPosition(double x, double y);
 }

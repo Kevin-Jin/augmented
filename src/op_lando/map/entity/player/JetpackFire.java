@@ -5,6 +5,7 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 import op_lando.map.state.MapState;
@@ -47,6 +48,12 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public void setPosition(Position pos) {
+		super.setPosition(pos);
+		this.pos.add(-getOrigin().getX() * getScale().getX(), -getHeight());
+	}
+
+	@Override
 	public float getWidth() {
 		return visible ? super.getWidth() : 0;
 	}
@@ -86,16 +93,6 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public void recalculateSelfBoundingPolygon() {
-		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-	}
-
-	@Override
-	public void addToPosition(double x, double y) {
-		pos.add(x, y);
-	}
-
-	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		boolean wasVisible = visible;
 		visible = (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump());
@@ -107,7 +104,7 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			if (wasVisible)
 				SoundCache.getSound("jetpack").stop();
 		}
-		pos.add(-getOrigin().getX() * getScale().getX(), -getHeight());
+		setPosition(pos);
 
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 	}

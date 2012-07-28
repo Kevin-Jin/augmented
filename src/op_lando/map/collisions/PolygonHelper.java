@@ -51,7 +51,12 @@ public class PolygonHelper {
 		return Math.abs(a - b) < TOLERANCE;
 	}
 
-	public static Polygon polygonRepresentingTranslation(Polygon startPoly, Vector2f translation) {
+	//this only takes into account a position change. implementing a scale
+	//change seems feasible (only extra exceptional case I can think of is
+	//when the endPoly is entirely contained within startPoly, in which case
+	//we simply return startPoly), but rotation definitely not as that involves
+	//curved edges, not polygons.
+	public static Polygon sweepCollisionPolygon(Polygon startPoly, Vector2f translation) {
 		if (translation.getX() == 0 && translation.getY() == 0)
 			return startPoly;
 
@@ -81,8 +86,8 @@ public class PolygonHelper {
 			//the same direction until the line segment from B' to B only
 			//intersects the preimage and image polygons at vertices/endpoints.
 			//Connect B' to B and then connect adjacent preimage vertices in the
-			//same direction that you went in the image. continue connecting
-			//until you hook back up with A.
+			//same direction that you was went in the image. continue connecting
+			//until A is reached.
 			for (int i = 0; i < preimage.length; i++) {
 				Vector2f[] preimageToImagePoints = preimageToImage(preimage[i], translation);
 				if (!intersects(preimageToImagePoints, startPoly, endPoly)) {
@@ -96,6 +101,11 @@ public class PolygonHelper {
 					Vector2f vectorSub = Vector2f.sub(preimage[positiveMod(i - 1, preimage.length)], preimage[i], null);
 					float thetaAdd = Vector2f.angle(translation, vectorAdd);
 					float thetaSub = Vector2f.angle(translation, vectorSub);
+					//if the angle between vectorSub and translation is less
+					//than the angle between vectorAdd and translation (i.e.
+					//thetaSub < thetaAdd, or thetaSub - thetaAdd < 0),
+					//direction = -1. thetaSub cannot equal thetaAdd, so
+					//otherwise direction = 1. Avoiding a branch = better perf.
 					int direction = (int) Math.signum(thetaSub - thetaAdd);
 
 					do {
@@ -153,6 +163,11 @@ public class PolygonHelper {
 			Vector2f vectorSub = Vector2f.sub(preimage[positiveMod(i - 1, preimage.length)], preimage[i], null);
 			float thetaAdd = Vector2f.angle(translation, vectorAdd);
 			float thetaSub = Vector2f.angle(translation, vectorSub);
+			//if the angle between vectorSub and translation is less than
+			//the angle between vectorAdd and translation (i.e. thetaSub <
+			//thetaAdd, or thetaSub - thetaAdd < 0), direction = -1.
+			//thetaSub cannot equal thetaAdd, so otherwise direction = 1.
+			//Avoiding a branch = better performance
 			int direction = (int) Math.signum(thetaSub - thetaAdd);
 
 			do {
@@ -171,7 +186,7 @@ public class PolygonHelper {
 	public static BoundingPolygon boundingPolygonRepresentingTranslation(BoundingPolygon b, Vector2f translation) {
 		Polygon[] polygons = new Polygon[b.getPolygons().length];
 		for (int i = 0; i < b.getPolygons().length; i++)
-			polygons[i] = polygonRepresentingTranslation(b.getPolygons()[i], translation);
+			polygons[i] = sweepCollisionPolygon(b.getPolygons()[i], translation);
 		return new BoundingPolygon(polygons);
 	}
 }

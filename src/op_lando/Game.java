@@ -49,7 +49,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 @SuppressWarnings("deprecation")
 public class Game {
-	private static final boolean DEBUG = true;
+	public static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
 	private static final boolean VSYNC = true;
 	public static final int TARGET_FPS = 1200; //VSYNC must be false for this to be higher than the monitor refresh rate
@@ -213,7 +213,7 @@ public class Game {
 			ent.preCollisionsUpdate(tDelta, input, camera, map);
 		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions();
 		for (Entity ent : map.getEntities())
-			ent.postCollisionsUpdate(tDelta, input, collisions);
+			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
 
 		AudioLoader.update();
 	}
