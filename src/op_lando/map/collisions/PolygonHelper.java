@@ -57,7 +57,7 @@ public class PolygonHelper {
 	//we simply return startPoly), but rotation definitely not as that involves
 	//curved edges, not polygons.
 	public static Polygon sweepCollisionPolygon(Polygon startPoly, Vector2f translation) {
-		if (translation.getX() == 0 && translation.getY() == 0)
+		if (Math.abs(translation.getX()) < 1 && Math.abs(translation.getY()) < 1)
 			return startPoly;
 
 		Polygon endPoly = createPolygon(startPoly, translation);
@@ -183,7 +183,7 @@ public class PolygonHelper {
 		return new Polygon(ret.toArray(new Vector2f[ret.size()]));
 	}
 
-	public static BoundingPolygon boundingPolygonRepresentingTranslation(BoundingPolygon b, Vector2f translation) {
+	public static BoundingPolygon sweepCollisionBoundingPolygon(BoundingPolygon b, Vector2f translation) {
 		Polygon[] polygons = new Polygon[b.getPolygons().length];
 		for (int i = 0; i < b.getPolygons().length; i++)
 			polygons[i] = sweepCollisionPolygon(b.getPolygons()[i], translation);

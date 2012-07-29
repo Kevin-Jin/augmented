@@ -50,7 +50,7 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public void setPosition(Position pos) {
 		super.setPosition(pos);
-		this.pos.add(-getOrigin().getX() * getScale().getX(), -getHeight());
+		this.pos.add(-getOrigin().getX(), -super.getHeight());
 	}
 
 	@Override
@@ -93,6 +93,11 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public void markStartPosition() {
+		startPos.set(pos);
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		boolean wasVisible = visible;
 		visible = (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump());
@@ -106,7 +111,9 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		}
 		setPosition(pos);
 
+		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
 		super.preCollisionsUpdate(tDelta, input, camera, map);
+		startPos.set(savedStartPos);
 	}
 
 	@Override

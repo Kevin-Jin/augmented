@@ -10,8 +10,10 @@ import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
+import op_lando.map.state.MapState;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
@@ -60,6 +62,18 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
+	}
+
+	@Override
+	public void markStartPosition() {
+		startPos.set(pos);
+	}
+
+	@Override
+	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
+		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+		super.preCollisionsUpdate(tDelta, input, camera, map);
+		startPos.set(savedStartPos);
 	}
 
 	@Override

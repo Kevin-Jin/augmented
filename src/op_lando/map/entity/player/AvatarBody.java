@@ -11,6 +11,7 @@ import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
+import op_lando.map.collisions.PolygonHelper;
 import op_lando.map.entity.BodyEntity;
 import op_lando.map.entity.Direction;
 import op_lando.map.entity.SimpleEntity;
@@ -100,24 +101,9 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		else
 			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+		transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
 
-		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
-			Vector2f base = baseAttachPoints.get(entry.getKey());
-			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
-		}
-		double lastRot = rot;
-		rot = 0;
-		try {
-			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
-			if (flipHorizontally)
-				coord.setX(coord.getX() + 48);
-			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getWorldMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
-		} finally {
-			rot = lastRot;
-		}
-
-		/*if (time == UpdateTime.COLLISION)
-			parent.updateChildrenAfterCollision();*/
+		setPosition(pos);
 	}
 
 	@Override
@@ -143,6 +129,25 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	@Override
 	public int getMovabilityIndex() {
 		return 1;
+	}
+
+	@Override
+	public void setPosition(Position pos) {
+		super.setPosition(pos);
+		for (Map.Entry<PlayerPart, Vector2f> entry : transformedAttachPoints.entrySet()) {
+			Vector2f base = baseAttachPoints.get(entry.getKey());
+			entry.getValue().set(Matrix4f.transform(getWorldMatrix(), new Vector4f(base.getX(), base.getY(), 1, 1), null));
+		}
+		double lastRot = rot;
+		rot = 0;
+		try {
+			Vector2f coord = new Vector2f(baseAttachPoints.get(PlayerPart.LEGS));
+			if (flipHorizontally)
+				coord.setX(coord.getX() + 48);
+			transformedAttachPoints.get(PlayerPart.LEGS).set(Matrix4f.transform(getWorldMatrix(), new Vector4f(coord.getX(), coord.getY(), 1, 1), null));
+		} finally {
+			rot = lastRot;
+		}
 	}
 
 	@Override

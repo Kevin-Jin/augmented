@@ -102,6 +102,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			Vector2f hitPosVector = hitPos.asVector();
 			Vector2f lengthVector = Vector2f.sub(hitPosVector, pos.asVector(), null);
 			if (!other.getBoundingPolygon().isPointInsideBoundingPolygon(hitPosVector) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getBottomCornerPosition().asVector(), lengthVector, null)) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getTopCornerPosition().asVector(), lengthVector, null))) {
+				//TODO: make this even less 'jumpy'
 				// our beam overextends to the collided entity (the front of the
 				// beam does not actually hit the collided entity), so trim it
 				// assert that either the bottom or the top edge of the beam had
@@ -161,6 +162,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
+	public void markStartPosition() {
+		startPos.set(pos);
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();
@@ -178,7 +184,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		}
 		lengthUpdated();
 
+		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
 		super.preCollisionsUpdate(tDelta, input, camera, map);
+		startPos.set(savedStartPos);
 	}
 
 	@Override

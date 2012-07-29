@@ -12,6 +12,7 @@ import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
+import op_lando.map.collisions.PolygonHelper;
 import op_lando.map.physicquantity.Acceleration;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.physicquantity.Velocity;
@@ -31,6 +32,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	protected final EntityKinematics motionProperties;
 	private final Set<Direction> moves;
 	protected double remainingJump;
+	protected final Position startPos;
 
 	protected SimpleEntity(BoundingPolygon boundPoly, EntityKinematics quantities) {
 		super(boundPoly, boundPoly);
@@ -39,6 +41,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		accel = new Acceleration();
 		moves = EnumSet.noneOf(Direction.class);
 		motionProperties = quantities;
+		startPos = new Position();
 	}
 
 	@SuppressWarnings("unused")
@@ -46,6 +49,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		if (time == UpdateTime.POST_COLLISIONS && !Game.DEBUG)
 			return;
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
+		transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
 	}
 
 	@Override
@@ -62,6 +66,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
+		startPos.set(pos);
 		if (motionProperties != null) {
 			//TODO: have left and right walking velocity have the same angle as the
 			//colliding surface below so magnitude is constant even if we are

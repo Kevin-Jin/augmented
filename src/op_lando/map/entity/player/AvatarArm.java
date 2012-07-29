@@ -5,6 +5,9 @@ import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.state.Camera;
+import op_lando.map.state.Input;
+import op_lando.map.state.MapState;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -48,6 +51,7 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	@Override
 	public void setPosition(Position pos) {
 		super.setPosition(pos);
+		//TODO: weird translation polygon when arm flips
 		if (flipHorizontally)
 			this.pos.add(-getWidth() * Math.cos(rot), -getWidth() * Math.sin(rot) - getHeight());
 		else
@@ -81,6 +85,18 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
+	}
+
+	@Override
+	public void markStartPosition() {
+		startPos.set(pos);
+	}
+
+	@Override
+	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
+		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+		super.preCollisionsUpdate(tDelta, input, camera, map);
+		startPos.set(savedStartPos);
 	}
 
 	@Override

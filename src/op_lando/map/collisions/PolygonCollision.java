@@ -3,6 +3,14 @@ package op_lando.map.collisions;
 import org.lwjgl.util.vector.Vector2f;
 
 public class PolygonCollision {
+	private static void normalize(Vector2f v) {
+		try {
+			v.normalise();
+		} catch (IllegalStateException e) {
+			v.set(Float.NaN, Float.NaN);
+		}
+	}
+
 	public static CollisionResult collision(Polygon a, Polygon b) {
 		Vector2f axis = new Vector2f(1, 1);
 		Vector2f translationAxis = new Vector2f(0, 0);
@@ -16,7 +24,7 @@ public class PolygonCollision {
 		for (int i = 0; i < a.getVertexCount(); ++i) {
 			Vector2f edge = a.getEdges()[i];
 			axis = new Vector2f(-edge.getY(), edge.getX());
-			axis.normalise();
+			normalize(axis);
 			minA = maxA = Vector2f.dot(a.getVertices()[0], axis);
 			for (int j = 1; j < a.getVertexCount(); ++j) {
 				tmp = Vector2f.dot(a.getVertices()[j], axis);
@@ -49,7 +57,7 @@ public class PolygonCollision {
 		for (int i = 0; i < b.getVertexCount(); ++i) {
 			Vector2f edge = b.getEdges()[i];
 			axis = new Vector2f(-edge.getY(), edge.getX());
-			axis.normalise();
+			normalize(axis);
 			minB = maxB = Vector2f.dot(axis, b.getVertices()[0]);
 			for (int j = 1; j < b.getVertexCount(); ++j) {
 				tmp = Vector2f.dot(axis, b.getVertices()[j]);

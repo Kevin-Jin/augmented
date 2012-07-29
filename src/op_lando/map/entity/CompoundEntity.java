@@ -47,6 +47,8 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	@Override
 	public void setPosition(Position pos) {
 		getBody().setPosition(pos);
+		for (AuxiliaryEntity<E> child : getAuxiliaries())
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 	}
 
 	@Override
@@ -59,20 +61,6 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		return getBody().getRotation();
 	}
 
-	/*public void updateChildrenAfterCollision() {
-		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
-		if (getBody().isVisible() && getBody().getSelfBoundingPolygon() != null)
-			polygons.add(getBody().getSelfBoundingPolygon());
-		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
-			child.setFlip(getBody().flipHorizontally());
-			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
-			child.recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
-			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
-				polygons.add(child.getSelfBoundingPolygon());
-		}
-		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
-	}*/
-
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
@@ -82,6 +70,7 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 			polygons.add(getBody().getSelfBoundingPolygon());
 		for (AuxiliaryEntity<E> child : getAuxiliaries()) {
 			child.setFlip(getBody().flipHorizontally());
+			child.markStartPosition();
 			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 			child.preCollisionsUpdate(tDelta, input, camera, map);
 			if (child.isVisible() && child.getSelfBoundingPolygon() != null)
