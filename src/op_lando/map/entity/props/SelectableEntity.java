@@ -4,6 +4,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
 import op_lando.map.state.MapState;
@@ -47,6 +48,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 
 	public void drag(int x, int y) {
 		dragged = true;
+		startPos.set(pos);
 		pos.add(x, y);
 	}
 
@@ -104,7 +106,9 @@ public abstract class SelectableEntity extends SimpleEntity {
 			dragged = false;
 			EntityKinematics temp = motionProperties;
 			motionProperties = null;
+			Position savedStartPos = new Position(startPos.getX(), startPos.getY());
 			super.preCollisionsUpdate(tDelta, input, camera, map);
+			startPos.set(savedStartPos);
 			vel.setScalarComponents(0, 0);
 			motionProperties = temp;
 		} else {
