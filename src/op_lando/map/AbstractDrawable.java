@@ -13,7 +13,7 @@ public abstract class AbstractDrawable implements Drawable {
 	}
 
 	protected final Vector2f getCenter() {
-		return new Vector2f(getWidth() / 2f, getHeight() / 2f);
+		return new Vector2f(getTexture().getImageWidth() / 2f, getTexture().getImageHeight() / 2f);
 	}
 
 	public abstract Position getPosition();

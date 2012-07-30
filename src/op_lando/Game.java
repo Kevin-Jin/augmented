@@ -140,6 +140,7 @@ public class Game {
 		TextureCache.setTexture("flame3", loadPng("resources/anim_flame/flame3"));
 		TextureCache.setTexture("flame4", loadPng("resources/anim_flame/flame4"));
 		TextureCache.setTexture("beam", loadPng("resources/beam"));
+		TextureCache.setTexture("box", loadPng("resources/crate"));
 		TextureCache.setTexture("scrollingWindowBg", loadPng("resources/scrollingBg"));
 		TextureCache.setTexture("mainBg", loadPng("resources/mainBg"));
 
@@ -162,11 +163,7 @@ public class Game {
 	}
 
 	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions() {
-		//TODO: use translation polygon instead of just plain old bounding
-		//polygons once we fix PolygonHelper.polygonRepresentingTranslation.
-		//otherwise we have lots of issues with thin collidables at low FPS.
-
-		//map.getCollidables() is sorted by movability, y coordinate ascending
+		//map.getCollidables() is sorted by movability ascending, y coordinate descending
 		List<CollidableDrawable> collidablesList = map.getCollidables();
 		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
 		Map<CollidableDrawable, Set<CollisionInformation>> log = new HashMap<CollidableDrawable, Set<CollisionInformation>>();

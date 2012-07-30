@@ -1,16 +1,15 @@
 package op_lando.map.state;
 
-import java.awt.Rectangle;
-
 import op_lando.map.physicquantity.Position;
 
+import org.lwjgl.util.Rectangle;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector4f;
 
 public class Camera {
 	private final int width, height;
-	private Vector2f pos;
+	private final Vector2f pos;
 	private Rectangle limits;
 
 	public Camera(int width, int height) {
@@ -34,7 +33,7 @@ public class Camera {
 
 	public void setLimits(Rectangle bounds) {
 		if (bounds != null) {
-			this.limits = new Rectangle(bounds.x, bounds.y, Math.max(width, bounds.width), Math.max(height, bounds.height));
+			this.limits = new Rectangle(bounds.getX(), bounds.getY(), Math.max(width, bounds.getWidth()), Math.max(height, bounds.getHeight()));
 			checkLimits();
 		} else {
 			this.limits = null;

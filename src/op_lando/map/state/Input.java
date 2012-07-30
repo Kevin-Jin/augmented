@@ -23,6 +23,8 @@ public class Input {
 	private final Set<Integer> updatedButtons;
 	private final Set<Integer> updatedKeys;
 
+	private final Point markedPointer;
+
 	public Input() {
 		pointerPos = new Point();
 		downButtons = new HashSet<Integer>();
@@ -31,6 +33,8 @@ public class Input {
 		pointerChange = new Point();
 		updatedButtons = new HashSet<Integer>();
 		updatedKeys = new HashSet<Integer>();
+
+		markedPointer = new Point();
 	}
 
 	public void update() {
@@ -61,6 +65,10 @@ public class Input {
 
 	public Point cursorTranslate() {
 		return new Point(pointerChange);
+	}
+
+	public Point markedPointer() {
+		return markedPointer;
 	}
 
 	/**

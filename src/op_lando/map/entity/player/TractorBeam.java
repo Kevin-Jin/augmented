@@ -8,6 +8,7 @@ import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.entity.AuxiliaryEntity;
 import op_lando.map.entity.SimpleEntity;
+import op_lando.map.entity.props.SelectableEntity;
 import op_lando.map.physicquantity.Position;
 import op_lando.map.state.Camera;
 import op_lando.map.state.Input;
@@ -15,6 +16,8 @@ import op_lando.map.state.MapState;
 import op_lando.resources.SoundCache;
 import op_lando.resources.TextureCache;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.Point;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector4f;
@@ -168,6 +171,8 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
+		Point cursor = input.markedPointer();
+
 		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
 			beginExtend();
 		else if (input.heldButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
@@ -176,11 +181,28 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			beginRetract();
 		else if (length > 0)
 			retract(tDelta);
-		if (selection != null && selection.getMovabilityIndex() != 0) {
-			//TODO: drag
-			//set angle of velocity from selection's current pos to mouse cursor
-			//and use very high magnitude (magnitude of translation * 60?)
-			//make sure to update our length!
+		if (selection != null) {
+			if (selection instanceof SelectableEntity) {
+				SelectableEntity prop = (SelectableEntity) selection;
+				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
+					prop.downScale(tDelta);
+				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
+					prop.upScale(tDelta);
+				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
+					prop.rotateCounterClockwise();
+				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
+					prop.rotateClockwise();
+
+				Position beamHit = getBeamHit();
+				Vector4f viewSpaceBeamHit = Matrix4f.transform(camera.getViewMatrix(1), beamHit.asVector4f(), null);
+				cursor.setLocation((int) viewSpaceBeamHit.getX(), (int) viewSpaceBeamHit.getY());
+
+				prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY());
+				length = (float) Math.sqrt(Math.pow(pos.getX() - beamHit.getX(), 2) + Math.pow(pos.getY() - beamHit.getY(), 2));
+				lengthUpdated();
+			}
+		} else {
+			cursor.setLocation(input.cursorPosition());
 		}
 		lengthUpdated();
 

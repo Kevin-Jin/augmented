@@ -108,21 +108,18 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		final float TOLERANCE = 0.001f;
+
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
 		//when a thin CollidableDrawable goes between body and legs. Basically can't
 		//have any horizontal platforms that are thinner than the legs are high.
-
-		//TODO: fix arm rotation based on position of body's origin before
-		//collision handling (I think - just try walking horizontally into the
-		//edge of a platform when cursor Y is not the same as origin Y. the arm
-		//points in the wrong direction as long as A or D are held)
 
 		//TODO: fix being able to go inside a platform when moving a concave
 		//vertex of the Player (e.g. connection between antenna and head,
 		//perpendicular arm and legs, or perpendicular arm and head) diagonally
 		//into one of the platform's corners 
 		super.collision(collisionInfo, otherCollidables);
-		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && collisionInfo.getCollidingSurface().getY() == 0)
+		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && Math.abs(collisionInfo.getCollidingSurface().getY()) < TOLERANCE)
 			flatSurfaces.add(collisionInfo.getCollidedWith());
 	}
 
@@ -220,7 +217,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			return true;
 		for (CollisionInformation info : log.get(root)) {
 			CollidableDrawable other = info.getCollidedWith();
-			if (other != this && hitPlatform(log, other))
+			if (other != this && other != parent.getBeam() && hitPlatform(log, other))
 				return true;
 		}
 		return false;

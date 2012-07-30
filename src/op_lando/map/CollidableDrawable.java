@@ -21,7 +21,6 @@ public interface CollidableDrawable extends Drawable {
 
 	boolean isVisible();
 
-	//platforms and switches 0, player 1, boxes 2, beam infinity
 	int getMovabilityIndex();
 
 	Position getPosition();

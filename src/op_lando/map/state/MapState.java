@@ -1,6 +1,5 @@
 package op_lando.map.state;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,11 +8,14 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.lwjgl.util.Rectangle;
+
 import op_lando.map.CollidableDrawable;
 import op_lando.map.Drawable;
 import op_lando.map.DrawableTexture;
 import op_lando.map.entity.Entity;
 import op_lando.map.entity.player.Player;
+import op_lando.map.entity.props.Box;
 import op_lando.map.physicquantity.Position;
 import op_lando.resources.LevelLayout;
 
@@ -93,6 +95,12 @@ public class MapState {
 			collidables.addAll(ent.getDrawables());
 		}
 
+		Box b = new Box();
+		b.setPosition(new Position(500, 500));
+		entities.put(Byte.valueOf(nextEntityId++), b);
+		layers.get(ZAxisLayer.MIDGROUND).getDrawables().add(b);
+		collidables.add(b);
+
 		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
 
 		player.setPosition(layout.getStartPosition());
@@ -101,7 +109,7 @@ public class MapState {
 			public int compare(CollidableDrawable a, CollidableDrawable b) {
 				int delta = a.getMovabilityIndex() - b.getMovabilityIndex();
 				if (delta == 0)
-					delta = Double.compare(a.getPosition().getY(), b.getPosition().getY());
+					delta = Double.compare(b.getPosition().getY(), a.getPosition().getY());
 				return delta;
 			}
 		});

@@ -20,6 +20,10 @@ public class EntityKinematics {
 		tMaxJump = maxJumpT;
 	}
 
+	public EntityKinematics() {
+		
+	}
+
 	public double getWalkAcceleration() {
 		return xAcceleration;
 	}

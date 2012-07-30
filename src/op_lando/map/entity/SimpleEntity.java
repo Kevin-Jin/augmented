@@ -29,7 +29,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	protected final Position pos;
 	protected final Velocity vel;
 	protected final Acceleration accel;
-	protected final EntityKinematics motionProperties;
+	protected EntityKinematics motionProperties;
 	private final Set<Direction> moves;
 	protected double remainingJump;
 	protected final Position startPos;
@@ -54,11 +54,13 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 
 	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		final float TOLERANCE = 0.001f;
+
 		Vector2f negationVector = collisionInfo.getMinimumTranslationVector();
 		pos.add(negationVector.getX(), negationVector.getY());
-		if (negationVector.getY() >= 0 && collisionInfo.getCollidingSurface().getY() == 0)
+		if (negationVector.getY() >= 0 && Math.abs(collisionInfo.getCollidingSurface().getY()) < TOLERANCE)
 			vel.setY(0);
-		else if (negationVector.getY() < 0 && collisionInfo.getCollidingSurface().getY() == 0)
+		else if (negationVector.getY() < 0 && Math.abs(collisionInfo.getCollidingSurface().getY()) < TOLERANCE)
 			vel.setY(0);
 
 		recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
