@@ -186,11 +186,11 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				SelectableEntity prop = (SelectableEntity) selection;
 				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
 					prop.downScale(tDelta);
-				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
+				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
 					prop.upScale(tDelta);
-				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
+				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
 					prop.rotateCounterClockwise();
-				else if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
+				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
 					prop.rotateClockwise();
 
 				Position beamHit = getBeamHit();

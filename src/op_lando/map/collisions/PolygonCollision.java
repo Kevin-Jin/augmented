@@ -12,12 +12,11 @@ public class PolygonCollision {
 	}
 
 	public static CollisionResult collision(Polygon a, Polygon b) {
-		Vector2f axis = new Vector2f(1, 1);
-		Vector2f translationAxis = new Vector2f(0, 0);
-		Vector2f collisionEdge = new Vector2f(0, 0);
+		Vector2f axis;
+		Vector2f translationAxis = null;
+		Vector2f collisionEdge = null;
 
-		final int NOTFOUND = -1;
-		float minIntervalDistance = NOTFOUND;
+		float minIntervalDistance = Float.POSITIVE_INFINITY;
 
 		float intervalDist;
 		float tmp, maxA, minA, minB, maxB;
@@ -46,7 +45,7 @@ public class PolygonCollision {
 				return new CollisionResult();
 			} else {
 				intervalDist = Math.abs(intervalDist);
-				if (intervalDist < minIntervalDistance || minIntervalDistance == NOTFOUND) {
+				if (intervalDist < minIntervalDistance) {
 					minIntervalDistance = intervalDist;
 					collisionEdge = edge;
 					translationAxis = axis;
@@ -79,7 +78,7 @@ public class PolygonCollision {
 				return new CollisionResult();
 			} else {
 				intervalDist = Math.abs(intervalDist);
-				if (intervalDist < minIntervalDistance || minIntervalDistance == NOTFOUND) {
+				if (intervalDist < minIntervalDistance) {
 					minIntervalDistance = intervalDist;
 					collisionEdge = edge;
 					translationAxis = axis;

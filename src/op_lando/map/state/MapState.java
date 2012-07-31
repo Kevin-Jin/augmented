@@ -104,15 +104,6 @@ public class MapState {
 		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
 
 		player.setPosition(layout.getStartPosition());
-		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
-			@Override
-			public int compare(CollidableDrawable a, CollidableDrawable b) {
-				int delta = a.getMovabilityIndex() - b.getMovabilityIndex();
-				if (delta == 0)
-					delta = Double.compare(b.getPosition().getY(), a.getPosition().getY());
-				return delta;
-			}
-		});
 	}
 
 	public Rectangle getCameraBounds() {
@@ -128,6 +119,15 @@ public class MapState {
 	}
 
 	public List<CollidableDrawable> getCollidables() {
+		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
+			@Override
+			public int compare(CollidableDrawable a, CollidableDrawable b) {
+				int delta = a.getMovabilityIndex() - b.getMovabilityIndex();
+				if (delta == 0)
+					delta = Double.compare(a.getPosition().getY(), b.getPosition().getY());
+				return delta;
+			}
+		});
 		return collidables;
 	}
 

@@ -55,7 +55,11 @@ public class PolygonHelper {
 	//change seems feasible (only extra exceptional case I can think of is
 	//when the endPoly is entirely contained within startPoly, in which case
 	//we simply return startPoly), but rotation definitely not as that involves
-	//curved edges, not polygons.
+	//curved edges, not polygons. if we implement collisions between convex
+	//polygons and circles, we can approximate rotation by setting the diameter
+	//of a semicircle the distance between the farthest two vertices, putting
+	//one at the start and one at the end and filling in the space between with
+	//a rectangle.
 	public static Polygon sweepCollisionPolygon(Polygon startPoly, Vector2f translation) {
 		if (Math.abs(translation.getX()) < 1 && Math.abs(translation.getY()) < 1)
 			return startPoly;
@@ -180,7 +184,7 @@ public class PolygonHelper {
 				i = positiveMod(i + direction, preimage.length);
 			} while (i != vertexIndices[0]);
 		}
-		return new Polygon(ret.toArray(new Vector2f[ret.size()]));
+		return new Polygon(endPoly.getCenter(), ret.toArray(new Vector2f[ret.size()]));
 	}
 
 	public static BoundingPolygon sweepCollisionBoundingPolygon(BoundingPolygon b, Vector2f translation) {

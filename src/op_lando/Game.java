@@ -73,9 +73,9 @@ public class Game {
 	}
 
 	public void glInit() throws LWJGLException {
-		DisplayMode[] modes = Display.getAvailableDisplayModes();
 		DisplayMode mode = null;
 		if (FULLSCREEN) {
+			DisplayMode[] modes = Display.getAvailableDisplayModes();
 			int freq = Display.getDesktopDisplayMode().getFrequency();
 			int colorDepth = Display.getDesktopDisplayMode().getBitsPerPixel();
 			for (int i = 0; i < modes.length && mode == null; i++) {

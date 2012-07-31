@@ -12,27 +12,34 @@ import op_lando.resources.EntityKinematics;
 
 public abstract class SelectableEntity extends SimpleEntity {
 	private static final float SCALE_RATE = 1f;
-	private static final float ANGULAR_VELOCITY = 5f; //in radians / second
+	private static final float ANGULAR_VELOCITY = (float) Math.PI; //in radians / second
 	private static final float ROTATE_INTERVAL = (float) Math.PI / 2;
+	private final float minScale, maxScale;
 	private float rot;
 	private byte rotateState;
 	private float scale;
 	private boolean continueRot, dragged;
 
-	protected SelectableEntity(BoundingPolygon boundPoly) {
+	protected SelectableEntity(BoundingPolygon boundPoly, float minScale, float maxScale) {
 		super(boundPoly, new EntityKinematics());
+		this.minScale = minScale;
+		this.maxScale = maxScale;
 		scale = 1;
 	}
 
 	public void downScale(double tDelta) {
 		float oldWidth = getWidth();
 		scale -= SCALE_RATE * tDelta;
+		if (scale < minScale)
+			scale = minScale;
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
 	}
 
 	public void upScale(double tDelta) {
 		float oldWidth = getWidth();
 		scale += SCALE_RATE * tDelta;
+		if (scale > maxScale)
+			scale = maxScale;
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
 	}
 
