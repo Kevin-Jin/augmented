@@ -27,4 +27,6 @@ public interface CollidableDrawable extends Drawable {
 	Position getPosition();
 
 	Velocity getVelocity();
+
+	void reset();
 }

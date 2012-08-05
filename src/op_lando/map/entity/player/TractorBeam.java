@@ -53,6 +53,14 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		compliantPos.set(pos.getX(), pos.getY() + getOrigin().getY() * -getScale().getY() - getHeight());
 	}
 
+	private void setSelection(CollidableDrawable newSelection) {
+		if (selection instanceof SelectableEntity)
+			((SelectableEntity) selection).unselect();
+		if (newSelection instanceof SelectableEntity)
+			((SelectableEntity) newSelection).select();
+		selection = newSelection;
+	}
+
 	private void beginExtend() {
 		SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
 	}
@@ -65,12 +73,12 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	private void beginRetract() {
-		selection = null;
+		setSelection(null);
 		SoundCache.getSound("beam").stop();
 	}
 
 	private void retract(double tDelta) {
-		selection = null;
+		setSelection(null);
 		length -= SHOOT_VELOCITY * tDelta;
 		if (length < 0)
 			length = 0;
@@ -101,7 +109,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		CollidableDrawable other = collisionInfo.getCollidedWith();
 		if (selection != other && other != parent.getBody()) {
 			Position hitPos = new Position(pos.getX() + length * Math.cos(rot), pos.getY() + length * Math.sin(rot));
-			selection = other;
+			setSelection(other);
 			Vector2f hitPosVector = hitPos.asVector();
 			Vector2f lengthVector = Vector2f.sub(hitPosVector, pos.asVector(), null);
 			if (!other.getBoundingPolygon().isPointInsideBoundingPolygon(hitPosVector) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getBottomCornerPosition().asVector(), lengthVector, null)) && !other.getBoundingPolygon().isPointInsideBoundingPolygon(Vector2f.add(getTopCornerPosition().asVector(), lengthVector, null))) {
@@ -197,7 +205,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
 					prop.rotateClockwise();
 
-				prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY());
+				prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY(), tDelta);
 				length = (float) Math.sqrt(Math.pow(pos.getX() - beamHit.getX(), 2) + Math.pow(pos.getY() - beamHit.getY(), 2));
 				lengthUpdated();
 			}

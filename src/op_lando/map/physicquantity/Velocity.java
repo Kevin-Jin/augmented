@@ -44,4 +44,9 @@ public class Velocity {
 	public Vector2f asVector() {
 		return new Vector2f((float) x, (float) y);
 	}
+
+	public void set(Velocity vel) {
+		this.x = vel.x;
+		this.y = vel.y;
+	}
 }

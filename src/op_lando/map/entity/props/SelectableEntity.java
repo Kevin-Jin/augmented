@@ -18,13 +18,23 @@ public abstract class SelectableEntity extends SimpleEntity {
 	private float rot;
 	private byte rotateState;
 	private float scale;
-	private boolean continueRot, dragged;
+	private boolean continueRot, selected;
 
 	protected SelectableEntity(BoundingPolygon boundPoly, float minScale, float maxScale) {
 		super(boundPoly, new EntityKinematics());
 		this.minScale = minScale;
 		this.maxScale = maxScale;
 		scale = 1;
+	}
+
+	public void select() {
+		selected = true;
+		vel.setScalarComponents(0, 0);
+	}
+
+	public void unselect() {
+		selected = false;
+		vel.setScalarComponents(0, 0);
 	}
 
 	public void downScale(double tDelta) {
@@ -53,10 +63,10 @@ public abstract class SelectableEntity extends SimpleEntity {
 		continueRot = true;
 	}
 
-	public void drag(int x, int y) {
-		dragged = true;
+	public void drag(int x, int y, double tDelta) {
 		startPos.set(pos);
 		pos.add(x, y);
+		vel.setScalarComponents(x / tDelta, y / tDelta);
 	}
 
 	@Override
@@ -109,14 +119,12 @@ public abstract class SelectableEntity extends SimpleEntity {
 			}
 		}
 		continueRot = false;
-		if (dragged) {
-			dragged = false;
+		if (selected) {
 			EntityKinematics temp = motionProperties;
-			motionProperties = null;
+			motionProperties = null; //prevent superclass implementation from updating velocity and position
 			Position savedStartPos = new Position(startPos.getX(), startPos.getY());
 			super.preCollisionsUpdate(tDelta, input, camera, map);
 			startPos.set(savedStartPos);
-			vel.setScalarComponents(0, 0);
 			motionProperties = temp;
 		} else {
 			super.preCollisionsUpdate(tDelta, input, camera, map);

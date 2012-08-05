@@ -119,6 +119,13 @@ public class Game {
 					b = collidables[j];
 					if (b.isVisible()) {
 						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b);
+						//if (result.needsRecalculate()) {
+						//  b.reset();
+						//  a.reset();
+						//  b.preCollisionsUpdate(tDelta + result.getEnterTime(), input, camera, map);
+						//  a.preCollisionsUpdate(tDelta + result.getEnterTime(), input, camera, map);
+						//  result = PolygonCollision.boundingPolygonCollision(a, b);
+						//}
 						if (result.collision()) {
 							result.getCollisionInformation().setCollidedWith(a);
 							b.collision(result.getCollisionInformation(), collidablesList);

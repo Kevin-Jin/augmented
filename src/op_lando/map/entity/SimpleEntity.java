@@ -124,4 +124,9 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	public Velocity getVelocity() {
 		return vel;
 	}
+
+	@Override
+	public void reset() {
+		pos.set(startPos);
+	}
 }

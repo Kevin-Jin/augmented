@@ -46,7 +46,7 @@ public class PolygonCollision {
 			if (intervalDist > 0) {
 				return new CollisionResult();
 			} else {
-				intervalDist = Math.abs(intervalDist);
+				intervalDist *= -1;
 				if (intervalDist < minIntervalDistance) {
 					minIntervalDistance = intervalDist;
 					collisionEdge = edge;
@@ -79,7 +79,7 @@ public class PolygonCollision {
 			if (intervalDist > 0) {
 				return new CollisionResult();
 			} else {
-				intervalDist = Math.abs(intervalDist);
+				intervalDist *= -1;
 				if (intervalDist < minIntervalDistance) {
 					minIntervalDistance = intervalDist;
 					collisionEdge = edge;
@@ -103,7 +103,7 @@ public class PolygonCollision {
 	}
 
 	public static CollisionResult boundingPolygonCollision(CollidableDrawable a, CollidableDrawable b) {
-		Vector2f vr = Vector2f.sub(b.getVelocity().asVector(), a.getVelocity().asVector(), null); //relative velocity
+		Vector2f vr = Vector2f.sub(a.getVelocity().asVector(), b.getVelocity().asVector(), null); //relative velocity
 		Polygon[] bPolygons = b.getBoundingPolygon().getPolygons();
 
 		CollisionResult largestTranslation = new CollisionResult();

@@ -81,6 +81,11 @@ public class Platform extends AbstractCollidable {
 	}
 
 	@Override
+	public void reset() {
+		
+	}
+
+	@Override
 	public float getWidth() {
 		return (float) Math.round(getRightX() - getLeftX());
 	}
