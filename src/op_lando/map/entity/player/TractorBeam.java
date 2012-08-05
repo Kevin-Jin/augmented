@@ -182,6 +182,10 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		else if (length > 0)
 			retract(tDelta);
 		if (selection != null) {
+			Position beamHit = getBeamHit();
+			Vector4f viewSpaceBeamHit = Matrix4f.transform(camera.getViewMatrix(1), beamHit.asVector4f(), null);
+			cursor.setLocation((int) viewSpaceBeamHit.getX(), (int) viewSpaceBeamHit.getY());
+
 			if (selection instanceof SelectableEntity) {
 				SelectableEntity prop = (SelectableEntity) selection;
 				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
@@ -192,10 +196,6 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 					prop.rotateCounterClockwise();
 				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
 					prop.rotateClockwise();
-
-				Position beamHit = getBeamHit();
-				Vector4f viewSpaceBeamHit = Matrix4f.transform(camera.getViewMatrix(1), beamHit.asVector4f(), null);
-				cursor.setLocation((int) viewSpaceBeamHit.getX(), (int) viewSpaceBeamHit.getY());
 
 				prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY());
 				length = (float) Math.sqrt(Math.pow(pos.getX() - beamHit.getX(), 2) + Math.pow(pos.getY() - beamHit.getY(), 2));

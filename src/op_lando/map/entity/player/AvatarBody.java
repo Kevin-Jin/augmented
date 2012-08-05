@@ -217,7 +217,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			return true;
 		for (CollisionInformation info : log.get(root)) {
 			CollidableDrawable other = info.getCollidedWith();
-			if (other != this && other != parent.getBeam() && hitPlatform(log, other))
+			if (info.getMinimumTranslationVector().getY() > 0 && other != this && other != parent.getBeam() && hitPlatform(log, other))
 				return true;
 		}
 		return false;
