@@ -1,5 +1,7 @@
 package op_lando.map.collisions;
 
+import op_lando.map.CollidableDrawable;
+
 import org.lwjgl.util.vector.Vector2f;
 
 public class PolygonCollision {
@@ -11,7 +13,7 @@ public class PolygonCollision {
 		}
 	}
 
-	public static CollisionResult collision(Polygon a, Polygon b) {
+	public static CollisionResult collision(Polygon a, Polygon b, Vector2f vr) {
 		Vector2f axis;
 		Vector2f translationAxis = null;
 		Vector2f collisionEdge = null;
@@ -100,11 +102,14 @@ public class PolygonCollision {
 			return minA - maxB;
 	}
 
-	public static CollisionResult boundingPolygonCollision(BoundingPolygon a, BoundingPolygon b) {
+	public static CollisionResult boundingPolygonCollision(CollidableDrawable a, CollidableDrawable b) {
+		Vector2f vr = Vector2f.sub(b.getVelocity().asVector(), a.getVelocity().asVector(), null); //relative velocity
+		Polygon[] bPolygons = b.getBoundingPolygon().getPolygons();
+
 		CollisionResult largestTranslation = new CollisionResult();
-		for (Polygon polygonA : a.getPolygons()) {
-			for (Polygon polygonB : b.getPolygons()) {
-				CollisionResult result = collision(polygonA, polygonB);
+		for (Polygon polygonA : a.getBoundingPolygon().getPolygons()) {
+			for (Polygon polygonB : bPolygons) {
+				CollisionResult result = collision(polygonA, polygonB, vr);
 				if (result.collision() && (!largestTranslation.collision() || largestTranslation.getCollisionInformation().getMinimumTranslationVector().lengthSquared() < result.getCollisionInformation().getMinimumTranslationVector().lengthSquared()))
 					largestTranslation = result;
 			}

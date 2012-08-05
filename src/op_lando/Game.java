@@ -118,7 +118,7 @@ public class Game {
 				for (int j = i + 1; j < collidables.length; j++) {
 					b = collidables[j];
 					if (b.isVisible()) {
-						CollisionResult result = PolygonCollision.boundingPolygonCollision(a.getBoundingPolygon(), b.getBoundingPolygon());
+						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b);
 						if (result.collision()) {
 							result.getCollisionInformation().setCollidedWith(a);
 							b.collision(result.getCollisionInformation(), collidablesList);

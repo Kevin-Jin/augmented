@@ -5,6 +5,7 @@ import java.util.List;
 import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.physicquantity.Velocity;
 
 public interface CollidableDrawable extends Drawable {
 	//TODO: try making a collision window rectangle, whose position is the
@@ -24,4 +25,6 @@ public interface CollidableDrawable extends Drawable {
 	int getMovabilityIndex();
 
 	Position getPosition();
+
+	Velocity getVelocity();
 }

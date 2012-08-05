@@ -6,6 +6,7 @@ import op_lando.map.collisions.BoundingPolygon;
 import op_lando.map.collisions.CollisionInformation;
 import op_lando.map.collisions.Polygon;
 import op_lando.map.physicquantity.Position;
+import op_lando.map.physicquantity.Velocity;
 import op_lando.resources.TextureCache;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -72,6 +73,11 @@ public class Platform extends AbstractCollidable {
 	@Override
 	public Position getPosition() {
 		return new Position(x1, y2);
+	}
+
+	@Override
+	public Velocity getVelocity() {
+		return new Velocity(0, 0);
 	}
 
 	@Override

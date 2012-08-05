@@ -1,5 +1,7 @@
 package op_lando.map.physicquantity;
 
+import org.lwjgl.util.vector.Vector2f;
+
 public class Velocity {
 	private double x;
 	private double y;
@@ -37,5 +39,9 @@ public class Velocity {
 	public void setEuclideanVector(double magnitude, double direction) {
 		x = magnitude * Math.cos(direction);
 		y = magnitude * Math.sin(direction);
+	}
+
+	public Vector2f asVector() {
+		return new Vector2f((float) x, (float) y);
 	}
 }
