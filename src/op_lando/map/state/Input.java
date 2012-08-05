@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.Point;
 
+//should make this an interface if we want to carry through with LowLevelUtil.
 public class Input {
 	public static final int
 		MOUSE_LEFT_CLICK = 0,

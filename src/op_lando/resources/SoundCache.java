@@ -3,7 +3,8 @@ package op_lando.resources;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lwjgl.openal.AL;
+import op_lando.LowLevelUtil;
+
 import org.newdawn.slick.openal.Audio;
 
 public class SoundCache {
@@ -19,6 +20,6 @@ public class SoundCache {
 
 	public static void flush() {
 		loaded.clear();
-		AL.destroy();
+		LowLevelUtil.releaseAudio();
 	}
 }

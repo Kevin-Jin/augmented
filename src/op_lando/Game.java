@@ -1,14 +1,19 @@
 package op_lando;
 
 import java.awt.Font;
+import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import op_lando.map.AbstractCollidable;
 import op_lando.map.CollidableDrawable;
@@ -44,6 +49,8 @@ public class Game {
 	private final Camera camera;
 	private final FrameRateState frameRateState;
 	private final MapState map;
+
+	private boolean screenshot;
 
 	public Game() {
 		matrixBuf = LowLevelUtil.createMatrixBuffer();
@@ -167,7 +174,18 @@ public class Game {
 	public void draw() {
 		LowLevelUtil.clearCanvas();
 		drawGame();
-		LowLevelUtil.flipBackBuffer(TARGET_FPS);
+		LowLevelUtil.flipBackBuffer();
+		if (screenshot) {
+			screenshot = false;
+			String fileName = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(Calendar.getInstance().getTime()) + ".png";
+			try {
+				ImageIO.write(LowLevelUtil.pngScreenshot(), "png", new File(fileName));
+			} catch (IOException e) {
+				System.err.println("Could not save screenshot " + fileName);
+				e.printStackTrace();
+			}
+		}
+		LowLevelUtil.waitForNextFrame(TARGET_FPS);
 	}
 
 	public void unloadContent() {
