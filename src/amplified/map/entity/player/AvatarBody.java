@@ -18,7 +18,7 @@ import amplified.map.CollidableDrawable;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.Polygon;
-import amplified.map.collisions.PolygonHelper;
+//import amplified.map.collisions.PolygonHelper;
 import amplified.map.entity.BodyEntity;
 import amplified.map.entity.Direction;
 import amplified.map.entity.SimpleEntity;
@@ -101,7 +101,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		else
 			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-		transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
+		//transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
 
 		setPosition(pos);
 	}

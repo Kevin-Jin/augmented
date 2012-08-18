@@ -1,12 +1,12 @@
 package amplified.map.collisions;
 
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
-import org.lwjgl.util.vector.Vector2f;
+//import org.lwjgl.util.vector.Vector2f;
 
 public class PolygonHelper {
-	private static boolean equal(Vector2f a, Vector2f b) {
+	/*private static boolean equal(Vector2f a, Vector2f b) {
 		final float TOLERANCE = 0.05f;
 		return Math.abs(a.getX() - b.getX()) < TOLERANCE && Math.abs(a.getY() - b.getY()) < TOLERANCE;
 	}
@@ -192,5 +192,5 @@ public class PolygonHelper {
 		for (int i = 0; i < b.getPolygons().length; i++)
 			polygons[i] = sweepCollisionPolygon(b.getPolygons()[i], translation);
 		return new BoundingPolygon(polygons);
-	}
+	}*/
 }
