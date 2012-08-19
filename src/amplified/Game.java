@@ -105,7 +105,7 @@ public class Game {
 		return !LowLevelUtil.windowClosed() && !input.releasedKeys().contains(Keyboard.KEY_ESCAPE);
 	}
 
-	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions() {
+	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
 		//map.getCollidables() is sorted by movability ascending, y coordinate descending
 		List<CollidableDrawable> collidablesList = map.getCollidables();
 		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
@@ -118,7 +118,7 @@ public class Game {
 				for (int j = i + 1; j < collidables.length; j++) {
 					b = collidables[j];
 					if (b.isVisible()) {
-						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b);
+						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b, tDelta);
 						if (result.collision()) {
 							result.getCollisionInformation().setCollidedWith(a);
 							b.collision(result.getCollisionInformation(), collidablesList);
@@ -151,7 +151,7 @@ public class Game {
 		input.update();
 		for (Entity ent : map.getEntities())
 			ent.preCollisionsUpdate(tDelta, input, camera, map);
-		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions();
+		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions((float) tDelta);
 		for (Entity ent : map.getEntities())
 			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
 

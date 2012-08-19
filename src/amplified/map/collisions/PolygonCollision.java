@@ -13,18 +13,32 @@ public class PolygonCollision {
 		}
 	}
 
-	//TODO: collisionEdge
-	//TODO: return no collision if collision occurred in negative velocity direction from start points
-	public static CollisionResult collision(Polygon a, Polygon b, Vector2f vr) {
+	/**
+	 * Static SAT if final area of polygon a collides with the origin area of polygon b.
+	 * Otherwise, performs a swept SAT check across the swept area of both polygons.
+	 * @param a Polygon A
+	 * @param b Polygon B
+	 * @param vr Relative velocity between polygons A and B
+	 * @param tDelta the highest value of tEnter allowed - polygons A and B will not
+	 * continuously move for any longer than this value on this frame.
+	 * @return
+	 */
+	public static CollisionResult collision(Polygon a, Polygon b, Vector2f vr, float tDelta) {
+		Vector2f displacement = new Vector2f(vr.getX() * tDelta, vr.getY() * tDelta);
 		Vector2f axis;
 		Vector2f translationAxis = null;
-		Vector2f collisionEdge = null;
+		Vector2f collisionEdge = null, sweptCollisionEdge = null;
 
+		boolean noOriginAreaCollisions = false;
 		float tEnterMax = Float.NEGATIVE_INFINITY;
 		float tExitMin = Float.POSITIVE_INFINITY;
-		/*float minIntervalDistance = Float.POSITIVE_INFINITY;
+		float minIntervalDistance = Float.POSITIVE_INFINITY;
 
-		float intervalDist;*/
+		//since we only care about static SAT of the origin area of polygon b, and both
+		//passed polygons are the final areas, we want to subtract the displacement from
+		//each of polygon b's vertices to find its world space origin area vertices.
+		//the displacement must then be subtracted from the resultant translation vector.
+		float intervalDist;
 		float tmp, maxA, minA, minB, maxB;
 		for (int i = 0; i < a.getVertexCount(); ++i) {
 			Vector2f edge = a.getEdges()[i];
@@ -38,17 +52,17 @@ public class PolygonCollision {
 				else if (tmp < minA)
 					minA = tmp;
 			}
-			minB = maxB = Vector2f.dot(b.getVertices()[0], axis);
+			minB = maxB = Vector2f.dot(Vector2f.sub(b.getVertices()[0], displacement, null), axis);
 			for (int j = 1; j < b.getVertexCount(); ++j) {
-				tmp = Vector2f.dot(b.getVertices()[j], axis);
+				tmp = Vector2f.dot(Vector2f.sub(b.getVertices()[j], displacement, null), axis);
 				if (tmp > maxB)
 					maxB = tmp;
 				else if (tmp < minB)
 					minB = tmp;
 			}
-			/*intervalDist = intervalDistance(minA, maxA, minB, maxB);
+			intervalDist = intervalDistance(minA, maxA, minB, maxB);
 			if (intervalDist > 0) {
-				return new CollisionResult();
+				noOriginAreaCollisions = true;
 			} else {
 				intervalDist *= -1;
 				if (intervalDist < minIntervalDistance) {
@@ -56,7 +70,7 @@ public class PolygonCollision {
 					collisionEdge = edge;
 					translationAxis = axis;
 				}
-			}*/
+			}
 
 			// Convert the slab for B into a 1D ray
 			float origin = (maxB + minB) * 0.5f; // Origin of ray
@@ -88,7 +102,10 @@ public class PolygonCollision {
 				}
 	
 				// Compute the intersection of slab intersection intervals
-				tEnterMax = Math.max(tEnterMax, tEnter);
+				if (tEnter > tEnterMax) {
+					tEnterMax = tEnter;
+					sweptCollisionEdge = edge;
+				}
 				tExitMin = Math.min(tExitMin, tExit);
 	
 				// Exit with no collision as soon as slab intersection becomes empty
@@ -101,9 +118,9 @@ public class PolygonCollision {
 			Vector2f edge = b.getEdges()[i];
 			axis = new Vector2f(-edge.getY(), edge.getX());
 			normalize(axis);
-			minB = maxB = Vector2f.dot(axis, b.getVertices()[0]);
+			minB = maxB = Vector2f.dot(axis, Vector2f.sub(b.getVertices()[0], displacement, null));
 			for (int j = 1; j < b.getVertexCount(); ++j) {
-				tmp = Vector2f.dot(axis, b.getVertices()[j]);
+				tmp = Vector2f.dot(axis, Vector2f.sub(b.getVertices()[j], displacement, null));
 				if (tmp > maxB)
 					maxB = tmp;
 				else if (tmp < minB)
@@ -117,9 +134,9 @@ public class PolygonCollision {
 				else if (tmp < minA)
 					minA = tmp;
 			}
-			/*intervalDist = intervalDistance(minA, maxA, minB, maxB);
+			intervalDist = intervalDistance(minA, maxA, minB, maxB);
 			if (intervalDist > 0) {
-				return new CollisionResult();
+				noOriginAreaCollisions = true;
 			} else {
 				intervalDist *= -1;
 				if (intervalDist < minIntervalDistance) {
@@ -127,7 +144,7 @@ public class PolygonCollision {
 					collisionEdge = edge;
 					translationAxis = axis;
 				}
-			}*/
+			}
 
 			// Convert the slab for B into a 1D ray
 			float origin = (maxB + minB) * 0.5f; // Origin of ray
@@ -159,7 +176,10 @@ public class PolygonCollision {
 				}
 	
 				// Compute the intersection of slab intersection intervals
-				tEnterMax = Math.max(tEnterMax, tEnter);
+				if (tEnter > tEnterMax) {
+					tEnterMax = tEnter;
+					sweptCollisionEdge = edge;
+				}
 				tExitMin = Math.min(tExitMin, tExit);
 	
 				// Exit with no collision as soon as slab intersection becomes empty
@@ -167,32 +187,40 @@ public class PolygonCollision {
 					return new CollisionResult();
 			}
 		}
-		translationAxis = new Vector2f(vr.getX() * tEnterMax, vr.getY() * tEnterMax);
-		if (tEnterMax > 1)
+		if (tEnterMax < 0) {
+			if (noOriginAreaCollisions)
+				return new CollisionResult();
+			Vector2f d = Vector2f.sub(a.getCenter(), Vector2f.sub(b.getCenter(), displacement, null), null);
+			if (Vector2f.dot(d, translationAxis) > 0.0f)
+				translationAxis.negate();
+			translationAxis.scale(minIntervalDistance);
+		} else if (tEnterMax <= tDelta) {
+			translationAxis = new Vector2f(vr);
+			translationAxis.scale(tEnterMax);
+			collisionEdge = sweptCollisionEdge;
+		} else {
 			return new CollisionResult();
+		}
+		Vector2f.sub(translationAxis, displacement, translationAxis);
 
-		/*Vector2f d = Vector2f.sub(a.getCenter(), b.getCenter(), null);
-		if (Vector2f.dot(d, translationAxis) > 0.0f)
-			translationAxis.negate();
-		translationAxis.scale(minIntervalDistance);*/
 		return new CollisionResult(translationAxis, collisionEdge);
 	}
 
-	/*private static float intervalDistance(float minA, float maxA, float minB, float maxB) {
+	private static float intervalDistance(float minA, float maxA, float minB, float maxB) {
 		if (minA < minB)
 			return minB - maxA;
 		else
 			return minA - maxB;
-	}*/
+	}
 
-	public static CollisionResult boundingPolygonCollision(CollidableDrawable a, CollidableDrawable b) {
-		Vector2f vr = Vector2f.sub(a.getVelocity().asVector(), b.getVelocity().asVector(), null); //relative velocity
+	public static CollisionResult boundingPolygonCollision(CollidableDrawable a, CollidableDrawable b, float tDelta) {
+		Vector2f vr = Vector2f.sub(b.getVelocity().asVector(), a.getVelocity().asVector(), null); //relative velocity
 		Polygon[] bPolygons = b.getBoundingPolygon().getPolygons();
 
 		CollisionResult largestTranslation = new CollisionResult();
 		for (Polygon polygonA : a.getBoundingPolygon().getPolygons()) {
 			for (Polygon polygonB : bPolygons) {
-				CollisionResult result = collision(polygonA, polygonB, vr);
+				CollisionResult result = collision(polygonA, polygonB, vr, tDelta);
 				if (result.collision() && (!largestTranslation.collision() || largestTranslation.getCollisionInformation().getMinimumTranslationVector().lengthSquared() < result.getCollisionInformation().getMinimumTranslationVector().lengthSquared()))
 					largestTranslation = result;
 			}

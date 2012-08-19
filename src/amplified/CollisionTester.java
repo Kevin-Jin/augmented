@@ -14,6 +14,7 @@ import amplified.map.collisions.CollisionResult;
 import amplified.map.collisions.Polygon;
 import amplified.map.collisions.PolygonCollision;
 
+//black - barrier, blue - frame start position, red - unobstructed frame end position, green - final position after collisions
 public class CollisionTester {
 	private static final Polygon BASE_BARRIER = new Polygon(new Vector2f[] { new Vector2f(0, 0), new Vector2f(30, 0), new Vector2f(30, 20), new Vector2f(0, 20) });
 
@@ -63,11 +64,11 @@ public class CollisionTester {
 		}
 
 		p[0] = Polygon.transformPolygon(BASE_BARRIER, new Matrix4f().translate(new Vector2f(Mouse.getX(), Mouse.getY()))); //barrier
-		p[1] = new Polygon(new Vector2f[] { new Vector2f(10, 40), new Vector2f(25, 20), new Vector2f(40, 40), new Vector2f(25, 60) }); //start position
+		p[1] = new Polygon(new Vector2f[] { new Vector2f(380, 280), new Vector2f(395, 260), new Vector2f(410, 280), new Vector2f(395, 300) }); //start position
 		p[2] = Polygon.transformPolygon(p[1], new Matrix4f().translate(velocity)); //end position. since tDelta == 1, we don't need to scale velocity
-		CollisionResult r = PolygonCollision.collision(p[0], p[1], velocity);
+		CollisionResult r = PolygonCollision.collision(p[0], p[2], velocity, 1);
 		if (r.collision())
-			p[3] = Polygon.transformPolygon(p[1], new Matrix4f().translate(r.getCollisionInformation().getMinimumTranslationVector())); //position at time of impact
+			p[3] = Polygon.transformPolygon(p[2], new Matrix4f().translate(r.getCollisionInformation().getMinimumTranslationVector())); //position at time of impact
 		else
 			p[3] = p[2];
 
