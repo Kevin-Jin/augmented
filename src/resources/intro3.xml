@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<level id="intro3">
+  <width>1280</width>
+  <height>720</height>
+  <start x="0" y="0" />
+  <end x="1720" y="800" />
+  <gravity acceleration="-400" terminalVelocity="-400" />
+  <nextMap>tutorial</nextMap>
+  <outerImage>intro3</outerImage>
+  <innerImage>intro3</innerImage>
+  <timer>5</timer>
+  <footholds>
+    <foothold id="0" anchor="bottom" />
+    <foothold id="1" anchor="left" />
+    <foothold id="2" anchor="right" />
+    <foothold id="3" anchor="top" />
+  </footholds>
+</level>

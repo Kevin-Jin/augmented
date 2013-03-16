@@ -13,11 +13,20 @@ import org.lwjgl.util.Rectangle;
 import amplified.map.CollidableDrawable;
 import amplified.map.Drawable;
 import amplified.map.DrawableTexture;
+import amplified.map.RetractablePlatform;
 import amplified.map.entity.Entity;
 import amplified.map.entity.player.Player;
 import amplified.map.entity.props.Box;
+import amplified.map.entity.props.NBox;
+import amplified.map.entity.props.RectangleBox;
+import amplified.map.entity.props.Switch;
 import amplified.map.physicquantity.Position;
 import amplified.resources.LevelLayout;
+import amplified.resources.map.BoxSpawnInfo;
+import amplified.resources.map.NBoxSpawnInfo;
+import amplified.resources.map.OverlayInfo;
+import amplified.resources.map.RectangleSpawnInfo;
+import amplified.resources.map.SwitchSpawnInfo;
 
 public class MapState {
 	public static class ZAxisLayer {
@@ -89,19 +98,38 @@ public class MapState {
 
 		entities.clear();
 		nextEntityId = 0;
-		entities.put(Byte.valueOf(nextEntityId++), player);
+		if (Double.isInfinite(layout.getExpiration()))
+			entities.put(Byte.valueOf(nextEntityId++), player);
+		for (BoxSpawnInfo box : layout.getBoxes()) {
+			Box b = new Box(box.getMinimumScale(), box.getMaximumScale());
+			b.setPosition(box.getPosition());
+			entities.put(Byte.valueOf(nextEntityId++), b);
+		}
+		for (RectangleSpawnInfo rect : layout.getRectangles()) {
+			RectangleBox r = new RectangleBox(rect.getMinimumScale(), rect.getMaximumScale());
+			r.setPosition(rect.getPosition());
+			entities.put(Byte.valueOf(nextEntityId++), r);
+		}
+		for (NBoxSpawnInfo nbox : layout.getNBoxes()) {
+			NBox n = new NBox();
+			n.setPosition(nbox.getPosition());
+			entities.put(Byte.valueOf(nextEntityId++), n);
+		}
+		for (SwitchSpawnInfo sw : layout.getSwitches()) {
+			Switch s = new Switch(sw.getColor(), sw.getSwitchables());
+			s.setPosition(sw.getPosition());
+			entities.put(Byte.valueOf(nextEntityId++), s);
+		}
+		for (RetractablePlatform plat : layout.getDoors())
+			plat.reset();
 		for (Entity ent : entities.values()) {
 			layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(ent.getDrawables());
 			collidables.addAll(ent.getDrawables());
 		}
 
-		Box b = new Box();
-		b.setPosition(new Position(500, 500));
-		entities.put(Byte.valueOf(nextEntityId++), b);
-		layers.get(ZAxisLayer.MIDGROUND).getDrawables().add(b);
-		collidables.add(b);
-
 		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
+		for (OverlayInfo ol : layout.getTips())
+			layers.get(ZAxisLayer.FOREGROUND).getDrawables().add(new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition()));
 
 		player.setPosition(layout.getStartPosition());
 	}

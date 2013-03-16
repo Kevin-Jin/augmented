@@ -20,7 +20,7 @@ public class CollisionTester {
 
 	private final Color[] c = { Color.black, Color.blue, Color.red, Color.green };
 	private final Polygon[] p = new Polygon[4];
-	private final Vector2f velocity = new Vector2f(0, 100);
+	private final Vector2f velocity = new Vector2f(30, 100);
 
 	public void glInit() throws LWJGLException {
 		DisplayMode mode = null;

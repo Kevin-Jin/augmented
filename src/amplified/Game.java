@@ -94,10 +94,20 @@ public class Game {
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
 
-		LevelCache.initialize();
+		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1"));
+		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2"));
+		LevelCache.setLevel("intro3", LevelCache.loadXml("resources/intro3"));
+		LevelCache.setLevel("tutorial", LevelCache.loadXml("resources/tutorial"));
+		LevelCache.setLevel("mid1", LevelCache.loadXml("resources/mid1"));
+		LevelCache.setLevel("level1", LevelCache.loadXml("resources/level1"));
+		LevelCache.setLevel("level2", LevelCache.loadXml("resources/level2"));
+		LevelCache.setLevel("level3", LevelCache.loadXml("resources/level3"));
+		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2"));
+		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4"));
+		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1"));
 
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
-		map.setLayout(LevelCache.getLevel("tutorial"));
+		map.setLayout(LevelCache.loadXml("resources/debug"));
 		camera.setLimits(map.getCameraBounds());
 	}
 

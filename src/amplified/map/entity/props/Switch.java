@@ -1,14 +1,16 @@
 package amplified.map.entity.props;
 
+import java.util.List;
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
-import amplified.map.collisions.BoundingPolygon;
+import amplified.map.Switchable;
 import amplified.map.entity.SimpleEntity;
-import amplified.resources.EntityKinematics;
 
 public class Switch extends SimpleEntity {
-	public Switch(BoundingPolygon boundPoly, EntityKinematics quantities) {
-		super(boundPoly, quantities);
+	public Switch(Color color, List<Switchable> list) {
+		super(null, null);
 	}
 
 	@Override

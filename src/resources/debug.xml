@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<level id="debug">
+  <width>1000</width>
+  <height>800</height>
+  <start x="100" y="100" />
+  <end x="1720" y="800" />
+  <gravity acceleration="-400" terminalVelocity="-400" />
+  <nextMap>mid1</nextMap>
+  <outerImage>scrollingWindowBg</outerImage>
+  <innerImage>mainBg</innerImage>
+  <timer>Infinity</timer>
+  <footholds>
+    <foothold id="0" x1="0" x2="700" y1="30" y2="0" />
+  </footholds>
+  <entities>
+    <box x="500" y="500" scaleInit="1" scaleMin="0.1" scaleMax="10" />
+  </entities>
+</level>

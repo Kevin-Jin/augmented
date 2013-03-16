@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<level id="level4">
+  <width>1500</width>
+  <height>1500</height>
+  <start x="100" y="1375" />
+  <end x="1250" y="0" />
+  <gravity acceleration="-400" terminalVelocity="-400" />
+  <nextMap>end1</nextMap>
+  <outerImage>scrollingWindowBg</outerImage>
+  <innerImage>mainBg</innerImage>
+  <timer>Infinity</timer>
+  <footholds>
+    <foothold id="0" anchor="bottom" />
+    <foothold id="1" anchor="left" />
+    <foothold id="2" anchor="right" />
+    <foothold id="3" anchor="top" />
+    <!-- Visible walls -->
+    <foothold id="4" x1="0" x2="50" y1="1500" y2="0" />
+    <foothold id="5" x1="1450" x2="1500" y1="1500" y2="0" />
+    <foothold id="6" x1="50" x2="1450" y1="1500" y2="1450" />
+    <!-- Six levels + bottom -->
+    <foothold id="10" x1="50" x2="1100" y1="1325" y2="1275" />
+    <foothold id="11" x1="1200" x2="1450" y1="1325" y2="1275" />
+    <foothold id="21" x1="150" x2="800" y1="1150" y2="1100" />
+    <foothold id="22" x1="900" x2="1250" y1="1150" y2="1100" />
+    <foothold id="23" x1="1350" x2="1450" y1="1150" y2="1100" />
+    <foothold id="31" x1="50" x2="150" y1="975" y2="925" />
+    <foothold id="32" x1="250" x2="425" y1="975" y2="925" />
+    <foothold id="33" x1="525" x2="650" y1="975" y2="925" />
+    <foothold id="34" x1="750" x2="1300" y1="975" y2="925" />
+    <foothold id="35" x1="1400" x2="1450" y1="975" y2="925" />
+    <foothold id="41" x1="150" x2="350" y1="800" y2="750" />
+    <foothold id="42" x1="450" x2="900" y1="800" y2="750" />
+    <foothold id="43" x1="1000" x2="1150" y1="800" y2="750" />
+    <foothold id="44" x1="1250" x2="1450" y1="800" y2="750" />
+    <foothold id="51" x1="50" x2="75" y1="625" y2="575" />
+    <foothold id="52" x1="175" x2="450" y1="625" y2="575" />
+    <foothold id="53" x1="550" x2="750" y1="625" y2="575" />
+    <foothold id="54" x1="850" x2="1300" y1="625" y2="575" />
+    <foothold id="55" x1="1400" x2="1450" y1="625" y2="575" />
+    <foothold id="56" x1="750" x2="850" y1="625" y2="575" switchableId="1" color="#8fbc8b" />
+    <foothold id="61" x1="50" x2="1050" y1="450" y2="400" />
+    <foothold id="62" x1="1050" x2="1150" y1="450" y2="400" switchableId="2" color="#008b8b" />
+    <foothold id="63" x1="1150" x2="1450" y1="450" y2="400" />
+    <foothold id="65" x1="50" x2="400" y1="275" y2="225" />
+    <foothold id="66" x1="500" x2="1200" y1="275" y2="225" />
+    <foothold id="67" x1="400" x2="500" y1="275" y2="225" switchableId="3" color="#ffd700" />
+    <!-- Separators -->
+    <foothold id="71" x1="500" x2="550" y1="1275" y2="1150" />
+    <foothold id="72" x1="1100" x2="1150" y1="1100" y2="975" />
+    <foothold id="73" x1="250" x2="300" y1="1100" y2="975" />
+    <foothold id="74" x1="570" x2="610" y1="925" y2="800" />
+    <foothold id="75" x1="300" x2="350" y1="925" y2="800" />
+    <foothold id="76" x1="1100" x2="1150" y1="925" y2="800" />
+    <foothold id="77" x1="1100" x2="1150" y1="750" y2="625" />
+    <foothold id="78" x1="175" x2="225" y1="750" y2="625" />
+    <foothold id="79" x1="650" x2="700" y1="750" y2="625" />
+    <foothold id="81" x1="625" x2="675" y1="575" y2="450" />
+    <foothold id="82" x1="1000" x2="1050" y1="575" y2="450" />
+    <foothold id="83" x1="1150" x2="1200" y1="400" y2="275" />
+  </footholds>
+  <entities>
+    <box x="350" y="1159" scaleInit="0.3" scaleMin="0.1" scaleMax="0.5" />
+    <box x="575" y="1159" scaleInit="0.3" scaleMin="0.1" scaleMax="0.5" />
+    <button x="700" y="450" color="#008b8b">
+      <buttontrigger switchableId="2" />
+    </button>
+    <button x="1400" y="450" color="#8fbc8b">
+      <buttontrigger switchableId="1" />
+    </button>
+    <button x="1050" y="625" color="#ffd700">
+      <buttontrigger switchableId="3" />
+    </button>
+  </entities>
+</level>
