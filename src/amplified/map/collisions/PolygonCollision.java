@@ -26,7 +26,7 @@ public class PolygonCollision {
 	public static CollisionResult collision(Polygon a, Polygon b, Vector2f vr, float tDelta) {
 		Vector2f displacement = new Vector2f(vr.getX() * tDelta, vr.getY() * tDelta);
 		Vector2f axis;
-		Vector2f translationAxis = null;
+		Vector2f translationAxis = null, sweptTranslationAxis = null;
 		Vector2f collisionEdge = null, sweptCollisionEdge = null;
 
 		boolean noOriginAreaCollisions = false;
@@ -76,14 +76,14 @@ public class PolygonCollision {
 			float origin = (maxB + minB) * 0.5f; // Origin of ray
 			float extent = (maxB - minB) * 0.5f; // Extent of slab B
 			float direction = Vector2f.dot(vr, axis); // Direction of ray (projected onto current axis of separation)
-	
+
 			// Expand the slab for A by the extent of the slab for B This transforms a slab/slab collision test into a ray/slab collision test
 			minA -= extent;
 			maxA += extent;
 
 			// Do a 1 dimensional collision check on projected axis
 			final float TOLERANCE = 0.0001f;
-	
+
 			// If ray is parallel to the slab
 			if (Math.abs(direction) < TOLERANCE) {
 				// Ray is parallel to slab, but NOT inside the slab
@@ -100,14 +100,15 @@ public class PolygonCollision {
 					tEnter = tExit;
 					tExit = temp;
 				}
-	
+
 				// Compute the intersection of slab intersection intervals
 				if (tEnter > tEnterMax) {
 					tEnterMax = tEnter;
 					sweptCollisionEdge = edge;
+					sweptTranslationAxis = axis;
 				}
 				tExitMin = Math.min(tExitMin, tExit);
-	
+
 				// Exit with no collision as soon as slab intersection becomes empty
 				if (tEnterMax > tExitMin)
 					return new CollisionResult();
@@ -150,14 +151,14 @@ public class PolygonCollision {
 			float origin = (maxB + minB) * 0.5f; // Origin of ray
 			float extent = (maxB - minB) * 0.5f; // Extent of slab B
 			float direction = Vector2f.dot(vr, axis); // Direction of ray (projected onto current axis of separation)
-	
+
 			// Expand the slab for A by the extent of the slab for B This transforms a slab/slab collision test into a ray/slab collision test
 			minA -= extent;
 			maxA += extent;
 
 			// Do a 1 dimensional collision check on projected axis
 			final float TOLERANCE = 0.0001f;
-	
+
 			// If ray is parallel to the slab
 			if (Math.abs(direction) < TOLERANCE) {
 				// Ray is parallel to slab, but NOT inside the slab
@@ -167,21 +168,22 @@ public class PolygonCollision {
 				// Compute intersection t value of ray with near and far plane of slab
 				float tEnter = (minA - origin) / direction;
 				float tExit = (maxA - origin) / direction;
-	
+
 				// Make "tEnter" be intersection with near plane, "tExit" with far plane
 				if (tEnter > tExit) {
 					float temp = tEnter;
 					tEnter = tExit;
 					tExit = temp;
 				}
-	
+
 				// Compute the intersection of slab intersection intervals
 				if (tEnter > tEnterMax) {
 					tEnterMax = tEnter;
 					sweptCollisionEdge = edge;
+					sweptTranslationAxis = axis;
 				}
 				tExitMin = Math.min(tExitMin, tExit);
-	
+
 				// Exit with no collision as soon as slab intersection becomes empty
 				if (tEnterMax > tExitMin)
 					return new CollisionResult();
@@ -197,6 +199,19 @@ public class PolygonCollision {
 		} else if (tEnterMax <= tDelta) {
 			translationAxis = new Vector2f(vr);
 			translationAxis.scale(tEnterMax);
+
+			//allow the object to move anywhere as long as it is not into the
+			//object it is colliding with (i.e. subtract displacement that is
+			//perpendicular to the colliding surface from overall displacement
+			//and then add to it the vr vector scaled to tEnterMax in order to
+			//get actual translationAxis)
+			Vector2f other = new Vector2f(sweptCollisionEdge);
+			normalize(other);
+			other.scale((float) ((displacement.length() - translationAxis.length()) * Math.sin(Vector2f.angle(sweptTranslationAxis, vr.negate(null)))));
+			if (displacement.getX() < 0)
+				other.negate();
+			Vector2f.add(translationAxis, other, translationAxis);
+
 			collisionEdge = sweptCollisionEdge;
 		} else {
 			return new CollisionResult();

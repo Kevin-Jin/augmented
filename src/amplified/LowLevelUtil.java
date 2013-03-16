@@ -116,6 +116,34 @@ public class LowLevelUtil {
 		GL11.glPushMatrix();
 		{
 			GL11.glLoadMatrix(modelViewMatrix);
+
+			//OpenGL ES 1.1 compatible code equivalent...
+			/*FloatBuffer box = BufferUtils.createFloatBuffer(8);
+			FloatBuffer tex = BufferUtils.createFloatBuffer(8);
+			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+			box.clear();
+			box.put(new float[] {
+				0, 0,
+				texture.getImageWidth(), 0,
+				texture.getImageWidth(), texture.getImageHeight(),
+				0, texture.getImageHeight()
+			});
+			box.flip();
+			GL11.glVertexPointer(2, 0, box);
+			tex.clear();
+			tex.put(new float[] {
+				0, 0,
+				texture.getWidth(), 0,
+				texture.getWidth(), texture.getHeight(),
+				0, texture.getHeight()
+			});
+			tex.flip();
+			GL11.glTexCoordPointer(2, 0, tex);
+			GL11.glDrawArrays(GL11.GL_QUADS, 0, 4);
+			GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+			GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);*/
+
 			GL11.glBegin(GL11.GL_QUADS);
 			{
 				GL11.glTexCoord2f(0, 0);
