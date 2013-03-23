@@ -65,7 +65,6 @@ public abstract class SelectableEntity extends SimpleEntity {
 
 	public void drag(int x, int y, double tDelta) {
 		startPos.set(pos);
-		pos.add(x, y);
 		vel.setScalarComponents(x / tDelta, y / tDelta);
 	}
 

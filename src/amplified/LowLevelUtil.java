@@ -20,10 +20,10 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import amplified.map.AbstractCollidable;
 import amplified.map.Drawable;
 import amplified.map.DrawableOverlayText;
 import amplified.map.collisions.Polygon;
@@ -164,9 +164,11 @@ public class LowLevelUtil {
 			}
 		}
 		GL11.glPopMatrix();
+
+		TextureImpl.unbind();
 	}
 
-	public static void drawTransformedWireframe(FloatBuffer buf, Matrix4f viewMatrix, AbstractCollidable drawable) {
+	public static void drawTransformedWireframe(FloatBuffer buf, Matrix4f viewMatrix, Color color, Polygon[] polygons) {
 		buf.clear();
 		viewMatrix.store(buf);
 		buf.flip();
@@ -174,8 +176,8 @@ public class LowLevelUtil {
 		{
 			GL11.glLoadMatrix(buf);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			Color.green.bind();
-			for (Polygon p : drawable.getBoundingPolygon().getPolygons()) {
+			color.bind();
+			for (Polygon p : polygons) {
 				GL11.glBegin(GL11.GL_LINE_LOOP);
 				Vector2f[] vertices = p.getVertices();
 				for (int i = 0; i < vertices.length; i++)

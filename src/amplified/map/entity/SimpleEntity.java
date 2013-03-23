@@ -89,8 +89,8 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 			moves.clear();
 			//gravity
 			vel.setY(Math.max(vel.getY() + map.getGravitationalFieldStrength() * tDelta, map.getTerminalVelocity()));
-			pos.add(vel.getX() * tDelta, vel.getY() * tDelta);
 		}
+		pos.add(vel.getX() * tDelta, vel.getY() * tDelta);
 
 		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
 	}

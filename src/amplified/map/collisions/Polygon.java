@@ -29,6 +29,13 @@ public class Polygon {
 		calculateEdges();
 	}
 
+	public Polygon(Polygon p) {
+		this.vertices = p.vertices;
+		this.numOfVertices = p.vertices.length;
+		this.edges = p.edges;
+		this.center = p.center;
+	}
+
 	public int getVertexCount() {
 		return numOfVertices;
 	}

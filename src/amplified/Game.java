@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Matrix4f;
+import org.newdawn.slick.Color;
 
 import amplified.map.AbstractCollidable;
 import amplified.map.CollidableDrawable;
@@ -25,7 +27,9 @@ import amplified.map.Drawable;
 import amplified.map.FpsOverlay;
 import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.CollisionResult;
+import amplified.map.collisions.Polygon;
 import amplified.map.collisions.PolygonCollision;
+import amplified.map.entity.DrawableEntity;
 import amplified.map.entity.Entity;
 import amplified.map.state.Camera;
 import amplified.map.state.FrameRateState;
@@ -49,6 +53,7 @@ public class Game {
 	private final Camera camera;
 	private final FrameRateState frameRateState;
 	private final MapState map;
+	private List<Polygon> preCollisionPolygons;
 
 	private boolean screenshot;
 
@@ -159,8 +164,15 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
-		for (Entity ent : map.getEntities())
+		if (DEBUG)
+			preCollisionPolygons = new ArrayList<Polygon>();
+		for (Entity ent : map.getEntities()) {
 			ent.preCollisionsUpdate(tDelta, input, camera, map);
+			if (DEBUG)
+				for (DrawableEntity d : ent.getDrawables())
+					for (Polygon p : d.getBoundingPolygon().getPolygons())
+						preCollisionPolygons.add(new Polygon(p));
+		}
 		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions((float) tDelta);
 		for (Entity ent : map.getEntities())
 			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
@@ -176,9 +188,11 @@ public class Game {
 				LowLevelUtil.drawSprite(matrixBuf, viewMatrix, drawable);
 
 				if (DEBUG && drawable instanceof AbstractCollidable)
-					LowLevelUtil.drawTransformedWireframe(matrixBuf, viewMatrix, (AbstractCollidable) drawable);
+					LowLevelUtil.drawTransformedWireframe(matrixBuf, viewMatrix, Color.green, ((AbstractCollidable) drawable).getBoundingPolygon().getPolygons());
 			}
 		}
+		if (DEBUG)
+			LowLevelUtil.drawTransformedWireframe(matrixBuf, camera.getViewMatrix(map.getLayers().get(MapState.ZAxisLayer.MIDGROUND).getParallaxFactor()), Color.red, preCollisionPolygons.toArray(new Polygon[preCollisionPolygons.size()]));
 	}
 
 	public void draw() {

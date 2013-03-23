@@ -205,12 +205,11 @@ public class PolygonCollision {
 			//perpendicular to the colliding surface from overall displacement
 			//and then add to it the vr vector scaled to tEnterMax in order to
 			//get actual translationAxis)
-			Vector2f other = new Vector2f(sweptCollisionEdge);
-			normalize(other);
-			other.scale((float) ((displacement.length() - translationAxis.length()) * Math.sin(Vector2f.angle(sweptTranslationAxis, vr.negate(null)))));
-			if (displacement.getX() < 0)
-				other.negate();
-			Vector2f.add(translationAxis, other, translationAxis);
+			Vector2f newDisp = new Vector2f(displacement);
+			//TODO: this is a temporary fix for getting stuck on platforms ONLY.
+			//need a generalized solution using vector maths
+			newDisp.setY(0);
+			Vector2f.add(translationAxis, newDisp, translationAxis);
 
 			collisionEdge = sweptCollisionEdge;
 		} else {
