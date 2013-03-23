@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -14,6 +16,7 @@ import amplified.map.CollidableDrawable;
 import amplified.map.Drawable;
 import amplified.map.DrawableTexture;
 import amplified.map.RetractablePlatform;
+import amplified.map.entity.AutoTransform;
 import amplified.map.entity.Entity;
 import amplified.map.entity.player.Player;
 import amplified.map.entity.props.Box;
@@ -65,6 +68,7 @@ public class MapState {
 	private final SortedMap<Byte, Entity> entities;
 	private final SortedMap<Byte, ZAxisLayer> layers;
 	private final List<CollidableDrawable> collidables;
+	private final Map<Entity, List<AutoTransform>> autoTransforms;
 	private byte nextEntityId;
 
 	public MapState(Drawable... overlays) {
@@ -73,6 +77,7 @@ public class MapState {
 		entities = new TreeMap<Byte, Entity>();
 		layers = new TreeMap<Byte, ZAxisLayer>();
 		collidables = new ArrayList<CollidableDrawable>();
+		autoTransforms = new HashMap<Entity, List<AutoTransform>>();
 
 		layers.put(ZAxisLayer.FAR_BACKGROUND, new ZAxisLayer(0.25f));
 		layers.put(ZAxisLayer.MAIN_BACKGROUND, new ZAxisLayer(0.5f));
@@ -100,27 +105,41 @@ public class MapState {
 
 		entities.clear();
 		nextEntityId = 0;
-		if (Double.isInfinite(layout.getExpiration()))
-			entities.put(Byte.valueOf(nextEntityId++), player);
+		entities.put(Byte.valueOf(nextEntityId++), player);
+		autoTransforms.put(player, layout.getAvatarAutoTransforms());
+		for (AutoTransform at : layout.getAvatarAutoTransforms())
+			at.reset();
 		for (BoxSpawnInfo box : layout.getBoxes()) {
 			Box b = new Box(box.getMinimumScale(), box.getMaximumScale());
 			b.setPosition(box.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), b);
+			autoTransforms.put(b, box.getAutoTransforms());
+			for (AutoTransform at : box.getAutoTransforms())
+				at.reset();
 		}
 		for (RectangleSpawnInfo rect : layout.getRectangles()) {
 			RectangleBox r = new RectangleBox(rect.getMinimumScale(), rect.getMaximumScale());
 			r.setPosition(rect.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), r);
+			autoTransforms.put(r, rect.getAutoTransforms());
+			for (AutoTransform at : rect.getAutoTransforms())
+				at.reset();
 		}
 		for (NBoxSpawnInfo nbox : layout.getNBoxes()) {
 			NBox n = new NBox();
 			n.setPosition(nbox.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), n);
+			autoTransforms.put(n, nbox.getAutoTransforms());
+			for (AutoTransform at : nbox.getAutoTransforms())
+				at.reset();
 		}
 		for (SwitchSpawnInfo sw : layout.getSwitches()) {
 			Switch s = new Switch(sw.getColor(), sw.getSwitchables());
 			s.setPosition(sw.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), s);
+			autoTransforms.put(s, sw.getAutoTransforms());
+			for (AutoTransform at : sw.getAutoTransforms())
+				at.reset();
 		}
 		for (RetractablePlatform plat : layout.getDoors())
 			plat.reset();
@@ -171,5 +190,9 @@ public class MapState {
 
 	public double getTerminalVelocity() {
 		return layout.getTerminalVelocity();
+	}
+
+	public List<AutoTransform> getAutoTransforms(Entity ent) {
+		return autoTransforms.get(ent);
 	}
 }

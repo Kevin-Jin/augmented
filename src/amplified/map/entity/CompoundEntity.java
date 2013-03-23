@@ -62,6 +62,13 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	}
 
 	@Override
+	public void setRotation(float rot) {
+		getBody().setRotation(rot);
+		for (AuxiliaryEntity<E> child : getAuxiliaries())
+			child.setRotation(rot);
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
 

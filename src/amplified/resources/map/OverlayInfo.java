@@ -35,4 +35,8 @@ public class OverlayInfo {
 	public String getImageName() {
 		return imageName;
 	}
+
+	public List<AutoTransform> getAutoTransforms() {
+		return autoTransforms;
+	}
 }

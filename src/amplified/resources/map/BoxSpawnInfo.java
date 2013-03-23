@@ -34,4 +34,8 @@ public class BoxSpawnInfo {
 	public float getMaximumScale() {
 		return maxScale;
 	}
+
+	public List<AutoTransform> getAutoTransforms() {
+		return autoTransforms;
+	}
 }

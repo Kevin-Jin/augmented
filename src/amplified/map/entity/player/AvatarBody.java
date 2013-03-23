@@ -18,7 +18,6 @@ import amplified.map.CollidableDrawable;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.Polygon;
-//import amplified.map.collisions.PolygonHelper;
 import amplified.map.entity.BodyEntity;
 import amplified.map.entity.Direction;
 import amplified.map.entity.SimpleEntity;
@@ -101,7 +100,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		else
 			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-		//transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
 
 		setPosition(pos);
 	}
@@ -157,14 +155,15 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		return (float) rot;
 	}
 
-	public float lookAt(Position pos) {
-		ReadableVector2f rotateAbout = Matrix4f.transform(getWorldMatrix(), new Vector4f(getOrigin().getX(), getOrigin().getY(), 1, 1), null);
-		double y = pos.getY() - rotateAbout.getY();
-		double x = pos.getX() - rotateAbout.getX();
-		double realRot = Math.atan2(y, x);
+	@Override
+	public void setRotation(float rot) {
+		throw new UnsupportedOperationException("Cannot rotate an AvatarBody");
+	}
+
+	public float rotate(double realRot, boolean flip) {
 		if (flipHorizontally)
 			realRot -= Math.PI;
-		if (!flipHorizontally && x < 0 || flipHorizontally && x > 0) {
+		if (flip) {
 			flipHorizontally = !flipHorizontally;
 			realRot -= Math.PI;
 		}
@@ -174,6 +173,14 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			// uhh, kludgy check but it works!
 			rot = -Math.PI / 4;
 		return (float) realRot;
+	}
+
+	public float lookAt(Position pos) {
+		ReadableVector2f rotateAbout = Matrix4f.transform(getWorldMatrix(), new Vector4f(getOrigin().getX(), getOrigin().getY(), 1, 1), null);
+		double y = pos.getY() - rotateAbout.getY();
+		double x = pos.getX() - rotateAbout.getX();
+		double realRot = Math.atan2(y, x);
+		return rotate(realRot, !flipHorizontally && x < 0 || flipHorizontally && x > 0);
 	}
 
 	@Override

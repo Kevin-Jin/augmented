@@ -55,6 +55,11 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	}
 
 	@Override
+	public void setRotation(float rot) {
+		throw new UnsupportedOperationException("Cannot rotate an AvatarLegs");
+	}
+
+	@Override
 	public BoundingPolygon getBoundingPolygon() {
 		return new BoundingPolygon(new Polygon[0]);
 	}

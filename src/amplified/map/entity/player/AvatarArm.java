@@ -51,7 +51,6 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 	@Override
 	public void setPosition(Position pos) {
 		super.setPosition(pos);
-		//TODO: weird translation polygon when arm flips
 		if (flipHorizontally)
 			this.pos.add(-getWidth() * Math.cos(rot), -getWidth() * Math.sin(rot) - getHeight());
 		else

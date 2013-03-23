@@ -129,7 +129,7 @@ public class LevelCache {
 			double start = Double.parseDouble(r.getAttributeValue(2));
 			double end = start + Double.parseDouble(r.getAttributeValue(1));
 			double clipTo = Double.parseDouble(r.getAttributeValue(0));
-			return new AutoTransform.Scale(start, end, clipTo);
+			return new AutoTransform.Rotate(start, end, clipTo);
 		} else {
 			return null;
 		}
@@ -319,6 +319,6 @@ public class LevelCache {
 			e.printStackTrace();
 			return null;
 		}
-		return new LevelLayout(width, height, footholds, startPos, endPos, yDeceleration, yVelocityMin, boxes, rects, nBoxes, switches, tips, doors, nextMap, outsideBg, insideBg, expiration);
+		return new LevelLayout(width, height, footholds, startPos, avatarAutoTransforms, endPos, exitAutoTransforms, yDeceleration, yVelocityMin, boxes, rects, nBoxes, switches, tips, doors, nextMap, outsideBg, insideBg, expiration);
 	}
 }

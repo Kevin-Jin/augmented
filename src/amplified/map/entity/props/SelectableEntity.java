@@ -89,6 +89,11 @@ public abstract class SelectableEntity extends SimpleEntity {
 	}
 
 	@Override
+	public void setRotation(float rot) {
+		this.rot = rot;
+	}
+
+	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		if (rotateState == 1) {
 			if (continueRot) {

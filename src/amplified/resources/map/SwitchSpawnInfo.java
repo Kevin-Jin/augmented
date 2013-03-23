@@ -33,4 +33,8 @@ public class SwitchSpawnInfo {
 	public List<Switchable> getSwitchables() {
 		return triggerFor;
 	}
+
+	public List<AutoTransform> getAutoTransforms() {
+		return autoTransforms;
+	}
 }

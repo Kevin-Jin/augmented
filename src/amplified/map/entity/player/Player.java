@@ -59,6 +59,14 @@ public class Player extends CompoundEntity<PlayerPart> {
 		return beam;
 	}
 
+	@Override
+	public void setRotation(float rot) {
+		float realRot = body.rotate(rot, false);
+		arm.setRotation(realRot);
+		beam.setRotation(realRot);
+		flame.setRotation(body.getRotation());
+	}
+
 	public void lookAt(Position pos) {
 		float realRot = body.lookAt(pos);
 		arm.setRotation(realRot);

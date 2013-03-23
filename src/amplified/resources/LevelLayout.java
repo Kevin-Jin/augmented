@@ -6,6 +6,7 @@ import java.util.Map;
 
 import amplified.map.Platform;
 import amplified.map.RetractablePlatform;
+import amplified.map.entity.AutoTransform;
 import amplified.map.physicquantity.Position;
 import amplified.resources.map.BoxSpawnInfo;
 import amplified.resources.map.NBoxSpawnInfo;
@@ -20,6 +21,7 @@ public class LevelLayout {
 	private final int width;
 	private final int height;
 	private final Position startPos, endPos;
+	private final List<AutoTransform> avatarAutoTransforms, exitAutoTransforms;
 	private final List<BoxSpawnInfo> boxes;
 	private final List<RectangleSpawnInfo> rects;
 	private final List<NBoxSpawnInfo> nBoxes;
@@ -30,12 +32,14 @@ public class LevelLayout {
 	private final String outsideBg, insideBg;
 	private final double expiration;
 
-	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, Position endPos, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration) {
+	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, List<AutoTransform> avatarAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration) {
 		this.width = width;
 		this.height = height;
 		this.footholds = footholds;
 		this.startPos = startPos;
+		this.avatarAutoTransforms = avatarAutoTransforms;
 		this.endPos = endPos;
+		this.exitAutoTransforms = exitAutoTransforms;
 		this.yDeceleration = yDeceleration;
 		this.yVelocityMin = yVelocityMin;
 		this.boxes = boxes;
@@ -74,8 +78,16 @@ public class LevelLayout {
 		return startPos;
 	}
 
+	public List<AutoTransform> getAvatarAutoTransforms() {
+		return avatarAutoTransforms;
+	}
+
 	public Position getEndPosition() {
 		return endPos;
+	}
+
+	public List<AutoTransform> getExitAutoTransforms() {
+		return exitAutoTransforms;
 	}
 
 	public List<BoxSpawnInfo> getBoxes() {

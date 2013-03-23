@@ -18,4 +18,8 @@ public class NBoxSpawnInfo {
 	public Position getPosition() {
 		return pos;
 	}
+
+	public List<AutoTransform> getAutoTransforms() {
+		return autoTransforms;
+	}
 }

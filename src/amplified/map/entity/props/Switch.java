@@ -14,6 +14,11 @@ public class Switch extends SimpleEntity {
 	}
 
 	@Override
+	public void setRotation(float rot) {
+		throw new UnsupportedOperationException("Cannot rotate a Switch");
+	}
+
+	@Override
 	public int getMovabilityIndex() {
 		return 0;
 	}

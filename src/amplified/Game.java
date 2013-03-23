@@ -29,6 +29,7 @@ import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.CollisionResult;
 import amplified.map.collisions.Polygon;
 import amplified.map.collisions.PolygonCollision;
+import amplified.map.entity.AutoTransform;
 import amplified.map.entity.DrawableEntity;
 import amplified.map.entity.Entity;
 import amplified.map.state.Camera;
@@ -40,6 +41,17 @@ import amplified.resources.LevelCache;
 import amplified.resources.SoundCache;
 import amplified.resources.TextureCache;
 
+//TODO: if level is cutscene:
+//MapState.getCameraBounds() should return "new Rectangle(0, 0, windowWidth, windowHeight)"
+//Do not allow beam to be shot or avatar moved by keyboard
+//Do not display cursor (except in pause menu)
+//Do not have Player look at cursor
+//Disable collisions?
+//
+//Actually implement map expiration timer
+//Implement main menu, pause menu
+//Implement AutoTransform.Scale
+//Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 public class Game {
 	public static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
@@ -112,7 +124,7 @@ public class Game {
 		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
 
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
-		map.setLayout(LevelCache.loadXml("resources/debug", WIDTH, HEIGHT));
+		map.setLayout(LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 		camera.setLimits(map.getCameraBounds());
 	}
 
@@ -168,6 +180,8 @@ public class Game {
 			preCollisionPolygons = new ArrayList<Polygon>();
 		for (Entity ent : map.getEntities()) {
 			ent.preCollisionsUpdate(tDelta, input, camera, map);
+			for (AutoTransform at : map.getAutoTransforms(ent))
+				at.transform(ent, tDelta);
 			if (DEBUG)
 				for (DrawableEntity d : ent.getDrawables())
 					for (Polygon p : d.getBoundingPolygon().getPolygons())

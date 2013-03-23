@@ -24,6 +24,8 @@ public interface Entity {
 
 	float getRotation();
 
+	void setRotation(float rot);
+
 	void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map);
 
 	void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera);

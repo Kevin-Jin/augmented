@@ -14,7 +14,6 @@ import amplified.map.AbstractCollidable;
 import amplified.map.CollidableDrawable;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
-//import amplified.map.collisions.PolygonHelper;
 import amplified.map.physicquantity.Acceleration;
 import amplified.map.physicquantity.Position;
 import amplified.map.physicquantity.Velocity;
@@ -49,7 +48,6 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		if (time == UpdateTime.POST_COLLISIONS && !Game.DEBUG)
 			return;
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
-		//transformedBoundPoly = PolygonHelper.sweepCollisionBoundingPolygon(transformedBoundPoly, new Position(startPos.getX() - pos.getX(), startPos.getY() - pos.getY()).asVector());
 	}
 
 	@Override
