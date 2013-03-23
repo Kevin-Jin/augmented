@@ -16,6 +16,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import amplified.map.Platform;
 import amplified.map.RetractablePlatform;
 import amplified.map.Switchable;
+import amplified.map.entity.AutoTransform;
 import amplified.map.physicquantity.Position;
 import amplified.resources.map.BoxSpawnInfo;
 import amplified.resources.map.NBoxSpawnInfo;
@@ -105,57 +106,65 @@ public class LevelCache {
 		return XMLStreamReader.END_ELEMENT;
 	}
 
-	private static int parseButton(Map<Byte, Switchable> allSwitchables, List<Switchable> associatedSwitchables, XMLStreamReader r) throws XMLStreamException {
+	private static AutoTransform parseAutoTransformEntry(String key, XMLStreamReader r) {
+		if (key.equals("scale")) {
+			if (!r.getAttributeLocalName(0).equals("factor") || !r.getAttributeLocalName(1).equals("duration") || !r.getAttributeLocalName(2).equals("after"))
+				throw new RuntimeException("Invalid level format");
+			double start = Double.parseDouble(r.getAttributeValue(2));
+			double end = start + Double.parseDouble(r.getAttributeValue(1));
+			double clipTo = Double.parseDouble(r.getAttributeValue(0));
+			return new AutoTransform.Scale(start, end, clipTo);
+		} else if (key.equals("translate")) {
+			if (!r.getAttributeLocalName(0).equals("dx") || !r.getAttributeLocalName(1).equals("dy")
+					|| !r.getAttributeLocalName(2).equals("duration") || !r.getAttributeLocalName(3).equals("after"))
+				throw new RuntimeException("Invalid level format");
+			double start = Double.parseDouble(r.getAttributeValue(3));
+			double end = start + Double.parseDouble(r.getAttributeValue(2));
+			double clipToDx = Double.parseDouble(r.getAttributeValue(0));
+			double clipToDy = Double.parseDouble(r.getAttributeValue(1));
+			return new AutoTransform.Translate(start, end, clipToDx, clipToDy);
+		} else if (key.equals("rotate")) {
+			if (!r.getAttributeLocalName(0).equals("angle") || !r.getAttributeLocalName(1).equals("duration") || !r.getAttributeLocalName(2).equals("after"))
+				throw new RuntimeException("Invalid level format");
+			double start = Double.parseDouble(r.getAttributeValue(2));
+			double end = start + Double.parseDouble(r.getAttributeValue(1));
+			double clipTo = Double.parseDouble(r.getAttributeValue(0));
+			return new AutoTransform.Scale(start, end, clipTo);
+		} else {
+			return null;
+		}
+	}
+
+	private static int parseButton(Map<Byte, Switchable> allSwitchables, List<Switchable> associatedSwitchables, List<AutoTransform> sequence, XMLStreamReader r) throws XMLStreamException {
 		for (int event = r.next(); event != XMLStreamReader.END_ELEMENT; event = r.next()) {
 			if (event == XMLStreamReader.START_ELEMENT) {
-				if (r.getLocalName().equals("buttontrigger")) {
+				String key = r.getLocalName();
+				if (key.equals("buttontrigger")) {
 					if (!r.getAttributeLocalName(0).equals("switchableId"))
 						throw new RuntimeException("Invalid level format");
 					associatedSwitchables.add(allSwitchables.get(Byte.valueOf(Byte.parseByte(r.getAttributeValue(0)))));
 					while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
 				} else {
-					throw new RuntimeException("Invalid level format");
+					AutoTransform autoTransform = parseAutoTransformEntry(key, r);
+					if (autoTransform != null) {
+						sequence.add(autoTransform);
+						while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
+					} else {
+						throw new RuntimeException("Invalid level format");
+					}
 				}
 			}
 		}
 		return XMLStreamReader.END_ELEMENT;
 	}
 
-	private static int parseEntities(Map<Byte, Switchable> switchables, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, XMLStreamReader r) throws XMLStreamException {
+	private static int parseAutoTransforms(List<AutoTransform> sequence, XMLStreamReader r) throws XMLStreamException {
 		for (int event = r.next(); event != XMLStreamReader.END_ELEMENT; event = r.next()) {
 			if (event == XMLStreamReader.START_ELEMENT) {
 				String key = r.getLocalName();
-				if (key.equals("box")) {
-					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
-							|| !r.getAttributeLocalName(2).equals("scaleInit") || !r.getAttributeLocalName(3).equals("scaleMin") || !r.getAttributeLocalName(4).equals("scaleMax"))
-						throw new RuntimeException("Invalid level format");
-					boxes.add(new BoxSpawnInfo(new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1))), Float.parseFloat(r.getAttributeValue(2)), Float.parseFloat(r.getAttributeValue(3)), Float.parseFloat(r.getAttributeValue(4))));
-					while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
-				} else if (key.equals("rectangle")) {
-					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
-							|| !r.getAttributeLocalName(2).equals("scaleInit") || !r.getAttributeLocalName(3).equals("scaleMin") || !r.getAttributeLocalName(4).equals("scaleMax"))
-						throw new RuntimeException("Invalid level format");
-					rects.add(new RectangleSpawnInfo(new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1))), Float.parseFloat(r.getAttributeValue(2)), Float.parseFloat(r.getAttributeValue(3)), Float.parseFloat(r.getAttributeValue(4))));
-					while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
-				} else if (key.equals("nbox")) {
-					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
-						throw new RuntimeException("Invalid level format");
-					nBoxes.add(new NBoxSpawnInfo(new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)))));
-					while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
-				} else if (key.equals("button")) {
-					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
-							|| !r.getAttributeLocalName(2).equals("color"))
-						throw new RuntimeException("Invalid level format");
-					List<Switchable> associatedSwitchables = new ArrayList<Switchable>();
-					Color c = parseColor(r.getAttributeValue(2));
-					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
-					parseButton(switchables, associatedSwitchables, r);
-					switches.add(new SwitchSpawnInfo(c, pos, associatedSwitchables));
-				} else if (key.equals("overlay")) {
-					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
-							|| !r.getAttributeLocalName(2).equals("w") || !r.getAttributeLocalName(3).equals("h") || !r.getAttributeLocalName(4).equals("src"))
-						throw new RuntimeException("Invalid level format");
-					tips.add(new OverlayInfo(new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1))), Integer.parseInt(r.getAttributeValue(2)), Integer.parseInt(r.getAttributeValue(3)), r.getAttributeValue(4)));
+				AutoTransform autoTransform = parseAutoTransformEntry(key, r);
+				if (autoTransform != null) {
+					sequence.add(autoTransform);
 					while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
 				} else {
 					throw new RuntimeException("Invalid level format");
@@ -165,10 +174,82 @@ public class LevelCache {
 		return XMLStreamReader.END_ELEMENT;
 	}
 
-	public static LevelLayout loadXml(String name) throws IOException {
-		int width = 0, height = 0;
-		Position startPos = null, endPos = null;
-		double yDeceleration = 0, yVelocityMin = 0, expiration = 0;
+	private static int parseEntities(Map<Byte, Switchable> switchables, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, Position startPos, List<AutoTransform> avatarAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, XMLStreamReader r) throws XMLStreamException {
+		for (int event = r.next(); event != XMLStreamReader.END_ELEMENT; event = r.next()) {
+			if (event == XMLStreamReader.START_ELEMENT) {
+				String key = r.getLocalName();
+				if (key.equals("avatar")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
+						throw new RuntimeException("Invalid level format");
+					startPos.set(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					parseAutoTransforms(avatarAutoTransforms, r);
+				} else if (key.equals("box")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
+							|| !r.getAttributeLocalName(2).equals("scaleInit") || !r.getAttributeLocalName(3).equals("scaleMin") || !r.getAttributeLocalName(4).equals("scaleMax"))
+						throw new RuntimeException("Invalid level format");
+					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					float scaleInit = Float.parseFloat(r.getAttributeValue(2));
+					float scaleMin = Float.parseFloat(r.getAttributeValue(3));
+					float scaleMax = Float.parseFloat(r.getAttributeValue(4));
+					List<AutoTransform> autoTransforms = new ArrayList<AutoTransform>();
+					parseAutoTransforms(autoTransforms, r);
+					boxes.add(new BoxSpawnInfo(pos, scaleInit, scaleMin, scaleMax, autoTransforms));
+				} else if (key.equals("rectangle")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
+							|| !r.getAttributeLocalName(2).equals("scaleInit") || !r.getAttributeLocalName(3).equals("scaleMin") || !r.getAttributeLocalName(4).equals("scaleMax"))
+						throw new RuntimeException("Invalid level format");
+					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					float scaleInit = Float.parseFloat(r.getAttributeValue(2));
+					float scaleMin = Float.parseFloat(r.getAttributeValue(3));
+					float scaleMax = Float.parseFloat(r.getAttributeValue(4));
+					List<AutoTransform> autoTransforms = new ArrayList<AutoTransform>();
+					parseAutoTransforms(autoTransforms, r);
+					rects.add(new RectangleSpawnInfo(pos, scaleInit, scaleMin, scaleMax, autoTransforms));
+				} else if (key.equals("nbox")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
+						throw new RuntimeException("Invalid level format");
+					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					List<AutoTransform> autoTransforms = new ArrayList<AutoTransform>();
+					parseAutoTransforms(autoTransforms, r);
+					nBoxes.add(new NBoxSpawnInfo(pos, autoTransforms));
+				} else if (key.equals("button")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
+							|| !r.getAttributeLocalName(2).equals("color"))
+						throw new RuntimeException("Invalid level format");
+					List<Switchable> associatedSwitchables = new ArrayList<Switchable>();
+					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					Color c = parseColor(r.getAttributeValue(2));
+					List<AutoTransform> autoTransforms = new ArrayList<AutoTransform>();
+					parseButton(switchables, associatedSwitchables, autoTransforms, r);
+					switches.add(new SwitchSpawnInfo(c, pos, associatedSwitchables, autoTransforms));
+				} else if (key.equals("overlay")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y")
+							|| !r.getAttributeLocalName(2).equals("w") || !r.getAttributeLocalName(3).equals("h") || !r.getAttributeLocalName(4).equals("src"))
+						throw new RuntimeException("Invalid level format");
+					Position pos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					int width = Integer.parseInt(r.getAttributeValue(2));
+					int height = Integer.parseInt(r.getAttributeValue(3));
+					String imageName = r.getAttributeValue(4);
+					List<AutoTransform> autoTransforms = new ArrayList<AutoTransform>();
+					parseAutoTransforms(autoTransforms, r);
+					tips.add(new OverlayInfo(pos, width, height, imageName, autoTransforms));
+				} else if (key.equals("exit")) {
+					if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
+						throw new RuntimeException("Invalid level format");
+					endPos.set(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
+					parseAutoTransforms(exitAutoTransforms, r);
+				} else {
+					throw new RuntimeException("Invalid level format");
+				}
+			}
+		}
+		return XMLStreamReader.END_ELEMENT;
+	}
+
+	public static LevelLayout loadXml(String name, int windowWidth, int windowHeight) throws IOException {
+		int width = windowWidth, height = windowHeight;
+		Position startPos = new Position(-99999, -99999), endPos = new Position(99999, 99999);
+		double yDeceleration = 0, yVelocityMin = 0, expiration = Double.POSITIVE_INFINITY;
 		String nextMap = null, outsideBg = null, insideBg = null;
 		Map<Byte, Platform> footholds = new HashMap<Byte, Platform>();
 		List<BoxSpawnInfo> boxes = new ArrayList<BoxSpawnInfo>();
@@ -177,6 +258,7 @@ public class LevelCache {
 		List<SwitchSpawnInfo> switches = new ArrayList<SwitchSpawnInfo>();
 		List<OverlayInfo> tips = new ArrayList<OverlayInfo>();
 		List<RetractablePlatform> doors = new ArrayList<RetractablePlatform>();
+		List<AutoTransform> avatarAutoTransforms = new ArrayList<AutoTransform>(), exitAutoTransforms = new ArrayList<AutoTransform>();
 
 		Map<Byte, Switchable> switchables = new HashMap<Byte, Switchable>();
 
@@ -199,16 +281,6 @@ public class LevelCache {
 						while ((event = r.next()) != XMLStreamReader.END_ELEMENT)
 							if (event == XMLStreamReader.CHARACTERS)
 								height = Integer.parseInt(r.getText());
-					} else if (key.equals("start")) {
-						if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
-							throw new RuntimeException("Invalid level format");
-						startPos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
-						while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
-					} else if (key.equals("end")) {
-						if (!r.getAttributeLocalName(0).equals("x") || !r.getAttributeLocalName(1).equals("y"))
-							throw new RuntimeException("Invalid level format");
-						endPos = new Position(Double.parseDouble(r.getAttributeValue(0)), Double.parseDouble(r.getAttributeValue(1)));
-						while ((event = r.next()) != XMLStreamReader.END_ELEMENT);
 					} else if (key.equals("gravity")) {
 						if (!r.getAttributeLocalName(0).equals("acceleration") || !r.getAttributeLocalName(1).equals("terminalVelocity"))
 							throw new RuntimeException("Invalid level format");
@@ -234,7 +306,7 @@ public class LevelCache {
 					} else if (key.equals("footholds")) {
 						event = parseFootholds(width, height, footholds, switchables, doors, r);
 					} else if (key.equals("entities")) {
-						event = parseEntities(switchables, boxes, rects, nBoxes, switches, tips, r);
+						event = parseEntities(switchables, boxes, rects, nBoxes, switches, tips, startPos, avatarAutoTransforms, endPos, exitAutoTransforms, r);
 					} else {
 						throw new RuntimeException("Invalid level format");
 					}

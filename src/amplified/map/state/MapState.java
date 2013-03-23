@@ -88,9 +88,11 @@ public class MapState {
 		this.layout = layout;
 
 		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();
-		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getOutsideBackground(), new Position(0, 0)));
+		if (layout.getOutsideBackground() != null)
+			layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getOutsideBackground(), new Position(0, 0)));
 		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().clear();
-		layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getInsideBackground(), new Position(0, 0)));
+		if (layout.getInsideBackground() != null)
+			layers.get(ZAxisLayer.MAIN_BACKGROUND).getDrawables().add(new DrawableTexture(layout.getInsideBackground(), new Position(0, 0)));
 
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().clear();
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(layout.getPlatforms());

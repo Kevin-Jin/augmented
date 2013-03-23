@@ -2,13 +2,10 @@
 <level id="level3">
   <width>2500</width>
   <height>2000</height>
-  <start x="300" y="0" />
-  <end x="2300" y="660" />
   <gravity acceleration="-400" terminalVelocity="-400" />
   <nextMap>mid2</nextMap>
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
-  <timer>Infinity</timer>
   <footholds>
     <foothold id="0" anchor="bottom" />
     <foothold id="1" anchor="left" />
@@ -67,6 +64,7 @@
     <foothold id="38" x1="2216" x2="2246" y1="825" y2="660" switchableId="13" color="#ffff00" />
   </footholds>
   <entities>
+    <avatar x="300" y="0" />
     <box x="151" y="0" scaleInit="0.3" scaleMin="0.3" scaleMax="0.5" />
     <box x="221" y="0" scaleInit="0.3" scaleMin="0.3" scaleMax="0.5" />
     <nbox x="1075" y="1200" />
@@ -95,5 +93,6 @@
       <buttontrigger switchableId="12" />
       <buttontrigger switchableId="13" />
     </button>
+    <exit x="2300" y="660" />
   </entities>
 </level>

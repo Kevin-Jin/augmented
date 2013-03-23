@@ -2,13 +2,10 @@
 <level id="level1">
   <width>1500</width>
   <height>2000</height>
-  <start x="0" y="0" />
-  <end x="1200" y="0" />
   <gravity acceleration="-400" terminalVelocity="-400" />
   <nextMap>level2</nextMap>
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
-  <timer>Infinity</timer>
   <footholds>
     <foothold id="0" anchor="bottom" />
     <foothold id="1" anchor="left" />
@@ -32,6 +29,7 @@
     <foothold id="13" x1="0" x2="1200" y1="1075" y2="1025" />
   </footholds>
   <entities>
+    <avatar x="0" y="0" />
     <box x="200" y="0" scaleInit="0.75" scaleMin="0.25" scaleMax="1" />
     <box x="1425" y="700" scaleInit="0.2" scaleMin="0.2" scaleMax="0.75" />
     <rectangle x="400" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1.5" />
@@ -48,5 +46,6 @@
       <buttontrigger switchableId="3" />
     </button>
     <overlay x="100" y="1200" w="400" h="200" src="rotateOverlay" />
+    <exit x="1200" y="0" />
   </entities>
 </level>

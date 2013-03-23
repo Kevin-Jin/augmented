@@ -2,13 +2,10 @@
 <level id="tutorial">
   <width>1920</width>
   <height>1080</height>
-  <start x="100" y="100" />
-  <end x="1720" y="800" />
   <gravity acceleration="-400" terminalVelocity="-400" />
   <nextMap>mid1</nextMap>
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
-  <timer>Infinity</timer>
   <footholds>
     <foothold id="0" anchor="bottom" />
     <foothold id="1" anchor="left" />
@@ -34,6 +31,7 @@
     <foothold id="14" x1="1650" x2="1700" y1="1060" y2="800" switchableId="1" color="#0000ff" />
   </footholds>
   <entities>
+    <avatar x="100" y="100" />
     <box x="401" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="0.5" />
     <box x="1100" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1" />
     <box x="1225" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1" />
@@ -47,5 +45,6 @@
     <overlay x="1400" y="400" w="400" h="200" src="growOverlay" />
     <overlay x="1400" y="1000" w="400" h="200" src="shrinkOverlay" />
     <overlay x="1900" y="1000" w="400" h="200" src="switchOverlay" />
+    <exit x="1720" y="800" />
   </entities>
 </level>

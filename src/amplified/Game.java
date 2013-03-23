@@ -99,20 +99,20 @@ public class Game {
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
 
-		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1"));
-		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2"));
-		LevelCache.setLevel("intro3", LevelCache.loadXml("resources/intro3"));
-		LevelCache.setLevel("tutorial", LevelCache.loadXml("resources/tutorial"));
-		LevelCache.setLevel("mid1", LevelCache.loadXml("resources/mid1"));
-		LevelCache.setLevel("level1", LevelCache.loadXml("resources/level1"));
-		LevelCache.setLevel("level2", LevelCache.loadXml("resources/level2"));
-		LevelCache.setLevel("level3", LevelCache.loadXml("resources/level3"));
-		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2"));
-		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4"));
-		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1"));
+		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1", WIDTH, HEIGHT));
+		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2", WIDTH, HEIGHT));
+		LevelCache.setLevel("intro3", LevelCache.loadXml("resources/intro3", WIDTH, HEIGHT));
+		LevelCache.setLevel("tutorial", LevelCache.loadXml("resources/tutorial", WIDTH, HEIGHT));
+		LevelCache.setLevel("mid1", LevelCache.loadXml("resources/mid1", WIDTH, HEIGHT));
+		LevelCache.setLevel("level1", LevelCache.loadXml("resources/level1", WIDTH, HEIGHT));
+		LevelCache.setLevel("level2", LevelCache.loadXml("resources/level2", WIDTH, HEIGHT));
+		LevelCache.setLevel("level3", LevelCache.loadXml("resources/level3", WIDTH, HEIGHT));
+		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2", WIDTH, HEIGHT));
+		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
+		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
 
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
-		map.setLayout(LevelCache.loadXml("resources/debug"));
+		map.setLayout(LevelCache.loadXml("resources/debug", WIDTH, HEIGHT));
 		camera.setLimits(map.getCameraBounds());
 	}
 
