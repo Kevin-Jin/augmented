@@ -157,6 +157,10 @@ public class MapState {
 
 		player.setPosition(layout.getStartPosition());
 	}
+	
+	public void resetLevel(){
+		setLayout(layout);
+	}
 
 	public Rectangle getCameraBounds() {
 		return new Rectangle(-LEFT_WALL_VISIBLE_PIXELS, -FLOOR_VISIBLE_PIXELS, layout.getWidth() + LEFT_WALL_VISIBLE_PIXELS + RIGHT_WALL_VISIBLE_PIXELS, layout.getHeight() + FLOOR_VISIBLE_PIXELS + CEILING_VISIBLE_PIXELS);

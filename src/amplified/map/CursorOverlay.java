@@ -15,7 +15,7 @@ public class CursorOverlay extends AbstractDrawable {
 
 	@Override
 	public Position getPosition() {
-		return new Position(state.markedPointer().getX() - getWidth() / 2, state.markedPointer().getY() - getHeight() / 2);
+		return new Position(state.cursorPosition().getX() - getWidth() / 2, state.cursorPosition().getY() - getHeight() / 2);
 	}
 
 	@Override

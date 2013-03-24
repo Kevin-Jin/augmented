@@ -17,9 +17,14 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.Rectangle;
 import org.lwjgl.util.vector.Matrix4f;
 import org.newdawn.slick.Color;
 
+import amplified.gui.GuiButton;
+import amplified.gui.GuiButton.ButtonHandler;
+import amplified.gui.GuiMainMenu;
+import amplified.gui.GuiScreen;
 import amplified.map.AbstractCollidable;
 import amplified.map.CollidableDrawable;
 import amplified.map.CursorOverlay;
@@ -48,6 +53,12 @@ import amplified.resources.TextureCache;
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
 public class Game {
+
+	public static enum GameState
+	{
+		TITLE_SCREEN, GAME, PAUSE
+	}
+
 	public static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
 	private static final boolean VSYNC = true;
@@ -61,8 +72,10 @@ public class Game {
 	private final FrameRateState frameRateState;
 	private final MapState map;
 	private List<Polygon> preCollisionPolygons;
+	private final GuiScreen titleScreen, pauseScreen;
 
-	private boolean screenshot;
+	private GameState state;
+	private boolean screenshot, close;
 
 	public Game() {
 		matrixBuf = LowLevelUtil.createMatrixBuffer();
@@ -71,7 +84,60 @@ public class Game {
 		camera = new Camera(WIDTH, HEIGHT);
 		frameRateState = new FrameRateState(new DecimalFormat("0.0"));
 
+		titleScreen = new GuiMainMenu(new Rectangle(0,0,WIDTH,HEIGHT));
+		pauseScreen = new GuiScreen(new Rectangle(0,0,WIDTH,HEIGHT));
+
 		map = new MapState(new FpsOverlay(frameRateState, HEIGHT), new CursorOverlay(input));
+		state = GameState.TITLE_SCREEN;
+
+		initGuis();
+	}
+	private void initGuis(){
+		titleScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2, 200, 50), new ButtonHandler()
+		{
+			public void clicked(){
+				newGame();
+			}
+		}));
+
+
+		pauseScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler()
+		{
+			public void clicked(){
+				newGame();
+			}
+		}));
+		pauseScreen.getButtons().add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler()
+		{
+			public void clicked(){
+				map.resetLevel();
+				camera.setLimits(map.getCameraBounds());
+				camera.lookAt(map.getPlayer().getPosition());
+				input.setCutscene(map.isCutscene());
+				state = GameState.GAME;
+			}
+		}));
+		pauseScreen.getButtons().add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler()
+		{
+			public void clicked(){
+				state = GameState.TITLE_SCREEN;
+			}
+		}));
+		pauseScreen.getButtons().add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler()
+		{
+			public void clicked(){
+				input.setCutscene(map.isCutscene());
+				state = GameState.GAME;
+			}
+		}));
+	}
+
+	private void newGame(){
+		map.setLayout(LevelCache.getLevel("debug"));
+		state = GameState.GAME;
+		camera.setLimits(map.getCameraBounds());
+		camera.lookAt(map.getPlayer().getPosition());
+		input.setCutscene(map.isCutscene());
 	}
 
 	public void graphicsInit() throws Exception {
@@ -95,6 +161,9 @@ public class Game {
 		TextureCache.setTexture("flame2", LowLevelUtil.loadPng("resources/anim_flame/flame2"));
 		TextureCache.setTexture("flame3", LowLevelUtil.loadPng("resources/anim_flame/flame3"));
 		TextureCache.setTexture("flame4", LowLevelUtil.loadPng("resources/anim_flame/flame4"));
+		TextureCache.setTexture("button", LowLevelUtil.loadPng("resources/buttons/buttonRegular"));
+		TextureCache.setTexture("buttonHover", LowLevelUtil.loadPng("resources/buttons/buttonHovering"));
+		TextureCache.setTexture("buttonPressed", LowLevelUtil.loadPng("resources/buttons/buttonPressed"));
 		TextureCache.setTexture("beam", LowLevelUtil.loadPng("resources/beam"));
 		TextureCache.setTexture("box", LowLevelUtil.loadPng("resources/crate"));
 		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
@@ -105,6 +174,7 @@ public class Game {
 		SoundCache.setSound("bgm", LowLevelUtil.loadOgg("resources/bgm"));
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
+		FontCache.setFont("button",LowLevelUtil.loadFont(new Font("Arial", Font.BOLD, 16)));
 
 		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2", WIDTH, HEIGHT));
@@ -117,15 +187,13 @@ public class Game {
 		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2", WIDTH, HEIGHT));
 		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
 		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
+		LevelCache.setLevel("debug", LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
-		map.setLayout(LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
-		camera.setLimits(map.getCameraBounds());
-		input.setCutscene(map.isCutscene());
 	}
 
 	public boolean nextFrame() {
-		return !LowLevelUtil.windowClosed() && !input.releasedKeys().contains(Keyboard.KEY_ESCAPE);
+		return !LowLevelUtil.windowClosed() && !close;
 	}
 
 	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
@@ -172,6 +240,37 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
+		if (input.pressedKeys().contains(Keyboard.KEY_ESCAPE)){
+			switch (state)
+			{
+			case GAME:
+				state = GameState.PAUSE;
+				input.setCutscene(false);
+				break;
+			case PAUSE:
+				state = GameState.GAME;
+				input.setCutscene(map.isCutscene());
+				break;
+			case TITLE_SCREEN:
+				close = true;
+				break;
+			}
+		}
+		switch(state){
+		case TITLE_SCREEN:
+			titleScreen.updateState(tDelta, input);
+			break;
+		case PAUSE:
+			pauseScreen.updateState(tDelta, input);
+			break;
+		case GAME:
+			updateGame(tDelta);
+			break;
+		}
+
+		LowLevelUtil.advanceAudioFrame();
+	}
+	private void updateGame(double tDelta){
 		if (DEBUG)
 			preCollisionPolygons = new ArrayList<Polygon>();
 		for (Entity ent : map.getEntities()) {
@@ -186,9 +285,8 @@ public class Game {
 		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions((float) tDelta);
 		for (Entity ent : map.getEntities())
 			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
-
-		LowLevelUtil.advanceAudioFrame();
 	}
+
 
 	private void drawGame() {
 		for (MapState.ZAxisLayer layer : map.getLayers().values()) {
@@ -201,13 +299,33 @@ public class Game {
 					LowLevelUtil.drawTransformedWireframe(matrixBuf, viewMatrix, Color.green, ((AbstractCollidable) drawable).getBoundingPolygon().getPolygons());
 			}
 		}
-		if (DEBUG)
+		if (DEBUG && preCollisionPolygons != null)
 			LowLevelUtil.drawTransformedWireframe(matrixBuf, camera.getViewMatrix(map.getLayers().get(MapState.ZAxisLayer.MIDGROUND).getParallaxFactor()), Color.red, preCollisionPolygons.toArray(new Polygon[preCollisionPolygons.size()]));
+	}
+
+	private void drawOverlays(){
+		MapState.ZAxisLayer layer = map.getLayers().get(MapState.ZAxisLayer.OVERLAY);
+		Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
+		for (Drawable drawable : layer.getDrawables()) {
+			LowLevelUtil.drawSprite(matrixBuf, viewMatrix, drawable);
+		}
 	}
 
 	public void draw() {
 		LowLevelUtil.clearCanvas();
-		drawGame();
+		switch(state){
+		case TITLE_SCREEN:
+			titleScreen.draw();
+			drawOverlays();
+			break;
+		default:
+			drawGame();
+			if (state == GameState.PAUSE){
+				pauseScreen.draw();
+				drawOverlays();
+			}
+			break;
+		}
 		LowLevelUtil.flipBackBuffer();
 		if (screenshot) {
 			screenshot = false;
