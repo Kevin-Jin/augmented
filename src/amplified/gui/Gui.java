@@ -17,6 +17,7 @@ public abstract class Gui{
 		GL11.glPushMatrix();
 		{
 			GL11.glLoadIdentity();
+			GL11.glColor3f(1,1,1);
 			GL11.glBegin(GL11.GL_QUADS);
 			{
 				GL11.glTexCoord2f(0, 0);
@@ -39,6 +40,7 @@ public abstract class Gui{
 		int sWidth = font.getWidth(text);
 		int sHeight = font.getHeight(text);
 		font.drawString(cX-sWidth/2, cY-sHeight/2,text,c);
+
 	}
 
 }

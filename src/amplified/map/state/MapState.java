@@ -90,6 +90,7 @@ public class MapState {
 	}
 
 	public void setLayout(LevelLayout layout) {
+		collidables.clear();
 		this.layout = layout;
 
 		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();

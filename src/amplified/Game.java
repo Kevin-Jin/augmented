@@ -133,7 +133,7 @@ public class Game {
 	}
 
 	private void newGame(){
-		map.setLayout(LevelCache.getLevel("debug"));
+		map.setLayout(LevelCache.getLevel("tutorial"));
 		state = GameState.GAME;
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
@@ -166,8 +166,18 @@ public class Game {
 		TextureCache.setTexture("buttonPressed", LowLevelUtil.loadPng("resources/buttons/buttonPressed"));
 		TextureCache.setTexture("beam", LowLevelUtil.loadPng("resources/beam"));
 		TextureCache.setTexture("box", LowLevelUtil.loadPng("resources/crate"));
+		TextureCache.setTexture("rect", LowLevelUtil.loadPng("resources/rect"));
+		
 		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
 		TextureCache.setTexture("mainBg", LowLevelUtil.loadPng("resources/mainBg"));
+		TextureCache.setTexture("switch", LowLevelUtil.loadPng("resources/switch"));
+
+		TextureCache.setTexture("jetpackOverlay",LowLevelUtil.loadPng("resources/overlays/overlayJetpack"));
+		TextureCache.setTexture("switchOverlay",LowLevelUtil.loadPng("resources/overlays/buttonOverlay"));
+		TextureCache.setTexture("growOverlay", LowLevelUtil.loadPng("resources/overlays/growBeamOverlay"));
+		TextureCache.setTexture("shrinkOverlay", LowLevelUtil.loadPng("resources/overlays/shrinkBeamOverlay"));
+		TextureCache.setTexture("beamOverlay", LowLevelUtil.loadPng("resources/overlays/tractorBeamOverlay"));
+		TextureCache.setTexture("rotateOverlay", LowLevelUtil.loadPng("resources/overlays/rotationOverlay"));
 
 		SoundCache.setSound("beam", LowLevelUtil.loadWav("resources/BeamSound"));
 		SoundCache.setSound("jetpack", LowLevelUtil.loadWav("resources/Jetpack"));
