@@ -47,8 +47,6 @@ import amplified.resources.SoundCache;
 import amplified.resources.TextureCache;
 
 //TODO:
-//Actually implement map expiration timer
-//Implement main menu, pause menu
 //Implement AutoTransform.Scale
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
@@ -133,7 +131,7 @@ public class Game {
 	}
 
 	private void newGame(){
-		map.setLayout(LevelCache.getLevel("tutorial"));
+		map.setLayout(LevelCache.getLevel("debug"));
 		state = GameState.GAME;
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
@@ -167,9 +165,11 @@ public class Game {
 		TextureCache.setTexture("beam", LowLevelUtil.loadPng("resources/beam"));
 		TextureCache.setTexture("box", LowLevelUtil.loadPng("resources/crate"));
 		TextureCache.setTexture("rect", LowLevelUtil.loadPng("resources/rect"));
-		
+
 		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
 		TextureCache.setTexture("mainBg", LowLevelUtil.loadPng("resources/mainBg"));
+		TextureCache.setTexture("door", LowLevelUtil.loadPng("resources/door"));
+		TextureCache.setTexture("openDoor", LowLevelUtil.loadPng("resources/opendoor"));
 		TextureCache.setTexture("switch", LowLevelUtil.loadPng("resources/switch"));
 
 		TextureCache.setTexture("jetpackOverlay",LowLevelUtil.loadPng("resources/overlays/overlayJetpack"));
@@ -266,6 +266,7 @@ public class Game {
 				break;
 			}
 		}
+		
 		switch(state){
 		case TITLE_SCREEN:
 			titleScreen.updateState(tDelta, input);
@@ -281,6 +282,20 @@ public class Game {
 		LowLevelUtil.advanceAudioFrame();
 	}
 	private void updateGame(double tDelta){
+		if (map.shouldChangeLevel(tDelta)){
+			String next = map.getNextLevel();
+			if (!next.equalsIgnoreCase("credits")){
+				map.setLayout(LevelCache.getLevel(next));
+				camera.setLimits(map.getCameraBounds());
+				camera.lookAt(map.getPlayer().getPosition());
+				input.setCutscene(map.isCutscene());
+			}
+			else
+				state = GameState.TITLE_SCREEN;
+			return;
+		}
+			
+		
 		if (DEBUG)
 			preCollisionPolygons = new ArrayList<Polygon>();
 		for (Entity ent : map.getEntities()) {

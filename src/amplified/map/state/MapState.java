@@ -20,6 +20,7 @@ import amplified.map.entity.AutoTransform;
 import amplified.map.entity.Entity;
 import amplified.map.entity.player.Player;
 import amplified.map.entity.props.Box;
+import amplified.map.entity.props.ExitDoor;
 import amplified.map.entity.props.NBox;
 import amplified.map.entity.props.RectangleBox;
 import amplified.map.entity.props.Switch;
@@ -34,11 +35,11 @@ import amplified.resources.map.SwitchSpawnInfo;
 public class MapState {
 	public static class ZAxisLayer {
 		public static final Byte
-			FAR_BACKGROUND = Byte.valueOf((byte) 0),
-			MAIN_BACKGROUND = Byte.valueOf((byte) 1),
-			MIDGROUND = Byte.valueOf((byte) 2),
-			FOREGROUND = Byte.valueOf((byte) 3),
-			OVERLAY = Byte.valueOf((byte) 4)
+		FAR_BACKGROUND = Byte.valueOf((byte) 0),
+		MAIN_BACKGROUND = Byte.valueOf((byte) 1),
+		MIDGROUND = Byte.valueOf((byte) 2),
+		FOREGROUND = Byte.valueOf((byte) 3),
+		OVERLAY = Byte.valueOf((byte) 4)
 		;
 
 		private float parallax;
@@ -71,6 +72,9 @@ public class MapState {
 	private final Map<Entity, List<AutoTransform>> autoTransforms;
 	private byte nextEntityId;
 
+	private ExitDoor door;
+	private double timeLeft;
+
 	public MapState(Drawable... overlays) {
 		player = new Player();
 
@@ -91,7 +95,11 @@ public class MapState {
 
 	public void setLayout(LevelLayout layout) {
 		collidables.clear();
+		autoTransforms.clear();
+		entities.clear();
 		this.layout = layout;
+		timeLeft = layout.getExpiration();
+		door = (layout.isCutscene()) ? null : new ExitDoor(layout.getEndPosition());
 
 		layers.get(ZAxisLayer.FAR_BACKGROUND).getDrawables().clear();
 		if (layout.getOutsideBackground() != null)
@@ -104,8 +112,11 @@ public class MapState {
 		layers.get(ZAxisLayer.MIDGROUND).getDrawables().addAll(layout.getPlatforms());
 		collidables.addAll(layout.getPlatforms());
 
-		entities.clear();
 		nextEntityId = 0;
+		if (door != null){
+			entities.put(Byte.valueOf(nextEntityId++), door);
+			autoTransforms.put(door, new ArrayList<AutoTransform>());
+		}
 		entities.put(Byte.valueOf(nextEntityId++), player);
 		autoTransforms.put(player, layout.getAvatarAutoTransforms());
 		autoTransforms.put(player.getBeam(), layout.getBeamAutoTransforms());
@@ -158,7 +169,7 @@ public class MapState {
 
 		player.setPosition(layout.getStartPosition());
 	}
-	
+
 	public void resetLevel(){
 		setLayout(layout);
 	}
@@ -169,6 +180,17 @@ public class MapState {
 
 	public boolean isCutscene() {
 		return layout.isCutscene();
+	}
+
+	public boolean shouldChangeLevel(double tDelta){
+		if (Double.isInfinite(timeLeft))
+			return door != null && door.shouldChangeMap();
+		timeLeft -= tDelta;
+		return (timeLeft <= 0);
+	}
+
+	public String getNextLevel(){
+		return layout.getNextMap();
 	}
 
 	public SortedMap<Byte, ZAxisLayer> getLayers() {
