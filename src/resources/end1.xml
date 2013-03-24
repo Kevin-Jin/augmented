@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<level id="end1">
+<cutscene id="end1">
   <innerImage>end1</innerImage>
   <timer>3</timer>
-</level>
+</cutscene>

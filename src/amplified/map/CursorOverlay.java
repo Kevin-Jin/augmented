@@ -19,6 +19,16 @@ public class CursorOverlay extends AbstractDrawable {
 	}
 
 	@Override
+	public float getWidth() {
+		return !state.isCutscene() ? super.getWidth() : 0;
+	}
+
+	@Override
+	public float getHeight() {
+		return !state.isCutscene() ? super.getHeight() : 0;
+	}
+
+	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("mouse");
 	}

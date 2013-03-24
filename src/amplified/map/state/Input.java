@@ -26,6 +26,8 @@ public class Input {
 
 	private final Point markedPointer;
 
+	private boolean cutscene;
+
 	public Input() {
 		pointerPos = new Point();
 		downButtons = new HashSet<Integer>();
@@ -57,6 +59,14 @@ public class Input {
 				downKeys.remove(Integer.valueOf(Keyboard.getEventKey()));
 			updatedKeys.add(Integer.valueOf(Keyboard.getEventKey()));
 		}
+	}
+
+	public void setCutscene(boolean is) {
+		this.cutscene = is;
+	}
+
+	public boolean isCutscene() {
+		return cutscene;
 	}
 
 	public Point cursorPosition() {

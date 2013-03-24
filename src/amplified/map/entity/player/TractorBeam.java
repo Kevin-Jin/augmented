@@ -179,40 +179,42 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
-		Point cursor = input.markedPointer();
-
-		if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
-			beginExtend();
-		else if (input.heldButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
-			extend(tDelta);
-		else if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
-			beginRetract();
-		else if (length > 0)
-			retract(tDelta);
-		if (selection != null) {
-			Position beamHit = getBeamHit();
-			Vector4f viewSpaceBeamHit = Matrix4f.transform(camera.getViewMatrix(1), beamHit.asVector4f(), null);
-			cursor.setLocation((int) viewSpaceBeamHit.getX(), (int) viewSpaceBeamHit.getY());
-
-			if (selection instanceof SelectableEntity) {
-				SelectableEntity prop = (SelectableEntity) selection;
-				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
-					prop.downScale(tDelta);
-				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
-					prop.upScale(tDelta);
-				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
-					prop.rotateCounterClockwise();
-				if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
-					prop.rotateClockwise();
-
-				prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY(), tDelta);
-				length = (float) Math.sqrt(Math.pow(pos.getX() - beamHit.getX(), 2) + Math.pow(pos.getY() - beamHit.getY(), 2));
-				lengthUpdated();
+		if (!input.isCutscene()) {
+			Point cursor = input.markedPointer();
+	
+			if (input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
+				beginExtend();
+			else if (input.heldButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
+				extend(tDelta);
+			else if (input.releasedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)))
+				beginRetract();
+			else if (length > 0)
+				retract(tDelta);
+			if (selection != null) {
+				Position beamHit = getBeamHit();
+				Vector4f viewSpaceBeamHit = Matrix4f.transform(camera.getViewMatrix(1), beamHit.asVector4f(), null);
+				cursor.setLocation((int) viewSpaceBeamHit.getX(), (int) viewSpaceBeamHit.getY());
+	
+				if (selection instanceof SelectableEntity) {
+					SelectableEntity prop = (SelectableEntity) selection;
+					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
+						prop.downScale(tDelta);
+					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
+						prop.upScale(tDelta);
+					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
+						prop.rotateCounterClockwise();
+					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
+						prop.rotateClockwise();
+	
+					prop.drag(input.cursorTranslate().getX(), input.cursorTranslate().getY(), tDelta);
+					length = (float) Math.sqrt(Math.pow(pos.getX() - beamHit.getX(), 2) + Math.pow(pos.getY() - beamHit.getY(), 2));
+					lengthUpdated();
+				}
+			} else {
+				cursor.setLocation(input.cursorPosition());
 			}
-		} else {
-			cursor.setLocation(input.cursorPosition());
+			lengthUpdated();
 		}
-		lengthUpdated();
 
 		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
 		super.preCollisionsUpdate(tDelta, input, camera, map);

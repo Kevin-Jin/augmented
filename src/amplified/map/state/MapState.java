@@ -107,7 +107,10 @@ public class MapState {
 		nextEntityId = 0;
 		entities.put(Byte.valueOf(nextEntityId++), player);
 		autoTransforms.put(player, layout.getAvatarAutoTransforms());
+		autoTransforms.put(player.getBeam(), layout.getBeamAutoTransforms());
 		for (AutoTransform at : layout.getAvatarAutoTransforms())
+			at.reset();
+		for (AutoTransform at : layout.getBeamAutoTransforms())
 			at.reset();
 		for (BoxSpawnInfo box : layout.getBoxes()) {
 			Box b = new Box(box.getMinimumScale(), box.getMaximumScale());
@@ -157,6 +160,10 @@ public class MapState {
 
 	public Rectangle getCameraBounds() {
 		return new Rectangle(-LEFT_WALL_VISIBLE_PIXELS, -FLOOR_VISIBLE_PIXELS, layout.getWidth() + LEFT_WALL_VISIBLE_PIXELS + RIGHT_WALL_VISIBLE_PIXELS, layout.getHeight() + FLOOR_VISIBLE_PIXELS + CEILING_VISIBLE_PIXELS);
+	}
+
+	public boolean isCutscene() {
+		return layout.isCutscene();
 	}
 
 	public SortedMap<Byte, ZAxisLayer> getLayers() {

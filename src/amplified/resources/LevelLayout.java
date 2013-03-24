@@ -21,7 +21,7 @@ public class LevelLayout {
 	private final int width;
 	private final int height;
 	private final Position startPos, endPos;
-	private final List<AutoTransform> avatarAutoTransforms, exitAutoTransforms;
+	private final List<AutoTransform> avatarAutoTransforms, beamAutoTransforms, exitAutoTransforms;
 	private final List<BoxSpawnInfo> boxes;
 	private final List<RectangleSpawnInfo> rects;
 	private final List<NBoxSpawnInfo> nBoxes;
@@ -31,13 +31,15 @@ public class LevelLayout {
 	private final String nextMap;
 	private final String outsideBg, insideBg;
 	private final double expiration;
+	private final boolean cutscene;
 
-	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, List<AutoTransform> avatarAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration) {
+	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, List<AutoTransform> avatarAutoTransforms, List<AutoTransform> beamAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration, boolean cutscene) {
 		this.width = width;
 		this.height = height;
 		this.footholds = footholds;
 		this.startPos = startPos;
 		this.avatarAutoTransforms = avatarAutoTransforms;
+		this.beamAutoTransforms = beamAutoTransforms;
 		this.endPos = endPos;
 		this.exitAutoTransforms = exitAutoTransforms;
 		this.yDeceleration = yDeceleration;
@@ -52,6 +54,7 @@ public class LevelLayout {
 		this.outsideBg = outsideBg;
 		this.insideBg = insideBg;
 		this.expiration = expiration;
+		this.cutscene = cutscene;
 	}
 
 	public double getGravitationalFieldStrength() {
@@ -80,6 +83,10 @@ public class LevelLayout {
 
 	public List<AutoTransform> getAvatarAutoTransforms() {
 		return avatarAutoTransforms;
+	}
+
+	public List<AutoTransform> getBeamAutoTransforms() {
+		return beamAutoTransforms;
 	}
 
 	public Position getEndPosition() {
@@ -128,5 +135,9 @@ public class LevelLayout {
 
 	public double getExpiration() {
 		return expiration;
+	}
+
+	public boolean isCutscene() {
+		return cutscene;
 	}
 }

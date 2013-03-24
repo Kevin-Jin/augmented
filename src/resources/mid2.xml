@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<level id="mid2">
+<cutscene id="mid2">
   <nextMap>level4</nextMap>
   <innerImage>mid2</innerImage>
   <timer>3</timer>
-</level>
+</cutscene>

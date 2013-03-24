@@ -94,11 +94,13 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		if (time == UpdateTime.COLLISION)
 			return;
 
-		camera.lookAt(parent.getPosition());
-		if (parent.getBeam().isBeamHit())
-			parent.lookAt(parent.getBeam().getBeamHit());
-		else
-			parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+		if (!input.isCutscene()) {
+			camera.lookAt(parent.getPosition());
+			if (parent.getBeam().isBeamHit())
+				parent.lookAt(parent.getBeam().getBeamHit());
+			else
+				parent.lookAt(camera.mouseToWorld(input.cursorPosition().getX(), input.cursorPosition().getY()));
+		}
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 
 		setPosition(pos);
@@ -206,14 +208,16 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		canJump = remainingJump > 0;
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
-			move(Direction.LEFT);
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
-			move(Direction.RIGHT);
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
-			move(Direction.UP);
-		if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
-			move(Direction.DOWN);
+		if (!input.isCutscene()) {
+			if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)))
+				move(Direction.LEFT);
+			if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D)))
+				move(Direction.RIGHT);
+			if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)))
+				move(Direction.UP);
+			if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_S)))
+				move(Direction.DOWN);
+		}
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 
 		flatSurfaces.clear();

@@ -41,17 +41,12 @@ import amplified.resources.LevelCache;
 import amplified.resources.SoundCache;
 import amplified.resources.TextureCache;
 
-//TODO: if level is cutscene:
-//MapState.getCameraBounds() should return "new Rectangle(0, 0, windowWidth, windowHeight)"
-//Do not allow beam to be shot or avatar moved by keyboard
-//Do not display cursor (except in pause menu)
-//Do not have Player look at cursor
-//Disable collisions?
-//
+//TODO:
 //Actually implement map expiration timer
 //Implement main menu, pause menu
 //Implement AutoTransform.Scale
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
+//Fix box being stuck to platform when dragged up, even when they no longer collide?
 public class Game {
 	public static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
@@ -126,6 +121,7 @@ public class Game {
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
 		map.setLayout(LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 		camera.setLimits(map.getCameraBounds());
+		input.setCutscene(map.isCutscene());
 	}
 
 	public boolean nextFrame() {
@@ -179,9 +175,9 @@ public class Game {
 		if (DEBUG)
 			preCollisionPolygons = new ArrayList<Polygon>();
 		for (Entity ent : map.getEntities()) {
-			ent.preCollisionsUpdate(tDelta, input, camera, map);
 			for (AutoTransform at : map.getAutoTransforms(ent))
 				at.transform(ent, tDelta);
+			ent.preCollisionsUpdate(tDelta, input, camera, map);
 			if (DEBUG)
 				for (DrawableEntity d : ent.getDrawables())
 					for (Polygon p : d.getBoundingPolygon().getPolygons())
