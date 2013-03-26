@@ -8,11 +8,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -24,19 +20,12 @@ import org.newdawn.slick.Color;
 import amplified.gui.GuiButton;
 import amplified.gui.GuiButton.ButtonHandler;
 import amplified.gui.GuiMainMenu;
-import amplified.gui.GuiScreen;
+import amplified.gui.GuiPauseMenu;
 import amplified.map.AbstractCollidable;
-import amplified.map.CollidableDrawable;
 import amplified.map.CursorOverlay;
 import amplified.map.Drawable;
 import amplified.map.FpsOverlay;
-import amplified.map.collisions.CollisionInformation;
-import amplified.map.collisions.CollisionResult;
 import amplified.map.collisions.Polygon;
-import amplified.map.collisions.PolygonCollision;
-import amplified.map.entity.AutoTransform;
-import amplified.map.entity.DrawableEntity;
-import amplified.map.entity.Entity;
 import amplified.map.state.Camera;
 import amplified.map.state.FrameRateState;
 import amplified.map.state.Input;
@@ -69,8 +58,8 @@ public class Game {
 	private final Camera camera;
 	private final FrameRateState frameRateState;
 	private final MapState map;
-	private List<Polygon> preCollisionPolygons;
-	private final GuiScreen titleScreen, pauseScreen;
+	private final List<Polygon> preCollisionPolygons;
+	private final ScreenFiller titleScreen, pauseScreen;
 
 	private GameState state;
 	private boolean screenshot, close;
@@ -82,29 +71,34 @@ public class Game {
 		camera = new Camera(WIDTH, HEIGHT);
 		frameRateState = new FrameRateState(new DecimalFormat("0.0"));
 
-		titleScreen = new GuiMainMenu(new Rectangle(0,0,WIDTH,HEIGHT));
-		pauseScreen = new GuiScreen(new Rectangle(0,0,WIDTH,HEIGHT));
+		preCollisionPolygons = DEBUG ? new ArrayList<Polygon>() : null;
 
-		map = new MapState(new FpsOverlay(frameRateState, HEIGHT), new CursorOverlay(input));
+		FpsOverlay fps = new FpsOverlay(frameRateState, HEIGHT);
+		CursorOverlay cursor = new CursorOverlay(input);
+		titleScreen = new GuiMainMenu(new Rectangle(0, 0, WIDTH, HEIGHT), getTitleScreenButtons(), input, fps, cursor);
+		map = new MapState(camera, preCollisionPolygons, input, fps, cursor);
+		pauseScreen = new GuiPauseMenu(getPauseScreenButtons(), map, input);
 		state = GameState.TITLE_SCREEN;
-
-		initGuis();
 	}
 
-	private void initGuis(){
-		titleScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2, 200, 50), new ButtonHandler() {
+	private List<GuiButton> getTitleScreenButtons() {
+		List<GuiButton> buttons = new ArrayList<GuiButton>();
+		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				newGame();
 			}
 		}));
+		return buttons;
+	}
 
-
-		pauseScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler() {
+	private List<GuiButton> getPauseScreenButtons() {
+		List<GuiButton> buttons = new ArrayList<GuiButton>();
+		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				newGame();
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				map.resetLevel();
 				camera.setLimits(map.getCameraBounds());
@@ -113,17 +107,18 @@ public class Game {
 				state = GameState.GAME;
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				state = GameState.TITLE_SCREEN;
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				input.setCutscene(map.isCutscene());
 				state = GameState.GAME;
 			}
 		}));
+		return buttons;
 	}
 
 	private void newGame(){
@@ -203,45 +198,10 @@ public class Game {
 		return !LowLevelUtil.windowClosed() && !close;
 	}
 
-	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
-		//map.getCollidables() is sorted by movability ascending, y coordinate descending
-		List<CollidableDrawable> collidablesList = map.getCollidables();
-		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
-		Map<CollidableDrawable, Set<CollisionInformation>> log = new HashMap<CollidableDrawable, Set<CollisionInformation>>();
-		CollidableDrawable a, b;
-		Set<CollisionInformation> aAll, bAll;
-		for (int i = 0; i < collidables.length - 1; i++) {
-			a = collidables[i];
-			if (a.isVisible()) {
-				for (int j = i + 1; j < collidables.length; j++) {
-					b = collidables[j];
-					if (b.isVisible()) {
-						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b, tDelta);
-						if (result.collision()) {
-							result.getCollisionInformation().setCollidedWith(a);
-							b.collision(result.getCollisionInformation(), collidablesList);
-
-							aAll = log.get(a);
-							if (aAll == null) {
-								aAll = new HashSet<CollisionInformation>();
-								log.put(a, aAll);
-							}
-							bAll = log.get(b);
-							if (bAll == null) {
-								bAll = new HashSet<CollisionInformation>();
-								log.put(b, bAll);
-							}
-							bAll.add(result.getCollisionInformation());
-							aAll.add(result.getCollisionInformation().complement(b));
-						}
-					}
-				}
-			}
-		}
-		return log;
-	}
-
 	public void update(double tDelta) {
+		if (DEBUG)
+			preCollisionPolygons.clear();
+
 		frameRateState.addFrame();
 		if (frameRateState.getElapsedSecondsSinceLastReset() > 1)
 			frameRateState.reset();
@@ -268,54 +228,21 @@ public class Game {
 
 		switch (state) {
 			case TITLE_SCREEN:
-				input.markedPointer().setLocation(input.cursorPosition());
-				titleScreen.updateState(tDelta, input);
+				titleScreen.update(tDelta);
 				break;
 			case PAUSE:
-				input.markedPointer().setLocation(input.cursorPosition());
-				pauseScreen.updateState(tDelta, input);
+				pauseScreen.update(tDelta);
 				break;
 			case GAME:
-				updateGame(tDelta);
+				state = map.update(tDelta);
 				break;
 		}
 
 		LowLevelUtil.advanceAudioFrame();
 	}
 
-	private void updateGame(double tDelta){
-		if (map.shouldChangeLevel(tDelta)){
-			String next = map.getNextLevel();
-			if (!next.equalsIgnoreCase("credits")){
-				map.setLayout(LevelCache.getLevel(next));
-				camera.setLimits(map.getCameraBounds());
-				camera.lookAt(map.getPlayer().getPosition());
-				input.setCutscene(map.isCutscene());
-			} else {
-				state = GameState.TITLE_SCREEN;
-			}
-			return;
-		}
-
-		if (DEBUG)
-			preCollisionPolygons = new ArrayList<Polygon>();
-		for (Entity ent : map.getEntities()) {
-			for (AutoTransform at : map.getAutoTransforms(ent))
-				at.transform(ent, tDelta);
-			ent.preCollisionsUpdate(tDelta, input, camera, map);
-			if (DEBUG)
-				for (DrawableEntity d : ent.getDrawables())
-					for (Polygon p : d.getBoundingPolygon().getPolygons())
-						preCollisionPolygons.add(new Polygon(p));
-		}
-		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions((float) tDelta);
-		for (Entity ent : map.getEntities())
-			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
-	}
-
-
-	private void drawGame() {
-		for (MapState.ZAxisLayer layer : map.getLayers().values()) {
+	private void drawGame(ScreenFiller screen) {
+		for (MapState.ZAxisLayer layer : screen.getLayers().values()) {
 			Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
 
 			for (Drawable drawable : layer.getDrawables()) {
@@ -325,30 +252,21 @@ public class Game {
 					LowLevelUtil.drawTransformedWireframe(matrixBuf, viewMatrix, Color.green, ((AbstractCollidable) drawable).getBoundingPolygon().getPolygons());
 			}
 		}
-		if (DEBUG && preCollisionPolygons != null)
-			LowLevelUtil.drawTransformedWireframe(matrixBuf, camera.getViewMatrix(map.getLayers().get(MapState.ZAxisLayer.MIDGROUND).getParallaxFactor()), Color.red, preCollisionPolygons.toArray(new Polygon[preCollisionPolygons.size()]));
-	}
-
-	private void drawOverlays(){
-		MapState.ZAxisLayer layer = map.getLayers().get(MapState.ZAxisLayer.OVERLAY);
-		Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
-		for (Drawable drawable : layer.getDrawables())
-			LowLevelUtil.drawSprite(matrixBuf, viewMatrix, drawable);
+		if (DEBUG && !preCollisionPolygons.isEmpty())
+			LowLevelUtil.drawTransformedWireframe(matrixBuf, camera.getViewMatrix(screen.getLayers().get(MapState.ZAxisLayer.MIDGROUND).getParallaxFactor()), Color.red, preCollisionPolygons.toArray(new Polygon[preCollisionPolygons.size()]));
 	}
 
 	public void draw() {
 		LowLevelUtil.clearCanvas();
 		switch (state) {
 			case TITLE_SCREEN:
-				titleScreen.draw();
-				drawOverlays();
+				drawGame(titleScreen);
+				break;
+			case PAUSE:
+				drawGame(pauseScreen);
 				break;
 			default:
-				drawGame();
-				if (state == GameState.PAUSE) {
-					pauseScreen.draw();
-					drawOverlays();
-				}
+				drawGame(map);
 				break;
 		}
 		LowLevelUtil.flipBackBuffer();

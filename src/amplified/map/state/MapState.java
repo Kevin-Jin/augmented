@@ -5,18 +5,28 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.lwjgl.util.Rectangle;
 
+import amplified.Game;
+import amplified.Game.GameState;
+import amplified.ScreenFiller;
 import amplified.map.CollidableDrawable;
 import amplified.map.Drawable;
 import amplified.map.DrawableTexture;
 import amplified.map.RetractablePlatform;
+import amplified.map.collisions.CollisionInformation;
+import amplified.map.collisions.CollisionResult;
+import amplified.map.collisions.Polygon;
+import amplified.map.collisions.PolygonCollision;
 import amplified.map.entity.AutoTransform;
+import amplified.map.entity.DrawableEntity;
 import amplified.map.entity.Entity;
 import amplified.map.entity.player.Player;
 import amplified.map.entity.props.Box;
@@ -25,6 +35,7 @@ import amplified.map.entity.props.NBox;
 import amplified.map.entity.props.RectangleBox;
 import amplified.map.entity.props.Switch;
 import amplified.map.physicquantity.Position;
+import amplified.resources.LevelCache;
 import amplified.resources.LevelLayout;
 import amplified.resources.map.BoxSpawnInfo;
 import amplified.resources.map.NBoxSpawnInfo;
@@ -32,38 +43,16 @@ import amplified.resources.map.OverlayInfo;
 import amplified.resources.map.RectangleSpawnInfo;
 import amplified.resources.map.SwitchSpawnInfo;
 
-public class MapState {
-	public static class ZAxisLayer {
-		public static final Byte
-			FAR_BACKGROUND = Byte.valueOf((byte) 0),
-			MAIN_BACKGROUND = Byte.valueOf((byte) 1),
-			MIDGROUND = Byte.valueOf((byte) 2),
-			FOREGROUND = Byte.valueOf((byte) 3),
-			OVERLAY = Byte.valueOf((byte) 4)
-		;
-
-		private float parallax;
-		private List<Drawable> drawables;
-
-		public ZAxisLayer(float parallax) {
-			this.parallax = parallax;
-			this.drawables = new ArrayList<Drawable>();
-		}
-
-		public float getParallaxFactor() {
-			return parallax;
-		}
-
-		public List<Drawable> getDrawables() {
-			return drawables;
-		}
-	}
-
+public class MapState extends ScreenFiller {
 	private static final int FLOOR_VISIBLE_PIXELS = 20;
 	private static final int CEILING_VISIBLE_PIXELS = 20;
 	private static final int LEFT_WALL_VISIBLE_PIXELS = 20;
 	private static final int RIGHT_WALL_VISIBLE_PIXELS = 20;
 	private static final double MAP_CHANGE_DELAY = 0.5; //seconds
+
+	private final Camera camera;
+	private final Input input;
+	private final List<Polygon> preCollisionPolygons;
 
 	private LevelLayout layout;
 	private final Player player;
@@ -76,7 +65,11 @@ public class MapState {
 	private ExitDoor door;
 	private double timeLeft;
 
-	public MapState(Drawable... overlays) {
+	public MapState(Camera camera, List<Polygon> preCollisionPolygons, Input input, Drawable... overlays) {
+		this.camera = camera;
+		this.input = input;
+		this.preCollisionPolygons = preCollisionPolygons;
+
 		player = new Player();
 
 		entities = new TreeMap<Byte, Entity>();
@@ -198,6 +191,7 @@ public class MapState {
 		return layout.getNextMap();
 	}
 
+	@Override
 	public SortedMap<Byte, ZAxisLayer> getLayers() {
 		return layers;
 	}
@@ -233,5 +227,73 @@ public class MapState {
 
 	public List<AutoTransform> getAutoTransforms(Entity ent) {
 		return autoTransforms.get(ent);
+	}
+
+	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
+		//map.getCollidables() is sorted by movability ascending, y coordinate descending
+		List<CollidableDrawable> collidablesList = getCollidables();
+		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);
+		Map<CollidableDrawable, Set<CollisionInformation>> log = new HashMap<CollidableDrawable, Set<CollisionInformation>>();
+		CollidableDrawable a, b;
+		Set<CollisionInformation> aAll, bAll;
+		for (int i = 0; i < collidables.length - 1; i++) {
+			a = collidables[i];
+			if (a.isVisible()) {
+				for (int j = i + 1; j < collidables.length; j++) {
+					b = collidables[j];
+					if (b.isVisible()) {
+						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b, tDelta);
+						if (result.collision()) {
+							result.getCollisionInformation().setCollidedWith(a);
+							b.collision(result.getCollisionInformation(), collidablesList);
+
+							aAll = log.get(a);
+							if (aAll == null) {
+								aAll = new HashSet<CollisionInformation>();
+								log.put(a, aAll);
+							}
+							bAll = log.get(b);
+							if (bAll == null) {
+								bAll = new HashSet<CollisionInformation>();
+								log.put(b, bAll);
+							}
+							bAll.add(result.getCollisionInformation());
+							aAll.add(result.getCollisionInformation().complement(b));
+						}
+					}
+				}
+			}
+		}
+		return log;
+	}
+
+	@Override
+	public GameState update(double tDelta) {
+		if (shouldChangeLevel(tDelta)){
+			String next = getNextLevel();
+			if (!next.equalsIgnoreCase("credits")){
+				setLayout(LevelCache.getLevel(next));
+				camera.setLimits(getCameraBounds());
+				camera.lookAt(getPlayer().getPosition());
+				input.setCutscene(isCutscene());
+				return GameState.GAME;
+			} else {
+				return GameState.TITLE_SCREEN;
+			}
+		}
+
+		for (Entity ent : getEntities()) {
+			for (AutoTransform at : getAutoTransforms(ent))
+				at.transform(ent, tDelta);
+			ent.preCollisionsUpdate(tDelta, input, camera, this);
+			if (Game.DEBUG)
+				for (DrawableEntity d : ent.getDrawables())
+					for (Polygon p : d.getBoundingPolygon().getPolygons())
+						preCollisionPolygons.add(new Polygon(p));
+		}
+		Map<CollidableDrawable, Set<CollisionInformation>> collisions = detectAndHandleCollisions((float) tDelta);
+		for (Entity ent : getEntities())
+			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
+		return GameState.GAME;
 	}
 }
