@@ -114,6 +114,7 @@ public class MapState extends ScreenFiller {
 		entities.put(Byte.valueOf(nextEntityId++), player);
 		autoTransforms.put(player, layout.getAvatarAutoTransforms());
 		autoTransforms.put(player.getBeam(), layout.getBeamAutoTransforms());
+		player.reset();
 		for (AutoTransform at : layout.getAvatarAutoTransforms())
 			at.reset();
 		for (AutoTransform at : layout.getBeamAutoTransforms())

@@ -100,7 +100,7 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		boolean wasVisible = visible;
-		visible = (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump());
+		visible = (!input.isCutscene() && input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump());
 		if (visible) {
 			animation.update(tDelta);
 			if (!wasVisible)

@@ -73,4 +73,9 @@ public class Player extends CompoundEntity<PlayerPart> {
 		beam.setRotation(realRot);
 		flame.setRotation(body.getRotation());
 	}
+
+	public void reset() {
+		body.reset();
+		beam.reset();
+	}
 }

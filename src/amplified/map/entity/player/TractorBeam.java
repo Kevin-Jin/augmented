@@ -275,4 +275,10 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	public PlayerPart getType() {
 		return PlayerPart.BEAM;
 	}
+
+	public void reset() {
+		beginRetract();
+		length = 0;
+		lengthUpdated();
+	}
 }

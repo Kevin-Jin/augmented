@@ -39,6 +39,8 @@ import amplified.resources.TextureCache;
 //Implement AutoTransform.Scale
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
+//Don't let SelectableEntities expand if they will collide with anything except Beam
+//Switches, RetractablePlatforms
 //Add special collision cases:
 // player and SelectableEntity collision
 public class Game {
@@ -121,7 +123,7 @@ public class Game {
 		return buttons;
 	}
 
-	private void newGame(){
+	private void newGame() {
 		map.setLayout(LevelCache.getLevel("debugCutscene"));
 		state = GameState.GAME;
 		camera.setLimits(map.getCameraBounds());

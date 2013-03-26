@@ -260,4 +260,9 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 				return transformedAttachPoints.get(part);
 		}
 	}
+
+	public void reset() {
+		getVelocity().setScalarComponents(0, 0);
+		remainingJump = 0;
+	}
 }

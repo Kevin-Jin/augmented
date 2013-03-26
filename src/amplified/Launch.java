@@ -5,10 +5,10 @@ public class Launch {
 		Game g = new Game();
 		g.graphicsInit();
 		g.loadContent();
-		long last = System.currentTimeMillis(), now;
+		long last = System.nanoTime(), now;
 		while (g.nextFrame()) {
-			now = System.currentTimeMillis();
-			g.update((now - last) / 1000d);
+			now = System.nanoTime();
+			g.update((now - last) / 1e9d);
 			last = now;
 
 			g.draw();
