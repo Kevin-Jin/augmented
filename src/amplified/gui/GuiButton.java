@@ -9,6 +9,7 @@ import org.newdawn.slick.opengl.Texture;
 import amplified.map.AbstractDrawable;
 import amplified.map.DrawableOverlayText;
 import amplified.map.physicquantity.Position;
+import amplified.map.state.Input;
 import amplified.resources.FontCache;
 import amplified.resources.TextureCache;
 
@@ -30,7 +31,7 @@ public class GuiButton extends AbstractDrawable {
 		this.active = true;
 	}
 
-	public boolean isPointInButton(Point point) {
+	private boolean isPointInButton(Point point) {
 		return point.getX() > bounds.getX() && point.getX() < bounds.getX() + bounds.getWidth() && 
 				point.getY() > bounds.getY() && point.getY() < bounds.getY() + bounds.getHeight();
 	}
@@ -38,12 +39,15 @@ public class GuiButton extends AbstractDrawable {
 	private void act() {
 		if (active) {
 			handler.clicked();
+			down = false;
+			hover = false;
 			active = false;
 		}
 	}
 
-	public void updateState(Point mouse, boolean mouseDown) {
-		if (isPointInButton(mouse)) {
+	public void update(Input input) {
+		boolean mouseDown = input.downButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK));
+		if (isPointInButton(input.cursorPosition())) {
 			if (mouseDown && !down) {
 				down = true;
 				hover = true;

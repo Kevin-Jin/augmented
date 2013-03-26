@@ -19,11 +19,11 @@ public class GuiPauseMenu extends ScreenFiller {
 
 		layers = new TreeMap<Byte, ZAxisLayer>();
 		layers.putAll(underlay.getLayers());
-		ZAxisLayer existingOverlay = layers.get(ZAxisLayer.OVERLAY);
 		ZAxisLayer overlay = new ZAxisLayer((byte) 0);
+		overlay.getDrawables().addAll(buttons);
+		ZAxisLayer existingOverlay = layers.get(ZAxisLayer.OVERLAY);
 		if (existingOverlay != null)
 			overlay.getDrawables().addAll(existingOverlay.getDrawables());
-		overlay.getDrawables().addAll(buttons);
 		layers.put(ZAxisLayer.OVERLAY, overlay);
 	}
 
@@ -32,7 +32,7 @@ public class GuiPauseMenu extends ScreenFiller {
 		input.markedPointer().setLocation(input.cursorPosition());
 
 		for (GuiButton button : buttons)
-			button.updateState(input.cursorPosition(), input.pressedButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)));
+			button.update(input);
 		return GameState.PAUSE;
 	}
 

@@ -241,7 +241,7 @@ public class Game {
 		LowLevelUtil.advanceAudioFrame();
 	}
 
-	private void drawGame(ScreenFiller screen) {
+	private void fillScreen(ScreenFiller screen) {
 		for (MapState.ZAxisLayer layer : screen.getLayers().values()) {
 			Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
 
@@ -260,13 +260,13 @@ public class Game {
 		LowLevelUtil.clearCanvas();
 		switch (state) {
 			case TITLE_SCREEN:
-				drawGame(titleScreen);
+				fillScreen(titleScreen);
 				break;
 			case PAUSE:
-				drawGame(pauseScreen);
+				fillScreen(pauseScreen);
 				break;
 			default:
-				drawGame(map);
+				fillScreen(map);
 				break;
 		}
 		LowLevelUtil.flipBackBuffer();

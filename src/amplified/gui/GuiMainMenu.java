@@ -54,7 +54,7 @@ public class GuiMainMenu extends ScreenFiller {
 		p.setPosition(new Position(50,600));
 
 		for (GuiButton button : buttons)
-			button.updateState(input.cursorPosition(), input.downButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK)));
+			button.update(input);
 		return GameState.TITLE_SCREEN;
 	}
 
