@@ -250,6 +250,10 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
+		if (input.pressedKeys().contains(Keyboard.KEY_F2)){
+			screenshot = true;
+		}
+		
 		if (input.pressedKeys().contains(Keyboard.KEY_ESCAPE)){
 			switch (state)
 			{
