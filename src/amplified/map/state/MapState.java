@@ -35,11 +35,11 @@ import amplified.resources.map.SwitchSpawnInfo;
 public class MapState {
 	public static class ZAxisLayer {
 		public static final Byte
-		FAR_BACKGROUND = Byte.valueOf((byte) 0),
-		MAIN_BACKGROUND = Byte.valueOf((byte) 1),
-		MIDGROUND = Byte.valueOf((byte) 2),
-		FOREGROUND = Byte.valueOf((byte) 3),
-		OVERLAY = Byte.valueOf((byte) 4)
+			FAR_BACKGROUND = Byte.valueOf((byte) 0),
+			MAIN_BACKGROUND = Byte.valueOf((byte) 1),
+			MIDGROUND = Byte.valueOf((byte) 2),
+			FOREGROUND = Byte.valueOf((byte) 3),
+			OVERLAY = Byte.valueOf((byte) 4)
 		;
 
 		private float parallax;
@@ -63,6 +63,7 @@ public class MapState {
 	private static final int CEILING_VISIBLE_PIXELS = 20;
 	private static final int LEFT_WALL_VISIBLE_PIXELS = 20;
 	private static final int RIGHT_WALL_VISIBLE_PIXELS = 20;
+	private static final double MAP_CHANGE_DELAY = 0.5; //seconds
 
 	private LevelLayout layout;
 	private final Player player;
@@ -113,9 +114,9 @@ public class MapState {
 		collidables.addAll(layout.getPlatforms());
 
 		nextEntityId = 0;
-		if (door != null){
+		if (door != null) {
 			entities.put(Byte.valueOf(nextEntityId++), door);
-			autoTransforms.put(door, new ArrayList<AutoTransform>());
+			autoTransforms.put(door, layout.getExitAutoTransforms());
 		}
 		entities.put(Byte.valueOf(nextEntityId++), player);
 		autoTransforms.put(player, layout.getAvatarAutoTransforms());
@@ -170,7 +171,7 @@ public class MapState {
 		player.setPosition(layout.getStartPosition());
 	}
 
-	public void resetLevel(){
+	public void resetLevel() {
 		setLayout(layout);
 	}
 
@@ -182,14 +183,18 @@ public class MapState {
 		return layout.isCutscene();
 	}
 
-	public boolean shouldChangeLevel(double tDelta){
-		if (Double.isInfinite(timeLeft))
-			return door != null && door.shouldChangeMap();
-		timeLeft -= tDelta;
-		return (timeLeft <= 0);
+	public boolean shouldChangeLevel(double tDelta) {
+		if (door != null && door.shouldChangeMap()) {
+			//if there's also a map expiration and that is shorter than the
+			//delay for the door to take effect, then use that instead
+			timeLeft = Double.isInfinite(timeLeft) ? MAP_CHANGE_DELAY : Math.min(MAP_CHANGE_DELAY, timeLeft);
+			door = null;
+			return false;
+		}
+		return (!Double.isInfinite(timeLeft) && (timeLeft -= tDelta) <= 0);
 	}
 
-	public String getNextLevel(){
+	public String getNextLevel() {
 		return layout.getNextMap();
 	}
 

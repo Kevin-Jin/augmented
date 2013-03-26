@@ -6,8 +6,10 @@ import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 
+import amplified.map.CollidableDrawable;
 import amplified.map.Switchable;
 import amplified.map.collisions.BoundingPolygon;
+import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.Polygon;
 import amplified.map.entity.SimpleEntity;
 import amplified.resources.TextureCache;
@@ -15,14 +17,14 @@ import amplified.resources.TextureCache;
 public class Switch extends SimpleEntity {
 	public Switch(Color color, List<Switchable> list) {
 		super(new BoundingPolygon(new Polygon[] {
-				new Polygon(new Vector2f[] {
-						new Vector2f(3, 0),
-						new Vector2f(34, 0),
-						new Vector2f(37, 6), 
-						new Vector2f(23, 21), 
-						new Vector2f(14, 21), 
-						new Vector2f(0, 6)
-				})
+			new Polygon(new Vector2f[] {
+				new Vector2f(3, 0),
+				new Vector2f(34, 0),
+				new Vector2f(37, 6), 
+				new Vector2f(23, 21), 
+				new Vector2f(14, 21), 
+				new Vector2f(0, 6)
+			})
 		}), null);
 	}
 
@@ -32,8 +34,16 @@ public class Switch extends SimpleEntity {
 	}
 
 	@Override
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+		if (collisionInfo.getCollidedWith() instanceof SelectableEntity)
+			;
+		//now push the other entity out
+		collisionInfo.getCollidedWith().collision(collisionInfo.complement(this), null);
+	}
+
+	@Override
 	public int getMovabilityIndex() {
-		return 0;
+		return 2;
 	}
 
 	@Override

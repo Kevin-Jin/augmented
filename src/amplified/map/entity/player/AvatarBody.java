@@ -21,7 +21,6 @@ import amplified.map.collisions.Polygon;
 import amplified.map.entity.BodyEntity;
 import amplified.map.entity.Direction;
 import amplified.map.entity.SimpleEntity;
-import amplified.map.entity.props.ExitDoor;
 import amplified.map.physicquantity.Position;
 import amplified.map.state.Camera;
 import amplified.map.state.Input;
@@ -118,12 +117,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		//TODO: fix being able to go inside a platform when moving a concave
 		//vertex of the Player (e.g. connection between antenna and head,
 		//perpendicular arm and legs, or perpendicular arm and head) diagonally
-		//into one of the platform's corners 
-		
-		if (collisionInfo.getCollidedWith() instanceof ExitDoor){
-			((ExitDoor)collisionInfo.getCollidedWith()).collision(collisionInfo.complement(this), null);
-			return;
-		}
+		//into one of the platform's corners
 		super.collision(collisionInfo, otherCollidables);
 		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && Math.abs(collisionInfo.getCollidingSurface().getY()) < TOLERANCE)
 			flatSurfaces.add(collisionInfo.getCollidedWith());

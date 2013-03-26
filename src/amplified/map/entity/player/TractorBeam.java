@@ -214,6 +214,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				cursor.setLocation(input.cursorPosition());
 			}
 			lengthUpdated();
+		} else {
+			length = 1;
+			lengthUpdated();
 		}
 
 		Position savedStartPos = new Position(startPos.getX(), startPos.getY());

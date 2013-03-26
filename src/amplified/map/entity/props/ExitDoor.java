@@ -14,15 +14,14 @@ import amplified.map.entity.player.AvatarBody;
 import amplified.map.physicquantity.Position;
 import amplified.resources.TextureCache;
 
-public class ExitDoor extends SimpleEntity{
-	
+public class ExitDoor extends SimpleEntity {
 	private boolean hit;
 
 	public ExitDoor(Position pos) {
 		super(new BoundingPolygon(new Polygon[] {
-				new Polygon(new Vector2f[] { 
-						new Vector2f(0,0),new Vector2f(201,0),new Vector2f(201,258),new Vector2f(0,258)
-				}) 
+			new Polygon(new Vector2f[] { 
+				new Vector2f(0,0),new Vector2f(201,0),new Vector2f(201,258),new Vector2f(0,258)
+			}) 
 		}), null);
 		setPosition(pos);
 	}
@@ -33,14 +32,14 @@ public class ExitDoor extends SimpleEntity{
 	}
 	
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables){
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
 		if (collisionInfo.getCollidedWith() instanceof AvatarBody)
 			hit = true;
 	}
 
 	@Override
 	public int getMovabilityIndex() {
-		return 0;
+		return 2;
 	}
 
 	@Override
@@ -48,8 +47,7 @@ public class ExitDoor extends SimpleEntity{
 		 return TextureCache.getTexture(hit ? "openDoor" : "door"); 
 	}
 	
-	public boolean shouldChangeMap(){
+	public boolean shouldChangeMap() {
 		return hit;
 	}
-
 }

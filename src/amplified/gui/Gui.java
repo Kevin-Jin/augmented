@@ -8,11 +8,10 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 
 @SuppressWarnings("deprecation")
-public abstract class Gui{
-
+public abstract class Gui {
 	public abstract void draw();
 
-	public void drawTexture(Texture texture, Rectangle bounds){
+	public void drawTexture(Texture texture, Rectangle bounds) {
 		texture.bind();
 		GL11.glPushMatrix();
 		{
@@ -35,12 +34,10 @@ public abstract class Gui{
 		
 		TextureImpl.unbind();
 	}
-	
-	public void drawCenteredString(TrueTypeFont font, int cX, int cY, String text, Color c){
+
+	public void drawCenteredString(TrueTypeFont font, int cX, int cY, String text, Color c) {
 		int sWidth = font.getWidth(text);
 		int sHeight = font.getHeight(text);
 		font.drawString(cX-sWidth/2, cY-sHeight/2,text,c);
-
 	}
-
 }

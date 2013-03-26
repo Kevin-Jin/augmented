@@ -50,10 +50,10 @@ import amplified.resources.TextureCache;
 //Implement AutoTransform.Scale
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
+//Add special collision cases:
+// player and SelectableEntity collision
 public class Game {
-
-	public static enum GameState
-	{
+	public static enum GameState {
 		TITLE_SCREEN, GAME, PAUSE
 	}
 
@@ -90,24 +90,22 @@ public class Game {
 
 		initGuis();
 	}
+
 	private void initGuis(){
-		titleScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2, 200, 50), new ButtonHandler()
-		{
-			public void clicked(){
+		titleScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2, 200, 50), new ButtonHandler() {
+			public void clicked() {
 				newGame();
 			}
 		}));
 
 
-		pauseScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler()
-		{
-			public void clicked(){
+		pauseScreen.getButtons().add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler() {
+			public void clicked() {
 				newGame();
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler()
-		{
-			public void clicked(){
+		pauseScreen.getButtons().add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler() {
+			public void clicked() {
 				map.resetLevel();
 				camera.setLimits(map.getCameraBounds());
 				camera.lookAt(map.getPlayer().getPosition());
@@ -115,15 +113,13 @@ public class Game {
 				state = GameState.GAME;
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler()
-		{
-			public void clicked(){
+		pauseScreen.getButtons().add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler() {
+			public void clicked() {
 				state = GameState.TITLE_SCREEN;
 			}
 		}));
-		pauseScreen.getButtons().add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler()
-		{
-			public void clicked(){
+		pauseScreen.getButtons().add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler() {
+			public void clicked() {
 				input.setCutscene(map.isCutscene());
 				state = GameState.GAME;
 			}
@@ -131,7 +127,7 @@ public class Game {
 	}
 
 	private void newGame(){
-		map.setLayout(LevelCache.getLevel("debug"));
+		map.setLayout(LevelCache.getLevel("debugCutscene"));
 		state = GameState.GAME;
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
@@ -197,7 +193,8 @@ public class Game {
 		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2", WIDTH, HEIGHT));
 		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
 		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
-		LevelCache.setLevel("debug", LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
+		LevelCache.setLevel("debug", LevelCache.loadXml("resources/debug", WIDTH, HEIGHT));
+		LevelCache.setLevel("debugCutscene", LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 
 		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
 	}
@@ -250,41 +247,42 @@ public class Game {
 			frameRateState.reset();
 
 		input.update();
-		if (input.pressedKeys().contains(Keyboard.KEY_F2)){
+		if (input.pressedKeys().contains(Keyboard.KEY_F2))
 			screenshot = true;
-		}
-		
-		if (input.pressedKeys().contains(Keyboard.KEY_ESCAPE)){
-			switch (state)
-			{
-			case GAME:
-				state = GameState.PAUSE;
-				input.setCutscene(false);
-				break;
-			case PAUSE:
-				state = GameState.GAME;
-				input.setCutscene(map.isCutscene());
-				break;
-			case TITLE_SCREEN:
-				close = true;
-				break;
+
+		if (input.pressedKeys().contains(Keyboard.KEY_ESCAPE)) {
+			switch (state) {
+				case GAME:
+					state = GameState.PAUSE;
+					input.setCutscene(false);
+					break;
+				case PAUSE:
+					state = GameState.GAME;
+					input.setCutscene(map.isCutscene());
+					break;
+				case TITLE_SCREEN:
+					close = true;
+					break;
 			}
 		}
-		
-		switch(state){
-		case TITLE_SCREEN:
-			titleScreen.updateState(tDelta, input);
-			break;
-		case PAUSE:
-			pauseScreen.updateState(tDelta, input);
-			break;
-		case GAME:
-			updateGame(tDelta);
-			break;
+
+		switch (state) {
+			case TITLE_SCREEN:
+				input.markedPointer().setLocation(input.cursorPosition());
+				titleScreen.updateState(tDelta, input);
+				break;
+			case PAUSE:
+				input.markedPointer().setLocation(input.cursorPosition());
+				pauseScreen.updateState(tDelta, input);
+				break;
+			case GAME:
+				updateGame(tDelta);
+				break;
 		}
 
 		LowLevelUtil.advanceAudioFrame();
 	}
+
 	private void updateGame(double tDelta){
 		if (map.shouldChangeLevel(tDelta)){
 			String next = map.getNextLevel();
@@ -293,13 +291,12 @@ public class Game {
 				camera.setLimits(map.getCameraBounds());
 				camera.lookAt(map.getPlayer().getPosition());
 				input.setCutscene(map.isCutscene());
-			}
-			else
+			} else {
 				state = GameState.TITLE_SCREEN;
+			}
 			return;
 		}
-			
-		
+
 		if (DEBUG)
 			preCollisionPolygons = new ArrayList<Polygon>();
 		for (Entity ent : map.getEntities()) {
@@ -335,25 +332,24 @@ public class Game {
 	private void drawOverlays(){
 		MapState.ZAxisLayer layer = map.getLayers().get(MapState.ZAxisLayer.OVERLAY);
 		Matrix4f viewMatrix = camera.getViewMatrix(layer.getParallaxFactor());
-		for (Drawable drawable : layer.getDrawables()) {
+		for (Drawable drawable : layer.getDrawables())
 			LowLevelUtil.drawSprite(matrixBuf, viewMatrix, drawable);
-		}
 	}
 
 	public void draw() {
 		LowLevelUtil.clearCanvas();
-		switch(state){
-		case TITLE_SCREEN:
-			titleScreen.draw();
-			drawOverlays();
-			break;
-		default:
-			drawGame();
-			if (state == GameState.PAUSE){
-				pauseScreen.draw();
+		switch (state) {
+			case TITLE_SCREEN:
+				titleScreen.draw();
 				drawOverlays();
-			}
-			break;
+				break;
+			default:
+				drawGame();
+				if (state == GameState.PAUSE) {
+					pauseScreen.draw();
+					drawOverlays();
+				}
+				break;
 		}
 		LowLevelUtil.flipBackBuffer();
 		if (screenshot) {

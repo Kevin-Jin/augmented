@@ -3,11 +3,13 @@
   <width>1000</width>
   <height>800</height>
   <gravity acceleration="-400" terminalVelocity="-400" />
+  <nextMap>debugCutscene</nextMap>
   <footholds>
     <foothold id="0" x1="0" x2="700" y1="30" y2="0" />
   </footholds>
   <entities>
     <avatar x="100" y="100" />
     <box x="500" y="500" scaleInit="1" scaleMin="0.1" scaleMax="10" />
+    <exit x="500" y="500" />
   </entities>
 </level>
