@@ -95,12 +95,12 @@ public class Game {
 
 	private List<GuiButton> getPauseScreenButtons() {
 		List<GuiButton> buttons = new ArrayList<GuiButton>();
-		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,50, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,365, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				newGame();
 			}
 		}));
-		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,110, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,305, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				map.resetLevel();
 				camera.setLimits(map.getCameraBounds());
@@ -109,12 +109,12 @@ public class Game {
 				state = GameState.GAME;
 			}
 		}));
-		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,170, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,245, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				state = GameState.TITLE_SCREEN;
 			}
 		}));
-		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,230, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,185, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				input.setCutscene(map.isCutscene());
 				state = GameState.GAME;
@@ -177,7 +177,7 @@ public class Game {
 		SoundCache.setSound("bgm", LowLevelUtil.loadOgg("resources/bgm"));
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
-		FontCache.setFont("button",LowLevelUtil.loadFont(new Font("Arial", Font.BOLD, 16)));
+		FontCache.setFont("button",LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 24)));
 
 		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2", WIDTH, HEIGHT));
