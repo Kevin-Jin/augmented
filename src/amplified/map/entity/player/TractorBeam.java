@@ -214,9 +214,6 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				cursor.setLocation(input.cursorPosition());
 			}
 			lengthUpdated();
-		} else {
-			length = 1;
-			lengthUpdated();
 		}
 
 		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
@@ -280,5 +277,16 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		beginRetract();
 		length = 0;
 		lengthUpdated();
+	}
+
+	@Override
+	public void setWidth(double w) {
+		length = (float) w;
+		lengthUpdated();
+	}
+
+	@Override
+	public void setHeight(double h) {
+		throw new UnsupportedOperationException("Cannot change height of TractorBeam");
 	}
 }

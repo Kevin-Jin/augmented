@@ -283,6 +283,8 @@ public class MapState extends ScreenFiller {
 			}
 		}
 
+		for (AutoTransform at : getAutoTransforms(player.getBeam()))
+			at.transform(player.getBeam(), tDelta);
 		for (Entity ent : getEntities()) {
 			for (AutoTransform at : getAutoTransforms(ent))
 				at.transform(ent, tDelta);

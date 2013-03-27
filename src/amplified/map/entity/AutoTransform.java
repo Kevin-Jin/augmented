@@ -2,16 +2,18 @@ package amplified.map.entity;
 
 public abstract class AutoTransform {
 	public static class Scale extends AutoTransform {
-		private final double finalFactor;
-		private final double rate;
+		private final double finalDw, finalDh;
+		private final double rateW, rateH;
 		private double elapsed;
 		private boolean inProgress;
 		private double wInit, hInit;
 
-		public Scale(double startAfter, double endAfter, double finalFactor) {
+		public Scale(double startAfter, double endAfter, double finalDw, double finalDh) {
 			super(startAfter, endAfter);
-			this.finalFactor = finalFactor;
-			this.rate = finalFactor / (endAfter - startAfter);
+			this.finalDw = finalDw;
+			this.finalDh = finalDh;
+			this.rateW = finalDw / (endAfter - startAfter);
+			this.rateH = finalDh / (endAfter - startAfter);
 		}
 
 		@Override
@@ -19,18 +21,22 @@ public abstract class AutoTransform {
 			elapsed += tDelta;
 			if (elapsed > endAfter) {
 				if (inProgress) {
-					//ent.setWidth(finalFactor * wInit);
-					//ent.setHeight(finalFactor * hInit);
+					if (rateW != 0)
+						ent.setWidth(finalDw + wInit);
+					if (rateH != 0)
+						ent.setHeight(finalDh + hInit);
 					inProgress = false;
 				}
 			} else if (elapsed > startAfter) {
 				if (!inProgress) {
-					//wInit = ent.getWidth();
-					//hInit = ent.getHeight();
+					wInit = ent.getWidth();
+					hInit = ent.getHeight();
 					inProgress = true;
 				}
-				//ent.setWidth(wInit * rate * elapsed);
-				//ent.setWidth(hInit * rate * elapsed);
+				if (rateW != 0)
+					ent.setWidth(rateW * (elapsed - startAfter) + wInit);
+				if (rateH != 0)
+					ent.setHeight(rateH * (elapsed - startAfter) + hInit);
 			}
 		}
 
@@ -71,7 +77,7 @@ public abstract class AutoTransform {
 					yInit = ent.getPosition().getY();
 					inProgress = true;
 				}
-				ent.getPosition().add(velX * tDelta, velY * tDelta);
+				ent.getPosition().set(velX * (elapsed - startAfter) + xInit, velY * (elapsed - startAfter) + yInit);
 			}
 		}
 
@@ -109,7 +115,7 @@ public abstract class AutoTransform {
 					rotInit = ent.getRotation();
 					inProgress = true;
 				}
-				ent.setRotation((float) (velAng * elapsed + rotInit));
+				ent.setRotation((float) (velAng * (elapsed - startAfter) + rotInit));
 			}
 		}
 

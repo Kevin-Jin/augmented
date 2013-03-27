@@ -102,4 +102,24 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		}
 		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
+
+	@Override
+	public float getWidth() {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	@Override
+	public float getHeight() {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	@Override
+	public void setWidth(double w) {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	@Override
+	public void setHeight(double h) {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
 }

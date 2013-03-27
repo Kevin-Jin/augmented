@@ -108,12 +108,22 @@ public class LevelCache {
 
 	private static AutoTransform parseAutoTransformEntry(String key, XMLStreamReader r) {
 		if (key.equals("scale")) {
-			if (!r.getAttributeLocalName(0).equals("factor") || !r.getAttributeLocalName(1).equals("duration") || !r.getAttributeLocalName(2).equals("after"))
+			int attrCount = r.getAttributeCount();
+			double dW = 0, dH = 0;
+			for (int i = 0; i < attrCount - 2; i++) {
+				String attrKey = r.getAttributeLocalName(i);
+				if (attrKey.equals("dw"))
+					dW = Double.parseDouble(r.getAttributeValue(i));
+				else if (attrKey.equals("dh"))
+					dH = Double.parseDouble(r.getAttributeValue(i));
+				else
+					throw new RuntimeException("Invalid level format");
+			}
+			if (!r.getAttributeLocalName(attrCount - 2).equals("duration") || !r.getAttributeLocalName(attrCount - 1).equals("after"))
 				throw new RuntimeException("Invalid level format");
-			double start = Double.parseDouble(r.getAttributeValue(2));
-			double end = start + Double.parseDouble(r.getAttributeValue(1));
-			double clipTo = Double.parseDouble(r.getAttributeValue(0));
-			return new AutoTransform.Scale(start, end, clipTo);
+			double start = Double.parseDouble(r.getAttributeValue(attrCount - 1));
+			double end = start + Double.parseDouble(r.getAttributeValue(attrCount - 2));
+			return new AutoTransform.Scale(start, end, dW, dH);
 		} else if (key.equals("translate")) {
 			if (!r.getAttributeLocalName(0).equals("dx") || !r.getAttributeLocalName(1).equals("dy")
 					|| !r.getAttributeLocalName(2).equals("duration") || !r.getAttributeLocalName(3).equals("after"))

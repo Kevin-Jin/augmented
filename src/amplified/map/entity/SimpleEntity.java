@@ -122,4 +122,14 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	public Velocity getVelocity() {
 		return vel;
 	}
+
+	@Override
+	public void setWidth(double w) {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	@Override
+	public void setHeight(double h) {
+		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
 }

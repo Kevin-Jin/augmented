@@ -65,6 +65,11 @@ public class Player extends CompoundEntity<PlayerPart> {
 		arm.setRotation(realRot);
 		beam.setRotation(realRot);
 		flame.setRotation(body.getRotation());
+		for (AuxiliaryEntity<PlayerPart> child : getAuxiliaries()) {
+			child.setFlip(getBody().flipHorizontally());
+			child.markStartPosition();
+			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
+		}
 	}
 
 	public void lookAt(Position pos) {

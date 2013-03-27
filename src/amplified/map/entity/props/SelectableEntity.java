@@ -139,4 +139,14 @@ public abstract class SelectableEntity extends SimpleEntity {
 	public Vector2f getOrigin() {
 		return getCenter();
 	}
+
+	@Override
+	public void setWidth(double w) {
+		scale = (float) (w / super.getWidth());
+	}
+
+	@Override
+	public void setHeight(double h) {
+		scale = (float) (h / super.getHeight());
+	}
 }
