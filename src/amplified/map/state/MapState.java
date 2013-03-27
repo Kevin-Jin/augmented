@@ -270,13 +270,15 @@ public class MapState extends ScreenFiller {
 
 	@Override
 	public GameState update(double tDelta) {
-		if (shouldChangeLevel(tDelta)){
+		if (shouldChangeLevel(tDelta)) {
 			String next = getNextLevel();
-			if (!next.equalsIgnoreCase("credits")){
+			if (!next.equalsIgnoreCase("credits")) {
+				suspend();
 				setLayout(LevelCache.getLevel(next));
 				camera.setLimits(getCameraBounds());
 				camera.lookAt(getPlayer().getPosition());
 				input.setCutscene(isCutscene());
+				resume();
 				return GameState.GAME;
 			} else {
 				return GameState.TITLE_SCREEN;
@@ -298,5 +300,15 @@ public class MapState extends ScreenFiller {
 		for (Entity ent : getEntities())
 			ent.postCollisionsUpdate(tDelta, input, collisions, camera);
 		return GameState.GAME;
+	}
+
+	public void suspend() {
+		player.getBeam().suspend();
+		player.getFlame().suspend();
+	}
+
+	public void resume() {
+		player.getBeam().resume(input);
+		player.getFlame().resume(input);
 	}
 }

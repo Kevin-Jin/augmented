@@ -80,7 +80,10 @@ public class Player extends CompoundEntity<PlayerPart> {
 	}
 
 	public void reset() {
+		setRotation(0);
 		body.reset();
+		legs.reset();
+		flame.reset();
 		beam.reset();
 	}
 }

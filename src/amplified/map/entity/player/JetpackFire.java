@@ -125,4 +125,19 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	public PlayerPart getType() {
 		return PlayerPart.FIRE;
 	}
+
+	public void reset() {
+		visible = false;
+		animation.reset();
+	}
+
+	public void suspend() {
+		if (visible)
+			SoundCache.getSound("jetpack").stop();
+	}
+
+	public void resume(Input input) {
+		if (!input.isCutscene() && input.downKeys().contains(Integer.valueOf(Keyboard.KEY_W)) && parent.getBody().canJump())
+			SoundCache.getSound("jetpack").playAsSoundEffect(1, 1, true);
+	}
 }

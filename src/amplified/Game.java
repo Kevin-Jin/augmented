@@ -102,10 +102,12 @@ public class Game {
 		}));
 		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,305, 200, 50), new ButtonHandler() {
 			public void clicked() {
+				map.suspend();
 				map.resetLevel();
 				camera.setLimits(map.getCameraBounds());
 				camera.lookAt(map.getPlayer().getPosition());
 				input.setCutscene(map.isCutscene());
+				map.resume();
 				state = GameState.GAME;
 			}
 		}));
@@ -124,11 +126,13 @@ public class Game {
 	}
 
 	private void newGame() {
+		map.suspend();
 		map.setLayout(LevelCache.getLevel("debugCutscene"));
-		state = GameState.GAME;
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
 		input.setCutscene(map.isCutscene());
+		map.resume();
+		state = GameState.GAME;
 	}
 
 	public void graphicsInit() throws Exception {
@@ -217,10 +221,12 @@ public class Game {
 				case GAME:
 					state = GameState.PAUSE;
 					input.setCutscene(false);
+					map.suspend();
 					break;
 				case PAUSE:
 					state = GameState.GAME;
 					input.setCutscene(map.isCutscene());
+					map.resume();
 					break;
 				case TITLE_SCREEN:
 					close = true;

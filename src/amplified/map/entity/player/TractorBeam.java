@@ -34,6 +34,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	private final Position compliantPos;
 	private CollidableDrawable selection;
 	private Vector2f pointInSelected;
+	private boolean playingSound;
 
 	public TractorBeam(Player parent) {
 		super(new BoundingPolygon(new Polygon[] {
@@ -63,6 +64,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 
 	private void beginExtend() {
 		SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
+		playingSound = true;
 	}
 
 	private void extend(double tDelta) {
@@ -75,6 +77,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	private void beginRetract() {
 		setSelection(null);
 		SoundCache.getSound("beam").stop();
+		playingSound = false;
 	}
 
 	private void retract(double tDelta) {
@@ -288,5 +291,19 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	@Override
 	public void setHeight(double h) {
 		throw new UnsupportedOperationException("Cannot change height of TractorBeam");
+	}
+
+	public void suspend() {
+		if (playingSound) {
+			SoundCache.getSound("beam").stop();
+			playingSound = false;
+		}
+	}
+
+	public void resume(Input input) {
+		if (!input.isCutscene() && input.downButtons().contains(Integer.valueOf(Input.MOUSE_LEFT_CLICK))) {
+			SoundCache.getSound("beam").playAsSoundEffect(1, 1, true);
+			playingSound = true;
+		}
 	}
 }

@@ -264,5 +264,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	public void reset() {
 		getVelocity().setScalarComponents(0, 0);
 		remainingJump = 0;
+		canJump = false;
 	}
 }

@@ -105,4 +105,8 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 	public PlayerPart getType() {
 		return PlayerPart.LEGS;
 	}
+
+	public void reset() {
+		animation.reset();
+	}
 }
