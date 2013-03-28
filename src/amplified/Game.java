@@ -36,7 +36,6 @@ import amplified.resources.SoundCache;
 import amplified.resources.TextureCache;
 
 //TODO:
-//Implement AutoTransform.Scale
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
 //Don't let SelectableEntities expand if they will collide with anything except Beam
@@ -119,6 +118,7 @@ public class Game {
 		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,185, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				input.setCutscene(map.isCutscene());
+				map.resume();
 				state = GameState.GAME;
 			}
 		}));

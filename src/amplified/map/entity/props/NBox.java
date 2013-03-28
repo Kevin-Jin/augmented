@@ -25,7 +25,7 @@ public class NBox extends SelectableEntity {
 				new Vector2f(133, 133),
 				new Vector2f(133, 1),
 				new Vector2f(99, 1) })
-			}), 1.25f, 1.25f);
+			}), 1f, 1.25f, 1.25f);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import amplified.map.collisions.Polygon;
 import amplified.resources.TextureCache;
 
 public class RectangleBox extends SelectableEntity {
-	public RectangleBox(float minScale, float maxScale) {
+	public RectangleBox(float initScale, float minScale, float maxScale) {
 		super(new BoundingPolygon(new Polygon[] {
 			new Polygon(new Vector2f[] {
 				new Vector2f(0, 380),
@@ -16,11 +16,11 @@ public class RectangleBox extends SelectableEntity {
 				new Vector2f(85, 0),
 				new Vector2f(0, 0)
 			})
-		}), minScale, maxScale);
+		}), initScale, minScale, maxScale);
 	}
 
 	public RectangleBox() {
-		this(0.1f, 10f);
+		this(1f, 0.1f, 10f);
 	}
 
 	@Override

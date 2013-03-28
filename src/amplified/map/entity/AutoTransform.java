@@ -90,6 +90,9 @@ public abstract class AutoTransform {
 	}
 
 	public static class Rotate extends AutoTransform {
+		private static final double TWO_PI = Math.PI * 2;
+		private static final double NORMALIZE_CENTER = 0; //[-PI, PI]
+
 		private final double finalDtheta;
 		private final double velAng;
 		private double elapsed;
@@ -102,20 +105,26 @@ public abstract class AutoTransform {
 			velAng = finalDtheta / (endAfter - startAfter);
 		}
 
+		private float normalize(double a) {
+			return (float) (a - TWO_PI * Math.floor((a + Math.PI - NORMALIZE_CENTER) / TWO_PI));
+		}
+
 		@Override
 		public void transform(Entity ent, double tDelta) {
 			elapsed += tDelta;
 			if (elapsed > endAfter) {
 				if (inProgress) {
-					ent.setRotation((float) (finalDtheta + rotInit));
+					ent.setRotation((float) normalize(finalDtheta + rotInit));
 					inProgress = false;
 				}
 			} else if (elapsed > startAfter) {
 				if (!inProgress) {
 					rotInit = ent.getRotation();
+					if (ent.flipHorizontally())
+						rotInit += Math.PI;
 					inProgress = true;
 				}
-				ent.setRotation((float) (velAng * (elapsed - startAfter) + rotInit));
+				ent.setRotation((float) normalize(velAng * (elapsed - startAfter) + rotInit));
 			}
 		}
 

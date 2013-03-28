@@ -120,7 +120,7 @@ public class MapState extends ScreenFiller {
 		for (AutoTransform at : layout.getBeamAutoTransforms())
 			at.reset();
 		for (BoxSpawnInfo box : layout.getBoxes()) {
-			Box b = new Box(box.getMinimumScale(), box.getMaximumScale());
+			Box b = new Box(box.getStartScale(), box.getMinimumScale(), box.getMaximumScale());
 			b.setPosition(box.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), b);
 			autoTransforms.put(b, box.getAutoTransforms());
@@ -128,7 +128,7 @@ public class MapState extends ScreenFiller {
 				at.reset();
 		}
 		for (RectangleSpawnInfo rect : layout.getRectangles()) {
-			RectangleBox r = new RectangleBox(rect.getMinimumScale(), rect.getMaximumScale());
+			RectangleBox r = new RectangleBox(rect.getStartScale(), rect.getMinimumScale(), rect.getMaximumScale());
 			r.setPosition(rect.getPosition());
 			entities.put(Byte.valueOf(nextEntityId++), r);
 			autoTransforms.put(r, rect.getAutoTransforms());
@@ -231,6 +231,9 @@ public class MapState extends ScreenFiller {
 	}
 
 	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
+		if (isCutscene())
+			return Collections.emptyMap();
+
 		//map.getCollidables() is sorted by movability ascending, y coordinate descending
 		List<CollidableDrawable> collidablesList = getCollidables();
 		CollidableDrawable[] collidables = collidablesList.toArray(new CollidableDrawable[collidablesList.size()]);

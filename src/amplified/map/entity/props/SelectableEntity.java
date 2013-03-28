@@ -20,11 +20,11 @@ public abstract class SelectableEntity extends SimpleEntity {
 	private float scale;
 	private boolean continueRot, selected;
 
-	protected SelectableEntity(BoundingPolygon boundPoly, float minScale, float maxScale) {
+	protected SelectableEntity(BoundingPolygon boundPoly, float initScale, float minScale, float maxScale) {
 		super(boundPoly, new EntityKinematics());
 		this.minScale = minScale;
 		this.maxScale = maxScale;
-		scale = 1;
+		scale = initScale;
 	}
 
 	public void select() {
