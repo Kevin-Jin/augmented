@@ -1,6 +1,8 @@
 package amplified.map;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
@@ -56,7 +58,7 @@ public class Platform extends AbstractCollidable {
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		
 	}
 

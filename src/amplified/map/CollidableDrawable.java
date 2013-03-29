@@ -1,6 +1,8 @@
 package amplified.map;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
@@ -18,7 +20,7 @@ public interface CollidableDrawable extends Drawable {
 
 	BoundingPolygon getBoundingPolygon();
 
-	void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables);
+	void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log);
 
 	boolean isVisible();
 

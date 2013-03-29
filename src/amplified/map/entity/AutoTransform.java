@@ -114,7 +114,7 @@ public abstract class AutoTransform {
 			elapsed += tDelta;
 			if (elapsed > endAfter) {
 				if (inProgress) {
-					ent.setRotation((float) normalize(finalDtheta + rotInit));
+					ent.setRotation(normalize(finalDtheta + rotInit));
 					inProgress = false;
 				}
 			} else if (elapsed > startAfter) {
@@ -124,7 +124,7 @@ public abstract class AutoTransform {
 						rotInit += Math.PI;
 					inProgress = true;
 				}
-				ent.setRotation((float) normalize(velAng * (elapsed - startAfter) + rotInit));
+				ent.setRotation(normalize(velAng * (elapsed - startAfter) + rotInit));
 			}
 		}
 

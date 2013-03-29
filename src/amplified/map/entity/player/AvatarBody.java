@@ -21,6 +21,7 @@ import amplified.map.collisions.Polygon;
 import amplified.map.entity.BodyEntity;
 import amplified.map.entity.Direction;
 import amplified.map.entity.SimpleEntity;
+import amplified.map.entity.props.SelectableEntity;
 import amplified.map.physicquantity.Position;
 import amplified.map.state.Camera;
 import amplified.map.state.Input;
@@ -107,7 +108,15 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
+		if (collisionInfo.getCollidedWith() instanceof SelectableEntity) {
+			Set<CollisionInformation> collidedWithCollisions = log.get(collisionInfo.getCollidedWith());
+			if (collidedWithCollisions == null) {
+				collisionInfo.getCollidedWith().collision(collisionInfo.complement(this), otherCollidables, log);
+				return;
+			}
+		}
+
 		final float TOLERANCE = 0.001f;
 
 		//TODO: fix collision fighting between legs polygon and body (self) polygon
@@ -118,7 +127,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		//vertex of the Player (e.g. connection between antenna and head,
 		//perpendicular arm and legs, or perpendicular arm and head) diagonally
 		//into one of the platform's corners
-		super.collision(collisionInfo, otherCollidables);
+		super.collision(collisionInfo, otherCollidables, log);
 		if (collisionInfo.getMinimumTranslationVector().getY() >= 0 && Math.abs(collisionInfo.getCollidingSurface().getY()) < TOLERANCE)
 			flatSurfaces.add(collisionInfo.getCollidedWith());
 	}

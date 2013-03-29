@@ -1,6 +1,8 @@
 package amplified.map.entity.player;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.Point;
@@ -108,7 +110,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		CollidableDrawable other = collisionInfo.getCollidedWith();
 		if (selection != other && other != parent.getBody()) {
 			Position hitPos = new Position(pos.getX() + length * Math.cos(rot), pos.getY() + length * Math.sin(rot));

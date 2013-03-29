@@ -39,9 +39,7 @@ import amplified.resources.TextureCache;
 //Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
 //Fix box being stuck to platform when dragged up, even when they no longer collide?
 //Don't let SelectableEntities expand if they will collide with anything except Beam
-//Switches, RetractablePlatforms
-//Add special collision cases:
-// player and SelectableEntity collision
+
 public class Game {
 	public static enum GameState {
 		TITLE_SCREEN, GAME, PAUSE

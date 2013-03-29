@@ -1,6 +1,8 @@
 package amplified.map.entity.props;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.Texture;
@@ -32,7 +34,7 @@ public class ExitDoor extends SimpleEntity {
 	}
 	
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		if (collisionInfo.getCollidedWith() instanceof AvatarBody)
 			hit = true;
 	}

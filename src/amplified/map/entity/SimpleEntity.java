@@ -51,7 +51,7 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		final float TOLERANCE = 0.001f;
 
 		Vector2f negationVector = collisionInfo.getMinimumTranslationVector();

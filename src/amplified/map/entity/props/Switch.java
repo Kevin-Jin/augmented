@@ -66,11 +66,11 @@ public class Switch extends SimpleEntity {
 	}
 
 	@Override
-	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables) {
+	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		if (collisionInfo.getCollidedWith() instanceof SelectableEntity)
 			hitMap.put((SelectableEntity) collisionInfo.getCollidedWith(), Double.valueOf(0));
 		//now push the other entity out
-		collisionInfo.getCollidedWith().collision(collisionInfo.complement(this), null);
+		collisionInfo.getCollidedWith().collision(collisionInfo.complement(this), otherCollidables, log);
 	}
 
 	@Override

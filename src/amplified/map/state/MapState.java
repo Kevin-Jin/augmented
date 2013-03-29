@@ -249,7 +249,7 @@ public class MapState extends ScreenFiller {
 						CollisionResult result = PolygonCollision.boundingPolygonCollision(a, b, tDelta);
 						if (result.collision()) {
 							result.getCollisionInformation().setCollidedWith(a);
-							b.collision(result.getCollisionInformation(), collidablesList);
+							b.collision(result.getCollisionInformation(), collidablesList, log);
 
 							aAll = log.get(a);
 							if (aAll == null) {
