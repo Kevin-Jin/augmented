@@ -196,6 +196,11 @@ public class PolygonCollision {
 			if (Vector2f.dot(d, translationAxis) > 0.0f)
 				translationAxis.negate();
 			translationAxis.scale(minIntervalDistance);
+			//only bring the entity back to the origin position (so that minimum
+			//translation vector can be applied to it) if displacement is
+			//towards the other colliding entity
+			if (tExitMin > 0)
+				Vector2f.sub(translationAxis, displacement, translationAxis);
 		} else if (tEnterMax <= tDelta) {
 			translationAxis = new Vector2f(vr);
 			translationAxis.scale(tEnterMax);
@@ -208,14 +213,16 @@ public class PolygonCollision {
 			Vector2f newDisp = new Vector2f(displacement);
 			//TODO: this is a temporary fix for getting stuck on platforms ONLY.
 			//need a generalized solution using vector maths
+			//this does not stop boxes from crossing thin, vertical walls
 			newDisp.setY(0);
 			Vector2f.add(translationAxis, newDisp, translationAxis);
+
+			Vector2f.sub(translationAxis, displacement, translationAxis);
 
 			collisionEdge = sweptCollisionEdge;
 		} else {
 			return new CollisionResult();
 		}
-		Vector2f.sub(translationAxis, displacement, translationAxis);
 
 		return new CollisionResult(translationAxis, collisionEdge);
 	}

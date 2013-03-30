@@ -36,10 +36,9 @@ import amplified.resources.SoundCache;
 import amplified.resources.TextureCache;
 
 //TODO:
-//Fully fix PolygonCollision.collision when (tEnterMax <= tDelta)
-//Fix box being stuck to platform when dragged up, even when they no longer collide?
+//Fully fix PolygonCollision.collision when dynamic SAT handling, (tEnterMax <= tDelta)
+//Fix choppy player walking while on the gruond
 //Don't let SelectableEntities expand if they will collide with anything except Beam
-
 public class Game {
 	public static enum GameState {
 		TITLE_SCREEN, GAME, PAUSE
