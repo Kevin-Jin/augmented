@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <level id="tutorial">
-  <width>1920</width>
+  <width>3400</width>
   <height>1080</height>
   <gravity acceleration="-400" terminalVelocity="-400" />
   <nextMap>mid1</nextMap>
@@ -11,40 +11,40 @@
     <foothold id="1" anchor="left" />
     <foothold id="2" anchor="right" />
     <foothold id="3" anchor="top" />
-    <foothold id="4" x1="300" x2="400" y1="200" y2="0" />
-    <foothold id="5" x1="975" x2="1075" y1="300" y2="0" />
-    <!-- Main center -->
-    <foothold id="7" x1="1000" x2="1300" y1="900" y2="700" />
-    <!-- Small to the right -->
-    <foothold id="8" x1="1300" x2="1500" y1="870" y2="850" />
-    <!-- Left -->
-    <foothold id="9" x1="950" x2="1000" y1="1100" y2="700" />
-    <!-- Top -->
-    <foothold id="10" x1="1000" x2="1500" y1="1100" y2="1050" />
-    <!-- Top to the right -->
-    <foothold id="11" x1="1500" x2="1951" y1="1100" y2="1060" />
-    <!-- Top part extending downwards -->
-    <foothold id="12" x1="1100" x2="1300" y1="1050" y2="940" />
-    <!-- Right wall, for exit -->
-    <foothold id="13" x1="1650" x2="1951" y1="800" y2="0" />
-    <!-- Wall blocking exit -->
-    <foothold id="14" x1="1650" x2="1700" y1="1060" y2="800" switchableId="1" color="#0000ff" />
+	<!-- Rectangle to the left of Square at start-->
+	<foothold id="4" x1="0" x2= "75" y1="300" y2="0" />
+	<!-- Square to the left of start -->
+	<foothold id="5" x1="75" x2="225" y1="150" y2="0" />
+	<!-- Jetpack Jump Wall -->
+	<foothold id="6" x1="700" x2="800" y1="225" y2="0" />
+	<!-- Laser placeholder for now -->
+	<foothold id="7" x1="1250" x2="1388" y1="1080" y2="138" />
+	<!-- Left wall of platform over shrink box -->
+	<foothold id="8" x1="1900" x2="1950" y1="1080" y2="175" />
+	<!-- Mid wall of platform over shrink box -->
+	<foothold id="9" x1="1950" x2="2100" y1="225" y2="175" />
+	<!-- Right wall of platform over shrink box, overextends -->
+	<foothold id="10" x1="2100" x2="2150" y1="1080" y2="125" />
+	<!-- Right platform with exit door -->
+    <foothold id="12" x1="2600" x2="3600" y1="450" y2="0" />
+	<!-- Top part blocking door -->
+	<foothold id="13" x1="3050" x2="3100" y1="1080" y2="600" />
+	<!-- Retractable platform blocking door -->
+	<foothold id="14" x1="3050" x2="3100" y1="600" y2="450" switchableId="1" color="#0000ff" /> 
   </footholds>
   <entities>
-    <avatar x="100" y="100" />
-    <box x="401" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="0.5" />
-    <box x="1100" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1" />
-    <box x="1225" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1" />
-    <box x="1350" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1" />
-    <box x="1001" y="901" scaleInit="0.4" scaleMin="0.1" scaleMax="0.4" />
-    <button x="1450" y="870" color="#0000ff">
+    <avatar x="10" y="350" />
+	<!-- First box detailing movement -->
+	<box x="1262" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="0.5" /> 
+	<!-- Second box, to be shrunk -->
+	<box x="1900" y="0" scaleInit="0.7" scaleMin="0.1" scaleMax="0.7" />
+	<!-- Third box, to be grown -->
+	<box x="2350" y="0" scaleInit="0.25" scaleMin="0.25" scaleMax="1.0" />
+	<!-- Fourth box, for button -->
+	<box x="2700" y="450" scaleInit="0.25" scaleMin="0.2" scaleMax="0.3" />
+	<button x="2825" y="450" color="#0000ff">
       <buttontrigger switchableId="1" />
     </button>
-    <overlay x="0" y="200" w="400" h="200" src="jetpackOverlay" />
-    <overlay x="500" y="200" w="400" h="200" src="beamOverlay" />
-    <overlay x="1400" y="400" w="400" h="200" src="growOverlay" />
-    <overlay x="1400" y="1000" w="400" h="200" src="shrinkOverlay" />
-    <overlay x="1900" y="1000" w="400" h="200" src="switchOverlay" />
-    <exit x="1720" y="800" />
+    <exit x="3112" y="450" />
   </entities>
 </level>
