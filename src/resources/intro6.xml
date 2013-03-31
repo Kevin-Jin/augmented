@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cutscene id="intro6">
+  <nextMap>tutorial</nextMap>
+  <outerImage>scrollingWindowBg</outerImage>
+  <innerImage>mainBg</innerImage>
+  <timer>5</timer>
+  <entities>
+    <!-- TODO: Show evil guy on computer screen, red alarm flashing next to him, three robots marching -->
+    <avatar x="50" y="530" />
+    <overlay x="0" y="340" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="And this is where our story begins." cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+    </overlay>
+  </entities>
+</cutscene>

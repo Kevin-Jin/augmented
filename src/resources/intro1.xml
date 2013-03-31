@@ -2,5 +2,10 @@
 <cutscene id="intro1">
   <nextMap>intro2</nextMap>
   <innerImage>intro1</innerImage>
-  <timer>3</timer>
+  <timer>5</timer>
+  <entities>
+    <overlay x="0" y="500" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="When matter expansion was discovered, it was thought it would change the world." cursorAfter="0" noCursorAfter="-1" duration="3" after="1" />
+    </overlay>
+  </entities>
 </cutscene>

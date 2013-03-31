@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cutscene id="intro4">
+  <nextMap>intro5</nextMap>
+  <outerImage>scrollingWindowBg</outerImage>
+  <innerImage>mainBg</innerImage>
+  <timer>10</timer>
+  <entities>
+    <!-- TODO: static screenshot of full Player with rot = 0, so we can have overlay images here for other robots -->
+    <!-- TODO: translate sparks after 3 -->
+    <avatar x="50" y="530">
+      <rotate angle="-1" duration="0.4" after="3" />
+      <rotate angle="2" duration="0.4" after="3.5" />
+      <rotate angle="2" duration="0.5" after="4" />
+    </avatar>
+    <overlay x="0" y="350" w="750" h="250" src="conveyor" />
+    <overlay x="0" y="400" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="That was until one robot, due to some malfunction, some deviation, was built" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+    </overlay>
+    <overlay x="0" y="380" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="with the understanding that what he was doing, was wrong." cursorAfter="4" noCursorAfter="-1" duration="3" after="4" />
+    </overlay>
+  </entities>
+</cutscene>

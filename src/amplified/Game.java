@@ -124,7 +124,7 @@ public class Game {
 
 	private void newGame() {
 		map.suspend();
-		map.setLayout(LevelCache.getLevel("tutorial"));
+		map.setLayout(LevelCache.getLevel("intro1"));
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
 		input.setCutscene(map.isCutscene());
@@ -159,12 +159,15 @@ public class Game {
 		TextureCache.setTexture("beam", LowLevelUtil.loadPng("resources/beam"));
 		TextureCache.setTexture("box", LowLevelUtil.loadPng("resources/crate"));
 		TextureCache.setTexture("rect", LowLevelUtil.loadPng("resources/rect"));
-
-		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
-		TextureCache.setTexture("mainBg", LowLevelUtil.loadPng("resources/mainBg"));
 		TextureCache.setTexture("door", LowLevelUtil.loadPng("resources/door"));
 		TextureCache.setTexture("openDoor", LowLevelUtil.loadPng("resources/opendoor"));
 		TextureCache.setTexture("switch", LowLevelUtil.loadPng("resources/switch"));
+		TextureCache.setTexture("diamond", LowLevelUtil.loadPng("resources/diamond"));
+		TextureCache.setTexture("conveyor", LowLevelUtil.loadPng("resources/conveyor"));
+
+		TextureCache.setTexture("intro1", LowLevelUtil.loadPng("resources/intro1"));
+		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
+		TextureCache.setTexture("mainBg", LowLevelUtil.loadPng("resources/mainBg"));
 
 		TextureCache.setTexture("jetpackOverlay",LowLevelUtil.loadPng("resources/overlays/overlayJetpack"));
 		TextureCache.setTexture("switchOverlay",LowLevelUtil.loadPng("resources/overlays/buttonOverlay"));
@@ -184,6 +187,9 @@ public class Game {
 		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro3", LevelCache.loadXml("resources/intro3", WIDTH, HEIGHT));
+		LevelCache.setLevel("intro4", LevelCache.loadXml("resources/intro4", WIDTH, HEIGHT));
+		LevelCache.setLevel("intro5", LevelCache.loadXml("resources/intro5", WIDTH, HEIGHT));
+		LevelCache.setLevel("intro6", LevelCache.loadXml("resources/intro6", WIDTH, HEIGHT));
 		LevelCache.setLevel("tutorial", LevelCache.loadXml("resources/tutorial", WIDTH, HEIGHT));
 		LevelCache.setLevel("mid1", LevelCache.loadXml("resources/mid1", WIDTH, HEIGHT));
 		LevelCache.setLevel("level1", LevelCache.loadXml("resources/level1", WIDTH, HEIGHT));

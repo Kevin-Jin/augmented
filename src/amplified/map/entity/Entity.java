@@ -11,7 +11,7 @@ import amplified.map.state.Camera;
 import amplified.map.state.Input;
 import amplified.map.state.MapState;
 
-public interface Entity {
+public interface Entity extends AutoTransformable {
 	Collection<? extends DrawableEntity> getDrawables();
 
 	void move(Direction to);

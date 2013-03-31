@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cutscene id="intro5">
+  <nextMap>intro6</nextMap>
+  <innerImage>intro1</innerImage>
+  <timer>5</timer>
+  <entities>
+    <overlay x="0" y="500" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="When matter expansion was discovered, it was thought it would change the world." cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="480" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="However, greed-ridden corporations began to hoard the technologies, developing" cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="460" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="robotic minions to expand their wealth while leaving the rest of the world in poverty." cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="440" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="These robotic minions were mass-produced, programmed to help the evil" cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="420" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="corporations in their quests for greed and power." cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="400" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="That was until one robot, due to some malfunction, some deviation, was built" cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="380" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="with the understanding that what he was doing, was wrong." cursorAfter="-1" noCursorAfter="0" duration="0" after="0" />
+    </overlay>
+    <overlay x="0" y="360" w="1" h="1" src="spacer">
+      <caption font="rain" color="#00FF00" text="The corporations were ready to do anything in their power in order to protect their wealth." cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+    </overlay>
+  </entities>
+</cutscene>

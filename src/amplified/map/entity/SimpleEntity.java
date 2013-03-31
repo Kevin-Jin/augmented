@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.Color;
 
 import amplified.Game;
 import amplified.map.AbstractCollidable;
@@ -121,5 +122,13 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 
 	public void setHeight(double h) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	public void initializeCaption(String font, Color color) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setCaption(String s) {
+		throw new UnsupportedOperationException();
 	}
 }

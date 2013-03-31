@@ -26,6 +26,7 @@ import amplified.map.collisions.CollisionResult;
 import amplified.map.collisions.Polygon;
 import amplified.map.collisions.PolygonCollision;
 import amplified.map.entity.AutoTransform;
+import amplified.map.entity.AutoTransformable;
 import amplified.map.entity.DrawableEntity;
 import amplified.map.entity.Entity;
 import amplified.map.entity.player.Player;
@@ -59,7 +60,8 @@ public class MapState extends ScreenFiller {
 	private final SortedMap<Byte, Entity> entities;
 	private final SortedMap<Byte, ZAxisLayer> layers;
 	private final List<CollidableDrawable> collidables;
-	private final Map<Entity, List<AutoTransform>> autoTransforms;
+	private final Map<AutoTransformable, List<AutoTransform>> autoTransforms;
+	private final List<AutoTransformable> autoTransformDrawableTextures;
 	private byte nextEntityId;
 
 	private ExitDoor door;
@@ -75,7 +77,8 @@ public class MapState extends ScreenFiller {
 		entities = new TreeMap<Byte, Entity>();
 		layers = new TreeMap<Byte, ZAxisLayer>();
 		collidables = new ArrayList<CollidableDrawable>();
-		autoTransforms = new HashMap<Entity, List<AutoTransform>>();
+		autoTransforms = new HashMap<AutoTransformable, List<AutoTransform>>();
+		autoTransformDrawableTextures = new ArrayList<AutoTransformable>();
 
 		layers.put(ZAxisLayer.FAR_BACKGROUND, new ZAxisLayer(0.25f));
 		layers.put(ZAxisLayer.MAIN_BACKGROUND, new ZAxisLayer(0.5f));
@@ -159,8 +162,28 @@ public class MapState extends ScreenFiller {
 		}
 
 		layers.get(ZAxisLayer.FOREGROUND).getDrawables().clear();
-		for (OverlayInfo ol : layout.getTips())
-			layers.get(ZAxisLayer.FOREGROUND).getDrawables().add(new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition()));
+		autoTransformDrawableTextures.clear();
+		if (layout.isCutscene()) {
+			for (OverlayInfo ol : layout.getTips()) {
+				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition());
+				layers.get(ZAxisLayer.MIDGROUND).getDrawables().add(dt);
+				autoTransforms.put(dt, ol.getAutoTransforms());
+				if (!ol.getAutoTransforms().isEmpty())
+					autoTransformDrawableTextures.add(dt);
+				for (AutoTransform at : ol.getAutoTransforms())
+					at.reset();
+			}
+		} else {
+			for (OverlayInfo ol : layout.getTips()) {
+				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition());
+				layers.get(ZAxisLayer.FOREGROUND).getDrawables().add(dt);
+				autoTransforms.put(dt, ol.getAutoTransforms());
+				if (!ol.getAutoTransforms().isEmpty())
+					autoTransformDrawableTextures.add(dt);
+				for (AutoTransform at : ol.getAutoTransforms())
+					at.reset();
+			}
+		}
 
 		player.setPosition(layout.getStartPosition());
 	}
@@ -225,8 +248,8 @@ public class MapState extends ScreenFiller {
 		return layout.getTerminalVelocity();
 	}
 
-	public List<AutoTransform> getAutoTransforms(Entity ent) {
-		return autoTransforms.get(ent);
+	public List<AutoTransform> getAutoTransforms(AutoTransformable transformable) {
+		return autoTransforms.get(transformable);
 	}
 
 	private Map<CollidableDrawable, Set<CollisionInformation>> detectAndHandleCollisions(float tDelta) {
@@ -292,6 +315,9 @@ public class MapState extends ScreenFiller {
 
 		for (AutoTransform at : getAutoTransforms(player.getBeam()))
 			at.transform(player.getBeam(), tDelta);
+		for (AutoTransformable transformable : autoTransformDrawableTextures)
+			for (AutoTransform at : getAutoTransforms(transformable))
+				at.transform(transformable, tDelta);
 		for (Entity ent : getEntities()) {
 			for (AutoTransform at : getAutoTransforms(ent))
 				at.transform(ent, tDelta);

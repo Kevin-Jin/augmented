@@ -140,6 +140,17 @@ public class LevelCache {
 			double end = start + Double.parseDouble(r.getAttributeValue(1));
 			double clipTo = Double.parseDouble(r.getAttributeValue(0));
 			return new AutoTransform.Rotate(start, end, clipTo);
+		} else if (key.equals("caption")) {
+			if (!r.getAttributeLocalName(0).equals("font") || !r.getAttributeLocalName(1).equals("color") || !r.getAttributeLocalName(2).equals("text") || !r.getAttributeLocalName(3).equals("cursorAfter") || !r.getAttributeLocalName(4).equals("noCursorAfter") || !r.getAttributeLocalName(5).equals("duration") || !r.getAttributeLocalName(6).equals("after"))
+				throw new RuntimeException("Invalid level format");
+			double start = Double.parseDouble(r.getAttributeValue(6));
+			double end = start + Double.parseDouble(r.getAttributeValue(5));
+			double noCursorAfter = Double.parseDouble(r.getAttributeValue(4));
+			double cursorAfter = Double.parseDouble(r.getAttributeValue(3));
+			String text = r.getAttributeValue(2);
+			Color color = parseColor(r.getAttributeValue(1));
+			String font = r.getAttributeValue(0);
+			return new AutoTransform.Caption(start, end, font, color, text, cursorAfter, noCursorAfter);
 		} else {
 			return null;
 		}

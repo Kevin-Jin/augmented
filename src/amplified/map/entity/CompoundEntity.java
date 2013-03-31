@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.newdawn.slick.Color;
+
 import amplified.map.CollidableDrawable;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
@@ -108,5 +110,13 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 
 	public void setHeight(double h) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
+	}
+
+	public void initializeCaption(String font, Color color) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setCaption(String s) {
+		throw new UnsupportedOperationException();
 	}
 }
