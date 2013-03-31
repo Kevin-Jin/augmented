@@ -214,7 +214,10 @@ public class PolygonCollision {
 			//TODO: this is a temporary fix for getting stuck on platforms ONLY.
 			//need a generalized solution using vector maths
 			//this does not stop boxes from crossing thin, vertical walls
-			newDisp.setY(0);
+			if (Math.abs(sweptTranslationAxis.getX()) > 0.1)
+				newDisp.setX(0);
+			if (Math.abs(sweptTranslationAxis.getY()) > 0.1f)
+				newDisp.setY(0);
 			Vector2f.add(translationAxis, newDisp, translationAxis);
 
 			Vector2f.sub(translationAxis, displacement, translationAxis);

@@ -85,7 +85,7 @@ public class Switch extends SimpleEntity {
 	}
 
 	public int getMovabilityIndex() {
-		return 2;
+		return 0;
 	}
 
 	public Texture getTexture() {
