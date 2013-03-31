@@ -107,11 +107,21 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		setPosition(pos);
 	}
 
+	private boolean ignoreCollisions(Set<CollisionInformation> collidedWithCollisions) {
+		final float TOLERANCE = 0.001f;
+
+		//TODO: prevent pushing player horizontally by dragging box along platform
+		for (CollisionInformation info : collidedWithCollisions)
+			if (info.getMinimumTranslationVector().lengthSquared() >= TOLERANCE && info.getCollidingSurface().getX() >= TOLERANCE)
+				return false;
+		return true;
+	}
+
 	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		if (collisionInfo.getCollidedWith() instanceof SelectableEntity) {
 			Set<CollisionInformation> collidedWithCollisions = log.get(collisionInfo.getCollidedWith());
-			if (collidedWithCollisions == null) {
+			if (collidedWithCollisions == null || ignoreCollisions(collidedWithCollisions)) {
 				collisionInfo.getCollidedWith().collision(collisionInfo.complement(this), otherCollidables, log);
 				return;
 			}
