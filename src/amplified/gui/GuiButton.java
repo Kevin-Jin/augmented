@@ -92,6 +92,6 @@ public class GuiButton extends AbstractDrawable {
 	@Override
 	public DrawableOverlayText getCaption() {
 		TrueTypeFont f = FontCache.getFont("button");
-		return new DrawableOverlayText(new Point((bounds.getWidth() - f.getWidth(text)) / 2, bounds.getHeight() - f.getHeight(text)/2), f, text);
+		return new DrawableOverlayText(new Point((bounds.getWidth() - f.getWidth(text)) / 2, bounds.getHeight() - f.getHeight(text) / 2), f, text);
 	}
 }

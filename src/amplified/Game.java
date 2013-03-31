@@ -56,7 +56,8 @@ public class Game {
 	private final FrameRateState frameRateState;
 	private final MapState map;
 	private final List<Polygon> preCollisionPolygons;
-	private final ScreenFiller titleScreen, pauseScreen;
+	private final GuiMainMenu titleScreen;
+	private final GuiPauseMenu pauseScreen;
 
 	private GameState state;
 	private boolean screenshot, close;
@@ -133,7 +134,7 @@ public class Game {
 
 	public void graphicsInit() throws Exception {
 		LowLevelUtil.setUpWindow(FULLSCREEN, WIDTH, HEIGHT, VSYNC);
-		LowLevelUtil.setUp2dCanvas(100, 149, 237, WIDTH, HEIGHT);
+		LowLevelUtil.setUp2dCanvas(0, 0, 0, WIDTH, HEIGHT);
 	}
 
 	public void loadContent() throws IOException {
@@ -177,7 +178,8 @@ public class Game {
 		SoundCache.setSound("bgm", LowLevelUtil.loadOgg("resources/bgm"));
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
-		FontCache.setFont("button",LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 24)));
+		FontCache.setFont("button", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 24)));
+		FontCache.setFont("rain", LowLevelUtil.loadFont(new Font("Courier New", Font.PLAIN, 12)));
 
 		LevelCache.setLevel("intro1", LevelCache.loadXml("resources/intro1", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro2", LevelCache.loadXml("resources/intro2", WIDTH, HEIGHT));
@@ -264,6 +266,7 @@ public class Game {
 		LowLevelUtil.clearCanvas();
 		switch (state) {
 			case TITLE_SCREEN:
+				titleScreen.drawBackground();
 				fillScreen(titleScreen);
 				break;
 			case PAUSE:
