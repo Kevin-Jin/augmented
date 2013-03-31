@@ -5,6 +5,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import amplified.map.CollidableDrawable;
+import amplified.map.Platform;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionResult;
 import amplified.map.collisions.PolygonCollision;
@@ -53,7 +54,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 
 	private boolean collidesWith(double tDelta, List<CollidableDrawable> others) {
 		for (CollidableDrawable curDrawable : others) {
-			if (!(curDrawable instanceof TractorBeam) && curDrawable != this) {
+			if (!(curDrawable instanceof TractorBeam) && curDrawable != this && curDrawable.isVisible()) {
 				//ignore beam and self
 				CollisionResult cr = PolygonCollision.boundingPolygonCollision(curDrawable, this, (float) tDelta);
 				if (cr.collision() && (cr.getCollisionInformation().getMinimumTranslationVector().getX() != 0 || cr.getCollisionInformation().getMinimumTranslationVector().getY() != 0))
@@ -61,6 +62,21 @@ public abstract class SelectableEntity extends SimpleEntity {
 			}
 		}
 		return false;
+	}
+	private boolean collidesWithPlatformsOnly(double tDelta, List<CollidableDrawable> others){
+		for (CollidableDrawable curDrawable : others){
+			if (!(curDrawable instanceof TractorBeam) && curDrawable != this && curDrawable.isVisible()) {
+				CollisionResult cr = PolygonCollision.boundingPolygonCollision(curDrawable, this, (float) tDelta);
+				if (cr.collision())
+					if (curDrawable instanceof Platform){
+						Vector2f vector = cr.getCollisionInformation().getMinimumTranslationVector();
+						pos.add(vector.getX(), vector.getY());
+					}
+					else
+						return false;
+			}
+		}
+		return true;
 	}
 
 	public void upScale(double tDelta, Input input, Camera camera, MapState map) {
@@ -73,8 +89,14 @@ public abstract class SelectableEntity extends SimpleEntity {
 			scale = maxScale;
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
 		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
+		boolean fail = !collidesWithPlatformsOnly(tDelta,map.getCollidables());
+		
+		if (!fail){
+			recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
+			fail = collidesWith(tDelta, map.getCollidables());
+		}
 
-		if (collidesWith(tDelta, map.getCollidables())) {
+		if (fail) {
 			scale = oldScale;
 			pos.set(oldPos);
 			recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
