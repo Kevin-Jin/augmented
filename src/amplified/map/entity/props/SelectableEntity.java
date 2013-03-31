@@ -1,9 +1,15 @@
 package amplified.map.entity.props;
 
+import java.util.List;
+
 import org.lwjgl.util.vector.Vector2f;
 
+import amplified.map.CollidableDrawable;
 import amplified.map.collisions.BoundingPolygon;
+import amplified.map.collisions.CollisionResult;
+import amplified.map.collisions.PolygonCollision;
 import amplified.map.entity.SimpleEntity;
+import amplified.map.entity.player.TractorBeam;
 import amplified.map.physicquantity.Position;
 import amplified.map.state.Camera;
 import amplified.map.state.Input;
@@ -45,12 +51,34 @@ public abstract class SelectableEntity extends SimpleEntity {
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
 	}
 
-	public void upScale(double tDelta) {
+	private boolean collidesWith(double tDelta, List<CollidableDrawable> others) {
+		for (CollidableDrawable curDrawable : others) {
+			if (!(curDrawable instanceof TractorBeam) && curDrawable != this) {
+				//ignore beam and self
+				CollisionResult cr = PolygonCollision.boundingPolygonCollision(curDrawable, this, (float) tDelta);
+				if (cr.collision() && (cr.getCollisionInformation().getMinimumTranslationVector().getX() != 0 || cr.getCollisionInformation().getMinimumTranslationVector().getY() != 0))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public void upScale(double tDelta, Input input, Camera camera, MapState map) {
+		float oldScale = scale;
+		Position oldPos = new Position(pos.getX(), pos.getY());
+
 		float oldWidth = getWidth();
 		scale += SCALE_RATE * tDelta;
 		if (scale > maxScale)
 			scale = maxScale;
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
+		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
+
+		if (collidesWith(tDelta, map.getCollidables())) {
+			scale = oldScale;
+			pos.set(oldPos);
+			recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
+		}
 	}
 
 	public void rotateCounterClockwise() {

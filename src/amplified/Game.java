@@ -37,8 +37,7 @@ import amplified.resources.TextureCache;
 
 //TODO:
 //Fully fix PolygonCollision.collision when dynamic SAT handling, (tEnterMax <= tDelta)
-//Fix choppy player walking while on the gruond
-//Don't let SelectableEntities expand if they will collide with anything except Beam
+//Fix choppy player walking while on the ground
 public class Game {
 	public static enum GameState {
 		TITLE_SCREEN, GAME, PAUSE

@@ -202,7 +202,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
 						prop.downScale(tDelta);
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
-						prop.upScale(tDelta);
+						prop.upScale(tDelta, input, camera, map);
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
 						prop.rotateCounterClockwise();
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
