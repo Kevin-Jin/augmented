@@ -41,10 +41,16 @@
 	<!-- Third box, to be grown -->
 	<box x="2350" y="0" scaleInit="0.25" scaleMin="0.25" scaleMax="1.0" />
 	<!-- Fourth box, for button -->
-	<box x="2700" y="450" scaleInit="0.25" scaleMin="0.2" scaleMax="0.3" />
-	<button x="2825" y="450" color="#0000ff">
+	<box x="2950" y="450" scaleInit="0.25" scaleMin="0.2" scaleMax="0.3" />
+	<button x="2850" y="450" color="#0000ff">
       <buttontrigger switchableId="1" />
     </button>
+	<overlay x="250" y="150" w="400" h="200" src="jetpackOverlay" />
+    <overlay x="1500" y="150" w="400" h="200" src="beamOverlay" />
+    <overlay x="2800" y="150" w="400" h="200" src="shrinkOverlay" />
+	<overlay x="4000" y="150" w="400" h="200" src="growOverlay" />
+	<overlay x="5000" y="400" w="400" h="200" src="switchOverlay" />
+    <exit x="1720" y="800" />
     <exit x="3112" y="450" />
   </entities>
 </level>
