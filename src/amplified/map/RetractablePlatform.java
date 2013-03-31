@@ -38,12 +38,10 @@ public class RetractablePlatform extends Platform implements Switchable {
 		extended = !inverted;
 	}
 
-	@Override
 	public void switchActivated() {
 		extended = inverted;
 	}
 
-	@Override
 	public void switchDeactivated() {
 		extended = !inverted;
 	}

@@ -43,7 +43,6 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 		}), null);
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 1;
 	}
@@ -71,7 +70,6 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 		return flipHorizontally;
 	}
 
-	@Override
 	public void setFlip(boolean flip) {
 		flipHorizontally = flip;
 	}
@@ -81,12 +79,10 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 		return new BoundingPolygon(new Polygon[0]);
 	}
 
-	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
 	}
 
-	@Override
 	public void markStartPosition() {
 		startPos.set(pos);
 	}
@@ -98,12 +94,10 @@ public class AvatarArm extends SimpleEntity implements AuxiliaryEntity<PlayerPar
 		startPos.set(savedStartPos);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("arm");
 	}
 
-	@Override
 	public PlayerPart getType() {
 		return PlayerPart.ARM;
 	}

@@ -167,17 +167,14 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		}
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return Integer.MAX_VALUE;
 	}
 
-	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return null;
 	}
 
-	@Override
 	public void markStartPosition() {
 		startPos.set(pos);
 	}
@@ -262,18 +259,15 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		this.rot = rot;
 	}
 
-	@Override
 	public void setFlip(boolean flip) {
 		if (flip)
 			rot += Math.PI;
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("beam");
 	}
 
-	@Override
 	public PlayerPart getType() {
 		return PlayerPart.BEAM;
 	}

@@ -23,7 +23,6 @@ public class FpsOverlay extends AbstractDrawable {
 		return new Position(0, yPos);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("spacer");
 	}

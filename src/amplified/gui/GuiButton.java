@@ -80,7 +80,6 @@ public class GuiButton extends AbstractDrawable {
 		return bounds.getHeight();
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture(down ? "buttonPressed" : hover ? "buttonHover" : "button");
 	}

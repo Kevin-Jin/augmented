@@ -28,7 +28,6 @@ public class NBox extends SelectableEntity {
 			}), 1f, 1.25f, 1.25f);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("n");
 	}

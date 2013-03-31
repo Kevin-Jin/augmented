@@ -132,7 +132,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 			flatSurfaces.add(collisionInfo.getCollidedWith());
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 1;
 	}
@@ -166,7 +165,6 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		return (float) rot;
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		throw new UnsupportedOperationException("Cannot rotate an AvatarBody");
 	}
@@ -204,12 +202,10 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		return parentBoundPoly;
 	}
 
-	@Override
 	public void setBoundingPolygon(BoundingPolygon parent) {
 		parentBoundPoly = parent;
 	}
 
-	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
 	}
@@ -255,12 +251,10 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 		super.postCollisionsUpdate(tDelta, input, log, camera);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("body");
 	}
 
-	@Override
 	public Vector2f getAttachPoint(PlayerPart part) {
 		switch (part) {
 			case BEAM:

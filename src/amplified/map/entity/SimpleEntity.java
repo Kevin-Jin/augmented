@@ -50,7 +50,6 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		transformedBoundPoly = BoundingPolygon.transformBoundingPolygon(baseBoundPoly, this);
 	}
 
-	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		final float TOLERANCE = 0.001f;
 
@@ -64,7 +63,6 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		recalculateBoundingPolygon(UpdateTime.COLLISION, null, null);
 	}
 
-	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		startPos.set(pos);
 		if (motionProperties != null) {
@@ -93,42 +91,34 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
 	}
 
-	@Override
 	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
 		recalculateBoundingPolygon(UpdateTime.POST_COLLISIONS, camera, input);
 	}
 
-	@Override
 	public Collection<? extends DrawableEntity> getDrawables() {
 		return Collections.singleton(this);
 	}
 
-	@Override
 	public void move(Direction to) {
 		moves.add(to);
 	}
 
-	@Override
 	public Position getPosition() {
 		return pos;
 	}
 
-	@Override
 	public void setPosition(Position pos) {
 		this.pos.set(pos);
 	}
 
-	@Override
 	public Velocity getVelocity() {
 		return vel;
 	}
 
-	@Override
 	public void setWidth(double w) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}
 
-	@Override
 	public void setHeight(double h) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}

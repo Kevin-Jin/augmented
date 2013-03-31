@@ -48,7 +48,6 @@ public class Switch extends SimpleEntity {
 		this.hitMap = new HashMap<SelectableEntity,Double>();
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		throw new UnsupportedOperationException("Cannot rotate a Switch");
 	}
@@ -85,12 +84,10 @@ public class Switch extends SimpleEntity {
 		wasActive = active;
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 2;
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("switch");
 	}

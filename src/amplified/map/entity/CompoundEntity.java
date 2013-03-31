@@ -29,46 +29,38 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		drawables = Collections.unmodifiableList(drawables);
 	}
 
-	@Override
 	public List<DrawableEntity> getDrawables() {
 		return drawables;
 	}
 
-	@Override
 	public void move(Direction to) {
 		getBody().move(to);
 	}
 
-	@Override
 	public Position getPosition() {
 		return getBody().getPosition();
 	}
 
-	@Override
 	public void setPosition(Position pos) {
 		getBody().setPosition(pos);
 		for (AuxiliaryEntity<E> child : getAuxiliaries())
 			child.setPosition(new Position(getBody().getAttachPoint(child.getType())));
 	}
 
-	@Override
 	public boolean flipHorizontally() {
 		return getBody().flipHorizontally();
 	}
 
-	@Override
 	public float getRotation() {
 		return getBody().getRotation();
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		getBody().setRotation(rot);
 		for (AuxiliaryEntity<E> child : getAuxiliaries())
 			child.setRotation(rot);
 	}
 
-	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
 		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
 
@@ -86,7 +78,6 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 
-	@Override
 	public void postCollisionsUpdate(double tDelta, Input input, Map<CollidableDrawable, Set<CollisionInformation>> log, Camera camera) {
 		List<BoundingPolygon> polygons = new ArrayList<BoundingPolygon>(drawables.size());
 
@@ -103,22 +94,18 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 		getBody().setBoundingPolygon(new BoundingPolygon(polygons.toArray(new BoundingPolygon[polygons.size()])));
 	}
 
-	@Override
 	public float getWidth() {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}
 
-	@Override
 	public float getHeight() {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}
 
-	@Override
 	public void setWidth(double w) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}
 
-	@Override
 	public void setHeight(double h) {
 		throw new UnsupportedOperationException("Cannot scale a CompoundEntity");
 	}

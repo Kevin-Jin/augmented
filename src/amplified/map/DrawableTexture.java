@@ -74,7 +74,6 @@ public class DrawableTexture extends AbstractDrawable {
 		return height;
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture(textureName);
 	}

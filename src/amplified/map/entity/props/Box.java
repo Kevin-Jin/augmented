@@ -23,7 +23,6 @@ public class Box extends SelectableEntity {
 		this(1f, 0.1f, 10f);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("box");
 	}

@@ -57,7 +57,6 @@ public class Platform extends AbstractCollidable {
 		return y2;
 	}
 
-	@Override
 	public void collision(CollisionInformation collisionInfo, List<CollidableDrawable> otherCollidables, Map<CollidableDrawable, Set<CollisionInformation>> log) {
 		
 	}
@@ -67,7 +66,6 @@ public class Platform extends AbstractCollidable {
 		return true;
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 0;
 	}
@@ -77,7 +75,6 @@ public class Platform extends AbstractCollidable {
 		return new Position(x1, y2);
 	}
 
-	@Override
 	public Velocity getVelocity() {
 		return new Velocity(0, 0);
 	}
@@ -92,7 +89,6 @@ public class Platform extends AbstractCollidable {
 		return (float) Math.round(getTopY() - getBottomY());
 	}
 
-	@Override
 	public Texture getTexture() {
 		return TextureCache.getTexture("platform");
 	}

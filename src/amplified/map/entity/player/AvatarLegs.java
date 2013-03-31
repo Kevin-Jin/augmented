@@ -39,7 +39,6 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		animation = new Animation(0.06, "legsRest", "legs1", "legs2", "legs3", "legs4", "legs5");
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 1;
 	}
@@ -49,12 +48,10 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		return flipHorizontally;
 	}
 
-	@Override
 	public void setFlip(boolean flip) {
 		flipHorizontally = flip;
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		throw new UnsupportedOperationException("Cannot rotate an AvatarLegs");
 	}
@@ -64,12 +61,10 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		return new BoundingPolygon(new Polygon[0]);
 	}
 
-	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
 	}
 
-	@Override
 	public void markStartPosition() {
 		startPos.set(pos);
 	}
@@ -96,12 +91,10 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		super.postCollisionsUpdate(tDelta, input, log, camera);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return animation.getTexture();
 	}
 
-	@Override
 	public PlayerPart getType() {
 		return PlayerPart.LEGS;
 	}

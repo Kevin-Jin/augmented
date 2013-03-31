@@ -28,7 +28,6 @@ public class ExitDoor extends SimpleEntity {
 		setPosition(pos);
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		throw new UnsupportedOperationException("Cannot rotate an exit door");
 	}
@@ -39,12 +38,10 @@ public class ExitDoor extends SimpleEntity {
 			hit = true;
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 2;
 	}
 
-	@Override
 	public Texture getTexture() {
 		 return TextureCache.getTexture(hit ? "openDoor" : "door"); 
 	}

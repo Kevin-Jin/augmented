@@ -68,7 +68,6 @@ public abstract class SelectableEntity extends SimpleEntity {
 		vel.setScalarComponents(x / tDelta, y / tDelta);
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 1;
 	}
@@ -88,7 +87,6 @@ public abstract class SelectableEntity extends SimpleEntity {
 		return rot;
 	}
 
-	@Override
 	public void setRotation(float rot) {
 		this.rot = rot;
 	}

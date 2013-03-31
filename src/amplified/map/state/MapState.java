@@ -203,7 +203,6 @@ public class MapState extends ScreenFiller {
 
 	public List<CollidableDrawable> getCollidables() {
 		Collections.sort(collidables, new Comparator<CollidableDrawable>() {
-			@Override
 			public int compare(CollidableDrawable a, CollidableDrawable b) {
 				int delta = a.getMovabilityIndex() - b.getMovabilityIndex();
 				if (delta == 0)

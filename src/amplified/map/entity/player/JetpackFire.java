@@ -37,7 +37,6 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		animation = new Animation(0.2, "flame1", "flame2", "flame3", "flame4");
 	}
 
-	@Override
 	public int getMovabilityIndex() {
 		return 1;
 	}
@@ -77,7 +76,6 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		return flipHorizontally;
 	}
 
-	@Override
 	public void setFlip(boolean flip) {
 		flipHorizontally = flip;
 	}
@@ -87,12 +85,10 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		return new BoundingPolygon(new Polygon[0]);
 	}
 
-	@Override
 	public BoundingPolygon getSelfBoundingPolygon() {
 		return super.getBoundingPolygon();
 	}
 
-	@Override
 	public void markStartPosition() {
 		startPos.set(pos);
 	}
@@ -116,12 +112,10 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		startPos.set(savedStartPos);
 	}
 
-	@Override
 	public Texture getTexture() {
 		return animation.getTexture();
 	}
 
-	@Override
 	public PlayerPart getType() {
 		return PlayerPart.FIRE;
 	}

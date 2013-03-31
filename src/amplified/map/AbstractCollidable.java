@@ -11,12 +11,10 @@ public abstract class AbstractCollidable extends AbstractDrawable implements Col
 		transformedBoundPoly = boundPoly;
 	}
 
-	@Override
 	public boolean isVisible() {
 		return getWidth() != 0 && getHeight() != 0;
 	}
 
-	@Override
 	public BoundingPolygon getBoundingPolygon() {
 		return transformedBoundPoly;
 	}

@@ -46,17 +46,14 @@ public abstract class AbstractDrawable implements Drawable {
 		return false;
 	}
 
-	@Override
 	public Color getTint() {
 		return Color.white;
 	}
 
-	@Override
 	public DrawableOverlayText getCaption() {
 		return null;
 	}
 
-	@Override
 	public final Matrix4f getWorldMatrix() {
 		return new Matrix4f()
 				.translate(new Vector2f(getDrawPosition()))
