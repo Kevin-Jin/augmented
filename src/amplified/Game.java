@@ -47,7 +47,7 @@ public class Game {
 	public static final boolean DEBUG = true;
 	private static final boolean FULLSCREEN = false;
 	private static final boolean VSYNC = true;
-	private static final int TARGET_FPS = 1200; //VSYNC must be false for this to be higher than the monitor refresh rate
+	private static final int TARGET_FPS = 60; //VSYNC must be false for this to be higher than the monitor refresh rate
 	private static final int WIDTH = 800, HEIGHT = 600;
 
 	private final FloatBuffer matrixBuf;

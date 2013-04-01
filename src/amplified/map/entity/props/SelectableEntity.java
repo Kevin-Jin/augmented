@@ -44,11 +44,13 @@ public abstract class SelectableEntity extends SimpleEntity {
 		vel.setScalarComponents(0, 0);
 	}
 
-	public void downScale(double tDelta) {
+	public void downScale(double tDelta, TractorBeam beam) {
+		//Position targetBeamHit = beam.getBeamHit();
 		float oldWidth = getWidth();
 		scale -= SCALE_RATE * tDelta;
 		if (scale < minScale)
 			scale = minScale;
+		//TODO: set pos so that afterwards, (beam.getBeamHit() == targetBeamHit)
 		pos.add((oldWidth - getWidth()) / 2, (oldWidth - getWidth()) / 2);
 	}
 
@@ -79,7 +81,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 		return true;
 	}
 
-	public void upScale(double tDelta, Input input, Camera camera, MapState map) {
+	public void upScale(double tDelta, TractorBeam beam, Input input, Camera camera, MapState map) {
 		float oldScale = scale;
 		Position oldPos = new Position(pos);
 
@@ -91,7 +93,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 		recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
 		boolean fail = !collidesWithPlatformsOnly(tDelta,map.getCollidables());
 		
-		if (!fail){
+		if (!fail) {
 			recalculateBoundingPolygon(UpdateTime.PRE_COLLISIONS, camera, input);
 			fail = collidesWith(tDelta, map.getCollidables());
 		}

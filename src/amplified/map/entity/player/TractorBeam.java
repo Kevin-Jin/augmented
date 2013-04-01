@@ -200,9 +200,9 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 				if (selection instanceof SelectableEntity) {
 					SelectableEntity prop = (SelectableEntity) selection;
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_Q)))
-						prop.downScale(tDelta);
+						prop.downScale(tDelta, this);
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_E)))
-						prop.upScale(tDelta, input, camera, map);
+						prop.upScale(tDelta, this, input, camera, map);
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_R)))
 						prop.rotateCounterClockwise();
 					if (input.downKeys().contains(Integer.valueOf(Keyboard.KEY_F)))
