@@ -17,7 +17,7 @@
     </avatar>
     <overlay x="250" y="10" w="175" h="324" src="enemy" />
     <overlay x="0" y="340" w="1" h="1" src="spacer">
-      <caption font="rain" color="#FFFF00" text="And this is where our story begins." cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+      <caption font="rain" color="#FFFF00" text="And this is where our story begins." cursorAfter="0" noCursorAfter="5" duration="2" after="1" />
     </overlay>
   </entities>
 </cutscene>

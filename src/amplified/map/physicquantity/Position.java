@@ -22,6 +22,11 @@ public class Position {
 		this(0, 0);
 	}
 
+	public Position(Position copy) {
+		this.x = copy.x;
+		this.y = copy.y;
+	}
+
 	public double getX() {
 		return x;
 	}

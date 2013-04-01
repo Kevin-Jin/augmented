@@ -10,11 +10,13 @@
   <entities>
     <avatar x="50" y="39">
       <beam>
-        <scale dw="150" duration="1" after="1" />
+        <scale dw="125" duration="1" after="1" />
+        <scale dw="-12.5" duration="1" after="2" />
       </beam>
     </avatar>
-    <overlay x="235" y="30" w="50" h="50" src="diamond">
-      <scale dw="50" dh="50" duration="1" after="2" />
+    <overlay x="235" y="40" w="25" h="25" src="diamond">
+      <scale dw="75" dh="75" duration="1" after="2" />
+      <translate dx="-25" dy="-25" duration="1" after="2" />
     </overlay>
     <overlay x="0" y="480" w="1" h="1" src="spacer">
       <caption font="rain" color="#FFFF00" text="However, greed-ridden corporations began to hoard the technologies, developing" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />

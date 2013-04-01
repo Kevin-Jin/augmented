@@ -125,7 +125,7 @@ public class Game {
 
 	private void newGame() {
 		map.suspend();
-		map.setLayout(LevelCache.getLevel("level1"));
+		map.setLayout(LevelCache.getLevel("intro1"));
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.isCutscene() ? new Position(0, 0) : map.getPlayer().getPosition());
 		input.setCutscene(map.isCutscene());
@@ -201,8 +201,6 @@ public class Game {
 		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2", WIDTH, HEIGHT));
 		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
 		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
-		LevelCache.setLevel("debug", LevelCache.loadXml("resources/debug", WIDTH, HEIGHT));
-		LevelCache.setLevel("debugCutscene", LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 
 		SoundCache.getSound("bgm").playAsMusic(1, 1, true);
 	}

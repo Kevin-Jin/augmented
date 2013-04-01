@@ -71,7 +71,7 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 
 	@Override
 	public void preCollisionsUpdate(double tDelta, Input input, Camera camera, MapState map) {
-		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+		Position savedStartPos = new Position(startPos);
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 		startPos.set(savedStartPos);
 	}

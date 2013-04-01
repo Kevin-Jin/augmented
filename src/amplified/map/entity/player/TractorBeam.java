@@ -218,7 +218,7 @@ public class TractorBeam extends SimpleEntity implements AuxiliaryEntity<PlayerP
 			lengthUpdated();
 		}
 
-		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+		Position savedStartPos = new Position(startPos);
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 		startPos.set(savedStartPos);
 	}

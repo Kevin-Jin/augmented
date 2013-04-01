@@ -17,16 +17,11 @@ import amplified.ScreenFiller;
 import amplified.map.AbstractDrawable;
 import amplified.map.Drawable;
 import amplified.map.DrawableOverlayText;
-import amplified.map.entity.player.Player;
 import amplified.map.physicquantity.Position;
 import amplified.map.state.Input;
 import amplified.resources.FontCache;
 import amplified.resources.TextureCache;
 
-//TODO
-//Draw Logo
-//Draw Player
-//Draw some background
 @SuppressWarnings("deprecation")
 public class GuiMainMenu extends ScreenFiller {
 	private static final double PERIOD = 0.032;
@@ -99,10 +94,6 @@ public class GuiMainMenu extends ScreenFiller {
 	private final Map<Byte, ZAxisLayer> layers;
 	private boolean initialized;
 
-	private Player p;
-	private float logoScale;
-	private boolean growLogo;
-
 	private double elapsed;
 
 	public GuiMainMenu(Rectangle bounds, List<GuiButton> buttons, Input input, Drawable... overlays) {
@@ -115,8 +106,6 @@ public class GuiMainMenu extends ScreenFiller {
 		for (Drawable overlay : overlays)
 			overlayLayer.getDrawables().add(overlay);
 		this.layers = Collections.singletonMap(ZAxisLayer.OVERLAY, overlayLayer);
-
-		p = new Player();
 	}
 
 	private void populateLetters() {
@@ -139,17 +128,6 @@ public class GuiMainMenu extends ScreenFiller {
 			populateLetters();
 
 		input.markedPointer().setLocation(input.cursorPosition());
-
-		if (logoScale < 0.75 && !growLogo)
-			growLogo = true;
-		else if (logoScale > 1.5 && growLogo)
-			growLogo = false;
-		if (growLogo)
-			logoScale += (float) (0.3 * tDelta);
-		else
-			logoScale -= (float) (0.3 * tDelta);
-
-		p.setPosition(new Position(50,600));
 
 		for (GuiButton button : buttons)
 			button.update(input);

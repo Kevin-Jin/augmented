@@ -166,7 +166,7 @@ public class MapState extends ScreenFiller {
 		autoTransformDrawableTextures.clear();
 		if (layout.isCutscene()) {
 			for (OverlayInfo ol : layout.getTips()) {
-				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition());
+				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), new Position(ol.getPosition()));
 				layers.get(ZAxisLayer.MIDGROUND).getDrawables().add(dt);
 				autoTransforms.put(dt, ol.getAutoTransforms());
 				if (!ol.getAutoTransforms().isEmpty())
@@ -176,7 +176,7 @@ public class MapState extends ScreenFiller {
 			}
 		} else {
 			for (OverlayInfo ol : layout.getTips()) {
-				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), ol.getPosition());
+				DrawableTexture dt = new DrawableTexture(ol.getWidth(), ol.getHeight(), ol.getImageName(), new Position(ol.getPosition()));
 				layers.get(ZAxisLayer.FOREGROUND).getDrawables().add(dt);
 				autoTransforms.put(dt, ol.getAutoTransforms());
 				if (!ol.getAutoTransforms().isEmpty())

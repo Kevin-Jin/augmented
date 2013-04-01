@@ -81,7 +81,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 
 	public void upScale(double tDelta, Input input, Camera camera, MapState map) {
 		float oldScale = scale;
-		Position oldPos = new Position(pos.getX(), pos.getY());
+		Position oldPos = new Position(pos);
 
 		float oldWidth = getWidth();
 		scale += SCALE_RATE * tDelta;
@@ -174,7 +174,7 @@ public abstract class SelectableEntity extends SimpleEntity {
 		if (selected) {
 			EntityKinematics temp = motionProperties;
 			motionProperties = null; //prevent superclass implementation from updating velocity and position
-			Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+			Position savedStartPos = new Position(startPos);
 			super.preCollisionsUpdate(tDelta, input, camera, map);
 			startPos.set(savedStartPos);
 			motionProperties = temp;

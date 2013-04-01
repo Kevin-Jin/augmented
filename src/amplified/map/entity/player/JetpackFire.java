@@ -107,7 +107,7 @@ public class JetpackFire extends SimpleEntity implements AuxiliaryEntity<PlayerP
 		}
 		setPosition(pos);
 
-		Position savedStartPos = new Position(startPos.getX(), startPos.getY());
+		Position savedStartPos = new Position(startPos);
 		super.preCollisionsUpdate(tDelta, input, camera, map);
 		startPos.set(savedStartPos);
 	}
