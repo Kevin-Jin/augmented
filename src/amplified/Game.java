@@ -178,6 +178,7 @@ public class Game {
 
 		SoundCache.setSound("beam", LowLevelUtil.loadWav("resources/BeamSound"));
 		SoundCache.setSound("jetpack", LowLevelUtil.loadWav("resources/Jetpack"));
+		SoundCache.setSound("newBGM", LowLevelUtil.loadWav("resources/tsa"));
 		SoundCache.setSound("bgm", LowLevelUtil.loadOgg("resources/bgm"));
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
@@ -201,7 +202,7 @@ public class Game {
 		LevelCache.setLevel("debug", LevelCache.loadXml("resources/debug", WIDTH, HEIGHT));
 		LevelCache.setLevel("debugCutscene", LevelCache.loadXml("resources/debugCutscene", WIDTH, HEIGHT));
 
-		SoundCache.getSound("bgm").playAsMusic(0.5f, 1, true);
+		SoundCache.getSound("newBGM").playAsMusic(1, 1, true);
 	}
 
 	public boolean nextFrame() {
