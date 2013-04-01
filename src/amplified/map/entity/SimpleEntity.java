@@ -131,4 +131,8 @@ public abstract class SimpleEntity extends AbstractCollidable implements Drawabl
 	public void setCaption(String s) {
 		throw new UnsupportedOperationException();
 	}
+
+	public void animate(double tDelta) {
+		throw new UnsupportedOperationException();
+	}
 }

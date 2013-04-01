@@ -117,6 +117,7 @@ public class MapState extends ScreenFiller {
 		entities.put(Byte.valueOf(nextEntityId++), player);
 		autoTransforms.put(player, layout.getAvatarAutoTransforms());
 		autoTransforms.put(player.getBeam(), layout.getBeamAutoTransforms());
+		autoTransforms.put(player.getLegs(), layout.getLegsAutoTransforms());
 		player.reset();
 		for (AutoTransform at : layout.getAvatarAutoTransforms())
 			at.reset();
@@ -304,7 +305,7 @@ public class MapState extends ScreenFiller {
 				suspend();
 				setLayout(LevelCache.getLevel(next));
 				camera.setLimits(getCameraBounds());
-				camera.lookAt(getPlayer().getPosition());
+				camera.lookAt(isCutscene() ? new Position(0, 0) : getPlayer().getPosition());
 				input.setCutscene(isCutscene());
 				resume();
 				return GameState.GAME;
@@ -315,6 +316,8 @@ public class MapState extends ScreenFiller {
 
 		for (AutoTransform at : getAutoTransforms(player.getBeam()))
 			at.transform(player.getBeam(), tDelta);
+		for (AutoTransform at : getAutoTransforms(player.getLegs()))
+			at.transform(player.getLegs(), tDelta);
 		for (AutoTransformable transformable : autoTransformDrawableTextures)
 			for (AutoTransform at : getAutoTransforms(transformable))
 				at.transform(transformable, tDelta);

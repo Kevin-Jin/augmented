@@ -119,4 +119,10 @@ public abstract class CompoundEntity<E extends Enum<E>> implements Entity {
 	public void setCaption(String s) {
 		throw new UnsupportedOperationException();
 	}
+
+	public void animate(double tDelta) {
+		getBody().animate(tDelta);
+		for (AuxiliaryEntity<E> child : getAuxiliaries())
+			child.animate(tDelta);
+	}
 }

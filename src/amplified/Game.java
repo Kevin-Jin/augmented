@@ -26,6 +26,7 @@ import amplified.map.CursorOverlay;
 import amplified.map.Drawable;
 import amplified.map.FpsOverlay;
 import amplified.map.collisions.Polygon;
+import amplified.map.physicquantity.Position;
 import amplified.map.state.Camera;
 import amplified.map.state.FrameRateState;
 import amplified.map.state.Input;
@@ -101,7 +102,7 @@ public class Game {
 				map.suspend();
 				map.resetLevel();
 				camera.setLimits(map.getCameraBounds());
-				camera.lookAt(map.getPlayer().getPosition());
+				camera.lookAt(map.isCutscene() ? new Position(0, 0) : map.getPlayer().getPosition());
 				input.setCutscene(map.isCutscene());
 				map.resume();
 				state = GameState.GAME;
@@ -126,7 +127,7 @@ public class Game {
 		map.suspend();
 		map.setLayout(LevelCache.getLevel("level1"));
 		camera.setLimits(map.getCameraBounds());
-		camera.lookAt(map.getPlayer().getPosition());
+		camera.lookAt(map.isCutscene() ? new Position(0, 0) : map.getPlayer().getPosition());
 		input.setCutscene(map.isCutscene());
 		map.resume();
 		state = GameState.GAME;
@@ -165,6 +166,7 @@ public class Game {
 		TextureCache.setTexture("diamond", LowLevelUtil.loadPng("resources/diamond"));
 		TextureCache.setTexture("conveyor", LowLevelUtil.loadPng("resources/conveyor"));
 		TextureCache.setTexture("enemy", LowLevelUtil.loadPng("resources/enemy"));
+		TextureCache.setTexture("robot", LowLevelUtil.loadPng("resources/robot"));
 
 		TextureCache.setTexture("intro1", LowLevelUtil.loadPng("resources/intro1"));
 		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));

@@ -4,20 +4,29 @@
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
   <timer>10</timer>
+  <footholds>
+    <foothold id="0" x1="0" x2="800" y1="10" y2="0" />
+  </footholds>
   <entities>
-    <!-- TODO: static screenshot of full Player with rot = 0, so we can have overlay images here for other robots -->
-    <!-- TODO: translate sparks after 3 -->
-    <avatar x="50" y="530">
+    <!-- TODO: overlay sparks translate after="3" -->
+    <overlay x="20" y="141" w="71" h="118" src="robot">
+      <translate dx="200" dy="0" duration="10" after="0" />
+    </overlay>
+    <avatar x="170" y="170">
       <rotate angle="-1" duration="0.4" after="3" />
       <rotate angle="2" duration="0.4" after="3.5" />
       <rotate angle="2" duration="0.5" after="4" />
+      <translate dx="200" dy="0" duration="10" after="0" />
     </avatar>
-    <overlay x="0" y="350" w="750" h="250" src="conveyor" />
+    <overlay x="320" y="141" w="71" h="118" src="robot">
+      <translate dx="200" dy="0" duration="10" after="0" />
+    </overlay>
+    <overlay x="0" y="10" w="708" h="215" src="conveyor" />
     <overlay x="0" y="400" w="1" h="1" src="spacer">
-      <caption font="rain" color="#00FF00" text="That was until one robot, due to some malfunction, some deviation, was built" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+      <caption font="rain" color="#FFFF00" text="That was until one robot, due to some malfunction, some deviation, was built" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
     </overlay>
     <overlay x="0" y="380" w="1" h="1" src="spacer">
-      <caption font="rain" color="#00FF00" text="with the understanding that what he was doing, was wrong." cursorAfter="4" noCursorAfter="-1" duration="3" after="4" />
+      <caption font="rain" color="#FFFF00" text="with the understanding that what he was doing, was wrong." cursorAfter="4" noCursorAfter="-1" duration="3" after="4" />
     </overlay>
   </entities>
 </cutscene>

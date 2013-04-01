@@ -85,7 +85,7 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 		//than 45 degrees from horizontal?
 		if ((input.downKeys().contains(Integer.valueOf(Keyboard.KEY_A)) || input.downKeys().contains(Integer.valueOf(Keyboard.KEY_D))) && parent.getBody().isWalking())
 			animation.update(tDelta);
-		else
+		else if (!input.isCutscene())
 			animation.reset();
 
 		super.postCollisionsUpdate(tDelta, input, log, camera);
@@ -101,5 +101,9 @@ public class AvatarLegs extends SimpleEntity implements AuxiliaryEntity<PlayerPa
 
 	public void reset() {
 		animation.reset();
+	}
+
+	public void animate(double tDelta) {
+		animation.update(tDelta);
 	}
 }

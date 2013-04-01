@@ -4,20 +4,23 @@
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
   <timer>10</timer>
+  <footholds>
+    <foothold id="0" x1="0" x2="800" y1="10" y2="0" />
+  </footholds>
   <entities>
-    <avatar x="50" y="530">
+    <avatar x="50" y="39">
       <beam>
         <scale dw="150" duration="1" after="1" />
       </beam>
     </avatar>
-    <overlay x="235" y="520" w="50" h="50" src="diamond">
+    <overlay x="235" y="30" w="50" h="50" src="diamond">
       <scale dw="50" dh="50" duration="1" after="2" />
     </overlay>
     <overlay x="0" y="480" w="1" h="1" src="spacer">
-      <caption font="rain" color="#00FF00" text="However, greed-ridden corporations began to hoard the technologies, developing" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+      <caption font="rain" color="#FFFF00" text="However, greed-ridden corporations began to hoard the technologies, developing" cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
     </overlay>
     <overlay x="0" y="460" w="1" h="1" src="spacer">
-      <caption font="rain" color="#00FF00" text="robotic minions to expand their wealth while leaving the rest of the world in poverty." cursorAfter="4" noCursorAfter="-1" duration="3" after="4" />
+      <caption font="rain" color="#FFFF00" text="robotic minions to expand their wealth while leaving the rest of the world in poverty." cursorAfter="4" noCursorAfter="-1" duration="3" after="4" />
     </overlay>
   </entities>
 </cutscene>

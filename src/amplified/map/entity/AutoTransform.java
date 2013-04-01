@@ -138,6 +138,35 @@ public abstract class AutoTransform {
 		}
 	}
 
+	public static class Animate extends AutoTransform {
+		private double elapsed;
+		private boolean inProgress;
+
+		public Animate(double startAfter, double endAfter) {
+			super(startAfter, endAfter);
+		}
+
+		@Override
+		public void transform(AutoTransformable ent, double tDelta) {
+			elapsed += tDelta;
+			if (elapsed > endAfter) {
+				if (inProgress) {
+					//ent.resetAnimation();
+					inProgress = false;
+				}
+			} else if (elapsed > startAfter) {
+				inProgress = true;
+				ent.animate(tDelta);
+			}
+		}
+
+		@Override
+		public void reset() {
+			elapsed = 0;
+			inProgress = false;
+		}
+	}
+
 	public static class Caption extends AutoTransform {
 		private final String font;
 		private final Color color;

@@ -21,7 +21,7 @@ public class LevelLayout {
 	private final int width;
 	private final int height;
 	private final Position startPos, endPos;
-	private final List<AutoTransform> avatarAutoTransforms, beamAutoTransforms, exitAutoTransforms;
+	private final List<AutoTransform> avatarAutoTransforms, beamAutoTransforms, legsAutoTransforms, exitAutoTransforms;
 	private final List<BoxSpawnInfo> boxes;
 	private final List<RectangleSpawnInfo> rects;
 	private final List<NBoxSpawnInfo> nBoxes;
@@ -33,7 +33,7 @@ public class LevelLayout {
 	private final double expiration;
 	private final boolean cutscene;
 
-	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, List<AutoTransform> avatarAutoTransforms, List<AutoTransform> beamAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration, boolean cutscene) {
+	public LevelLayout(int width, int height, Map<Byte, Platform> footholds, Position startPos, List<AutoTransform> avatarAutoTransforms, List<AutoTransform> beamAutoTransforms, List<AutoTransform> legsAutoTransforms, Position endPos, List<AutoTransform> exitAutoTransforms, double yDeceleration, double yVelocityMin, List<BoxSpawnInfo> boxes, List<RectangleSpawnInfo> rects, List<NBoxSpawnInfo> nBoxes, List<SwitchSpawnInfo> switches, List<OverlayInfo> tips, List<RetractablePlatform> doors, String nextMap, String outsideBg, String insideBg, double expiration, boolean cutscene) {
 		this.width = width;
 		this.height = height;
 		this.footholds = footholds;
@@ -42,6 +42,7 @@ public class LevelLayout {
 		this.beamAutoTransforms = beamAutoTransforms;
 		this.endPos = endPos;
 		this.exitAutoTransforms = exitAutoTransforms;
+		this.legsAutoTransforms = legsAutoTransforms;
 		this.yDeceleration = yDeceleration;
 		this.yVelocityMin = yVelocityMin;
 		this.boxes = boxes;
@@ -87,6 +88,10 @@ public class LevelLayout {
 
 	public List<AutoTransform> getBeamAutoTransforms() {
 		return beamAutoTransforms;
+	}
+
+	public List<AutoTransform> getLegsAutoTransforms() {
+		return legsAutoTransforms;
 	}
 
 	public Position getEndPosition() {

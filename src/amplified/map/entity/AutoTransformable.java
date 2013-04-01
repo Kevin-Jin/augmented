@@ -24,4 +24,6 @@ public interface AutoTransformable {
 	void setCaption(String s);
 
 	void initializeCaption(String font, Color color);
+
+	void animate(double tDelta);
 }

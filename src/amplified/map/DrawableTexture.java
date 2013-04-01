@@ -121,4 +121,8 @@ public class DrawableTexture extends AbstractDrawable implements AutoTransformab
 	public void setCaption(String s) {
 		caption = s;
 	}
+
+	public void animate(double tDelta) {
+		throw new UnsupportedOperationException();
+	}
 }

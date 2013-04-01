@@ -4,11 +4,20 @@
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
   <timer>5</timer>
+  <footholds>
+    <foothold id="0" x1="0" x2="800" y1="10" y2="0" />
+  </footholds>
   <entities>
-    <!-- TODO: Show evil guy on computer screen, red alarm flashing next to him, three robots marching -->
-    <avatar x="50" y="530" />
+    <!-- TODO: show red alarm flashing next to enemy -->
+    <avatar x="450" y="39">
+      <translate dx="400" dy="0" duration="5" after="0" />
+      <legs>
+        <animate duration="5" after="0" />
+      </legs>
+    </avatar>
+    <overlay x="250" y="10" w="175" h="324" src="enemy" />
     <overlay x="0" y="340" w="1" h="1" src="spacer">
-      <caption font="rain" color="#00FF00" text="And this is where our story begins." cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
+      <caption font="rain" color="#FFFF00" text="And this is where our story begins." cursorAfter="0" noCursorAfter="4" duration="3" after="1" />
     </overlay>
   </entities>
 </cutscene>
