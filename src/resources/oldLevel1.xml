@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<level id="level1">
+  <width>1500</width>
+  <height>2000</height>
+  <gravity acceleration="-400" terminalVelocity="-400" />
+  <nextMap>level2</nextMap>
+  <outerImage>scrollingWindowBg</outerImage>
+  <innerImage>mainBg</innerImage>
+  <footholds>
+    <foothold id="0" anchor="bottom" />
+    <foothold id="1" anchor="left" />
+    <foothold id="2" anchor="right" />
+    <foothold id="3" anchor="top" />
+    <!-- Center platform -->
+    <foothold id="4" x1="400" x2="600" y1="700" y2="600" />
+    <!-- Center-right platform near exit -->
+    <foothold id="5" x1="1050" x2="1250" y1="700" y2="600" />
+    <!-- Wall blocking exit -->
+    <foothold id="6" x1="1050" x2="1150" y1="600" y2="0" />
+    <!-- Wall above and to the right of exit -->
+    <foothold id="7" x1="1350" x2="1500" y1="700" y2="600" />
+    <!-- Platform to the right near door -->
+    <foothold id="8" x1="1450" x2="1500" y1="600" y2="0" />
+    <foothold id="9" x1="1250" x2="1350" y1="700" y2="670" switchableId="1" color="#ffff00" />
+    <foothold id="10" x1="1250" x2="1350" y1="665" y2="635" switchableId="2" color="#800000" />
+    <foothold id="11" x1="1250" x2="1350" y1="630" y2="600" switchableId="3" color="#f0ffff" />
+    <foothold id="12" x1="1125" x2="1175" y1="1000" y2="700" switchableId="4" color="#d2691e" />
+    <!-- Top floor -->
+    <foothold id="13" x1="0" x2="1200" y1="1075" y2="1025" />
+  </footholds>
+  <entities>
+    <avatar x="0" y="0" />
+    <box x="200" y="0" scaleInit="0.75" scaleMin="0.25" scaleMax="1" />
+    <box x="1425" y="700" scaleInit="0.2" scaleMin="0.2" scaleMax="0.75" />
+    <rectangle x="400" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="1.5" />
+    <button x="550" y="700" color="#d2691e">
+      <buttontrigger switchableId="4" />
+    </button>
+    <button x="1050" y="700" color="#800000">
+      <buttontrigger switchableId="2" />
+    </button>
+    <button x="500" y="1075" color="#ffff00">
+      <buttontrigger switchableId="1" />
+    </button>
+    <button x="200" y="1075" color="#f0ffff">
+      <buttontrigger switchableId="3" />
+    </button>
+    <overlay x="100" y="1200" w="400" h="200" src="rotateOverlay" />
+    <exit x="1200" y="0" />
+  </entities>
+</level>

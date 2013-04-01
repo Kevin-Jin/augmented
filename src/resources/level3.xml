@@ -55,12 +55,12 @@
     <foothold id="29" x1="600" x2="700" y1="199" y2="176" switchableId="4" color="#ffa500" />
     <foothold id="30" x1="1000" x2="1100" y1="600" y2="580" switchableId="5" color="#ffa500" />
     <foothold id="31" x1="600" x2="700" y1="174" y2="151" switchableId="6" color="#ffc0cb" />
-    <foothold id="32" x1="925" x2="950" y1="550" y2="375" switchableId="7" color="#ffc0cb" />
+    <foothold id="32" x1="925" x2="950" y1="550" y2="375" switchableId="7" color="#ffc0cb" activated="true" />
     <foothold id="33" x1="1901" x2="1933" y1="825" y2="660" switchableId="8" color="#d2b48c" />
     <foothold id="34" x1="2150" x2="2180" y1="825" y2="660" switchableId="9" color="#d2b48c" />
     <foothold id="35" x1="1935" x2="1966" y1="825" y2="660" switchableId="10" color="#800080" />
-    <foothold id="36" x1="2183" x2="2213" y1="825" y2="660" switchableId="11" color="#800080" />
-    <foothold id="37" x1="1967" x2="2000" y1="825" y2="660" switchableId="12" color="#ffff00" />
+    <foothold id="36" x1="2183" x2="2213" y1="825" y2="660" switchableId="11" color="#800080" activated="true"/>
+    <foothold id="37" x1="1967" x2="2000" y1="825" y2="660" switchableId="12" color="#ffff00" activated="true"/>
     <foothold id="38" x1="2216" x2="2246" y1="825" y2="660" switchableId="13" color="#ffff00" />
   </footholds>
   <entities>

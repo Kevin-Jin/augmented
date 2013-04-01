@@ -124,7 +124,7 @@ public class Game {
 
 	private void newGame() {
 		map.suspend();
-		map.setLayout(LevelCache.getLevel("intro1"));
+		map.setLayout(LevelCache.getLevel("level1"));
 		camera.setLimits(map.getCameraBounds());
 		camera.lookAt(map.getPlayer().getPosition());
 		input.setCutscene(map.isCutscene());

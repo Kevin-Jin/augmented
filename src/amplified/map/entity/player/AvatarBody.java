@@ -15,6 +15,7 @@ import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.Texture;
 
 import amplified.map.CollidableDrawable;
+import amplified.map.Platform;
 import amplified.map.collisions.BoundingPolygon;
 import amplified.map.collisions.CollisionInformation;
 import amplified.map.collisions.Polygon;
@@ -112,7 +113,7 @@ public class AvatarBody extends SimpleEntity implements BodyEntity<PlayerPart> {
 
 		//TODO: prevent pushing player horizontally by dragging box along platform
 		for (CollisionInformation info : collidedWithCollisions)
-			if (info.getMinimumTranslationVector().lengthSquared() >= TOLERANCE && info.getCollidingSurface().getX() >= TOLERANCE)
+			if (!(info.getCollidedWith() instanceof Platform) || info.getMinimumTranslationVector().lengthSquared() >= TOLERANCE && info.getCollidingSurface().getX() >= TOLERANCE)
 				return false;
 		return true;
 	}
