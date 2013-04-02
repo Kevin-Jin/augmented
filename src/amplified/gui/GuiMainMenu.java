@@ -17,6 +17,7 @@ import amplified.ScreenFiller;
 import amplified.map.AbstractDrawable;
 import amplified.map.Drawable;
 import amplified.map.DrawableOverlayText;
+import amplified.map.DrawableTexture;
 import amplified.map.physicquantity.Position;
 import amplified.map.state.Input;
 import amplified.resources.FontCache;
@@ -94,6 +95,11 @@ public class GuiMainMenu extends ScreenFiller {
 	private final Map<Byte, ZAxisLayer> layers;
 	private boolean initialized;
 
+	private DrawableTexture logo;
+	private int logoWidth, logoHeight;
+	private float logoScale;
+	private boolean growLogo;
+
 	private double elapsed;
 
 	public GuiMainMenu(Rectangle bounds, List<GuiButton> buttons, Input input, Drawable... overlays) {
@@ -106,9 +112,18 @@ public class GuiMainMenu extends ScreenFiller {
 		for (Drawable overlay : overlays)
 			overlayLayer.getDrawables().add(overlay);
 		this.layers = Collections.singletonMap(ZAxisLayer.OVERLAY, overlayLayer);
+
+		logoScale = 0.75f;
 	}
 
-	private void populateLetters() {
+	private void initialize() {
+		Texture texture = TextureCache.getTexture("logo");
+		logoWidth = texture.getImageWidth();
+		logoHeight = texture.getImageHeight();
+		logo = new DrawableTexture("logo", new Position());
+		layers.get(ZAxisLayer.OVERLAY).getDrawables().add(0, logo);
+
+		//populate letters
 		int height = FontCache.getFont("rain").getHeight();
 		int width = FontCache.getFont("rain").getWidth("M");
 		int total = bounds.getHeight() / height + 1;
@@ -125,9 +140,21 @@ public class GuiMainMenu extends ScreenFiller {
 	@Override
 	public GameState update(double tDelta) {
 		if (!initialized)
-			populateLetters();
+			initialize();
 
 		input.markedPointer().setLocation(input.cursorPosition());
+
+		if (logoScale < 0.75 && !growLogo)
+			growLogo = true;
+		else if (logoScale > 1.5 && growLogo)
+			growLogo = false;
+		if (growLogo)
+			logoScale += (float) (0.3 * tDelta);
+		else
+			logoScale -= (float) (0.3 * tDelta);
+		logo.setWidth(logoScale * logoWidth);
+		logo.setHeight(logoScale * logoHeight);
+		logo.getPosition().set((bounds.getWidth() - logo.getWidth()) / 2, (bounds.getHeight() - logo.getHeight()) * 3 / 4);
 
 		for (GuiButton button : buttons)
 			button.update(input);
