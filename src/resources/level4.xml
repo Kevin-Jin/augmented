@@ -62,6 +62,8 @@
     <foothold id="36" x1="2183" x2="2213" y1="825" y2="660" switchableId="11" color="#800080" activated="true"/>
     <foothold id="37" x1="1967" x2="2000" y1="825" y2="660" switchableId="12" color="#ffff00" activated="true"/>
     <foothold id="38" x1="2216" x2="2246" y1="825" y2="660" switchableId="13" color="#ffff00" />
+    <!-- Elevates the trio of adjacent switches -->
+    <foothold id="39" x1="1500" x2="1700" y1="710" y2="660" />
   </footholds>
   <entities>
     <avatar x="300" y="0" />
@@ -81,15 +83,15 @@
       <buttontrigger switchableId="6" />
       <buttontrigger switchableId="7" />
     </button>
-    <button x="1450" y="660" color="#d2b48c">
+    <button x="1650" y="710" color="#d2b48c">
       <buttontrigger switchableId="8" />
       <buttontrigger switchableId="9" />
     </button>
-    <button x="1375" y="660" color="#800080">
+    <button x="1575" y="710" color="#800080">
       <buttontrigger switchableId="10" />
       <buttontrigger switchableId="11" />
     </button>
-    <button x="1300" y="660" color="#ffff00">
+    <button x="1500" y="710" color="#ffff00">
       <buttontrigger switchableId="12" />
       <buttontrigger switchableId="13" />
     </button>
