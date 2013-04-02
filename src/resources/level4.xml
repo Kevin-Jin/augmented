@@ -3,7 +3,7 @@
   <width>2500</width>
   <height>2000</height>
   <gravity acceleration="-400" terminalVelocity="-400" />
-  <nextMap>credits</nextMap>
+  <nextMap>end</nextMap>
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
   <footholds>

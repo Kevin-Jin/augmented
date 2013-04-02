@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cutscene id="end">
+  <nextMap>credits</nextMap>
+  <innerImage>intro1</innerImage>
+  <timer>5</timer>
+  <entities>
+    <overlay x="0" y="500" w="1" h="1" src="spacer">
+      <caption font="rain" color="#FFFFFF" text="Congratulations! You have safely escaped from the factory!" cursorAfter="0" noCursorAfter="5" duration="2" after="1" />
+    </overlay>
+  </entities>
+</cutscene>

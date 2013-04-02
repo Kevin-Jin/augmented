@@ -88,17 +88,22 @@ public class Game {
 				newGame();
 			}
 		}));
+		buttons.add(new GuiButton("Exit", new Rectangle((WIDTH - 200) / 2, HEIGHT / 2 - 60, 200, 50), new ButtonHandler() {
+			public void clicked() {
+				close = true;
+			}
+		}));
 		return buttons;
 	}
 
 	private List<GuiButton> getPauseScreenButtons() {
 		List<GuiButton> buttons = new ArrayList<GuiButton>();
-		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2,365, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("New Game", new Rectangle((WIDTH - 200) / 2, 365, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				newGame();
 			}
 		}));
-		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2,305, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Restart Level", new Rectangle((WIDTH - 200) / 2, 305, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				map.suspend();
 				map.resetLevel();
@@ -109,13 +114,13 @@ public class Game {
 				state = GameState.GAME;
 			}
 		}));
-		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,245, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2, 245, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				state = GameState.TITLE_SCREEN;
 				MusicHandler.startPlayingOld();
 			}
 		}));
-		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,185, 200, 50), new ButtonHandler() {
+		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2, 185, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				input.setCutscene(map.isCutscene());
 				map.resume();
@@ -199,13 +204,11 @@ public class Game {
 		LevelCache.setLevel("intro5", LevelCache.loadXml("resources/intro5", WIDTH, HEIGHT));
 		LevelCache.setLevel("intro6", LevelCache.loadXml("resources/intro6", WIDTH, HEIGHT));
 		LevelCache.setLevel("tutorial", LevelCache.loadXml("resources/tutorial", WIDTH, HEIGHT));
-		LevelCache.setLevel("mid1", LevelCache.loadXml("resources/mid1", WIDTH, HEIGHT));
 		LevelCache.setLevel("level1", LevelCache.loadXml("resources/level1", WIDTH, HEIGHT));
 		LevelCache.setLevel("level2", LevelCache.loadXml("resources/level2", WIDTH, HEIGHT));
 		LevelCache.setLevel("level3", LevelCache.loadXml("resources/level3", WIDTH, HEIGHT));
-		LevelCache.setLevel("mid2", LevelCache.loadXml("resources/mid2", WIDTH, HEIGHT));
 		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
-		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
+		LevelCache.setLevel("end", LevelCache.loadXml("resources/end", WIDTH, HEIGHT));
 
 		MusicHandler.startPlayingOld();
 	}
@@ -239,7 +242,6 @@ public class Game {
 					map.resume();
 					break;
 				case TITLE_SCREEN:
-					close = true;
 					break;
 			}
 		}
