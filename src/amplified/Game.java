@@ -31,6 +31,7 @@ import amplified.map.state.Camera;
 import amplified.map.state.FrameRateState;
 import amplified.map.state.Input;
 import amplified.map.state.MapState;
+import amplified.map.state.MusicHandler;
 import amplified.resources.FontCache;
 import amplified.resources.LevelCache;
 import amplified.resources.SoundCache;
@@ -111,6 +112,7 @@ public class Game {
 		buttons.add(new GuiButton("Main Menu", new Rectangle((WIDTH - 200) / 2,245, 200, 50), new ButtonHandler() {
 			public void clicked() {
 				state = GameState.TITLE_SCREEN;
+				MusicHandler.startPlayingOld();
 			}
 		}));
 		buttons.add(new GuiButton("Back to Game", new Rectangle((WIDTH - 200) / 2,185, 200, 50), new ButtonHandler() {
@@ -182,7 +184,8 @@ public class Game {
 
 		SoundCache.setSound("beam", LowLevelUtil.loadWav("resources/BeamSound"));
 		SoundCache.setSound("jetpack", LowLevelUtil.loadWav("resources/Jetpack"));
-		SoundCache.setSound("bgm", LowLevelUtil.loadOgg("resources/bgm"));
+		SoundCache.setSound("oldMusic", LowLevelUtil.loadOgg("resources/bgm"));
+		SoundCache.setSound("newMusic", LowLevelUtil.loadOgg("resources/raia"));
 
 		FontCache.setFont("fps", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 14)));
 		FontCache.setFont("button", LowLevelUtil.loadFont(new Font("Arial", Font.PLAIN, 24)));
@@ -203,7 +206,7 @@ public class Game {
 		LevelCache.setLevel("level4", LevelCache.loadXml("resources/level4", WIDTH, HEIGHT));
 		LevelCache.setLevel("end1", LevelCache.loadXml("resources/end1", WIDTH, HEIGHT));
 
-		SoundCache.getSound("bgm").playAsMusic(1, 1, true);
+		MusicHandler.startPlayingOld();
 	}
 
 	public boolean nextFrame() {

@@ -95,6 +95,10 @@ public class MapState extends ScreenFiller {
 		autoTransforms.clear();
 		entities.clear();
 		this.layout = layout;
+		if (layout.isCutscene())
+			MusicHandler.startPlayingOld();
+		else
+			MusicHandler.startPlayingNew();
 		timeLeft = layout.getExpiration();
 		door = (layout.isCutscene()) ? null : new ExitDoor(layout.getEndPosition());
 
@@ -310,6 +314,7 @@ public class MapState extends ScreenFiller {
 				resume();
 				return GameState.GAME;
 			} else {
+				MusicHandler.startPlayingOld();
 				return GameState.TITLE_SCREEN;
 			}
 		}
