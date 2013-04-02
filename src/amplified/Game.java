@@ -174,6 +174,7 @@ public class Game {
 		TextureCache.setTexture("intro1", LowLevelUtil.loadPng("resources/intro1"));
 		TextureCache.setTexture("scrollingWindowBg", LowLevelUtil.loadPng("resources/scrollingBg"));
 		TextureCache.setTexture("mainBg", LowLevelUtil.loadPng("resources/mainBg"));
+		TextureCache.setTexture("logo", LowLevelUtil.loadPng("resources/logo"));
 
 		TextureCache.setTexture("jetpackOverlay",LowLevelUtil.loadPng("resources/overlays/overlayJetpack"));
 		TextureCache.setTexture("switchOverlay",LowLevelUtil.loadPng("resources/overlays/buttonOverlay"));
