@@ -160,6 +160,7 @@ public class Game {
 		TextureCache.setTexture("beam", LowLevelUtil.loadPng("resources/beam"));
 		TextureCache.setTexture("box", LowLevelUtil.loadPng("resources/crate"));
 		TextureCache.setTexture("rect", LowLevelUtil.loadPng("resources/rect"));
+		TextureCache.setTexture("n", LowLevelUtil.loadPng("resources/n"));
 		TextureCache.setTexture("door", LowLevelUtil.loadPng("resources/door"));
 		TextureCache.setTexture("openDoor", LowLevelUtil.loadPng("resources/opendoor"));
 		TextureCache.setTexture("switch", LowLevelUtil.loadPng("resources/switch"));

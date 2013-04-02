@@ -50,7 +50,6 @@
     <overlay x="2800" y="150" w="400" h="200" src="shrinkOverlay" />
 	<overlay x="4000" y="150" w="400" h="200" src="growOverlay" />
 	<overlay x="5000" y="400" w="400" h="200" src="switchOverlay" />
-    <exit x="1720" y="800" />
-    <exit x="3112" y="450" />
+    <exit x="3113" y="450" />
   </entities>
 </level>

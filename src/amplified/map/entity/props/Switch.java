@@ -23,7 +23,7 @@ import amplified.map.state.MapState;
 import amplified.resources.TextureCache;
 
 public class Switch extends SimpleEntity {
-	private final static double DEACTIVATE_DELAY = .25;
+	private final static double DEACTIVATE_DELAY = .1;
 
 	private final Color color;
 	private final List<Switchable> switches;
