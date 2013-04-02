@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <level id="level3">
-  <width>2500</width>
+  <width>1920</width>
   <height>2000</height>
   <gravity acceleration="-400" terminalVelocity="-400" />
-  <nextMap>mid2</nextMap>
+  <nextMap>level4</nextMap>
   <outerImage>scrollingWindowBg</outerImage>
   <innerImage>mainBg</innerImage>
   <footholds>
@@ -11,88 +11,37 @@
     <foothold id="1" anchor="left" />
     <foothold id="2" anchor="right" />
     <foothold id="3" anchor="top" />
-    <!-- Left part for switches -->
-    <foothold id="4" x1="0" x2="150" y1="200" y2="0" />
-    <!-- Right wall -->
-    <foothold id="5" x1="700" x2="1100" y1="225" y2="0" />
-    <!-- Left floating wall -->
-    <foothold id="6" x1="300" x2="350" y1="750" y2="500" />
-    <!-- Bottom of floating wall -->
-    <foothold id="7" x1="300" x2="550" y1="500" y2="450" />
-    <!-- Right of the float wall is another -->
-    <foothold id="8" x1="550" x2="600" y1="500" y2="150" />
-    <!-- Left upper part -->
-    <foothold id="9" x1="500" x2="600" y1="900" y2="625" />
-    <!-- Part off of left upper -->
-    <foothold id="10" x1="500" x2="1000" y1="1000" y2="900" />
-    <!-- Part blocking access to left -->
-    <foothold id="11" x1="600" x2="650" y1="675" y2="567" />
-    <!-- Step 1 -->
-    <foothold id="13" x1="775" x2="1100" y1="275" y2="225" />
-    <!-- Step 2 -->
-    <foothold id="14" x1="850" x2="1100" y1="325" y2="275" />
-    <!-- Step 3 -->
-    <foothold id="15" x1="925" x2="1100" y1="375" y2="325" />
-    <!-- Large right floor -->
-    <foothold id="16" x1="1100" x2="2500" y1="660" y2="0" />
-    <!-- Part coming down from top -->
-    <foothold id="17" x1="850" x2="1000" y1="900" y2="550" />
-    <!-- 2 float platforms holding N -->
-    <foothold id="18" x1="1075" x2="1225" y1="1200" y2="1150" />
-    <foothold id="19" x1="1325" x2="1475" y1="1200" y2="1150" />
-    <!-- Float upper right, holding retractables -->
-    <foothold id="20" x1="1900" x2="2000" y1="1000" y2="825" />
-    <!-- Part guarding door -->
-    <foothold id="21" x1="2150" x2="2250" y1="1125" y2="825" />
-    <foothold id="22" x1="2100" x2="2150" y1="860" y2="825" />
-    <foothold id="23" x1="2250" x2="2500" y1="1125" y2="1075" />
-    <!-- Step 4 -->
-    <foothold id="24" x1="1000" x2="1100" y1="425" y2="375" />
-    <foothold id="25" x1="1000" x2="1050" y1="875" y2="825" />
-    <foothold id="26" x1="350" x2="500" y1="675" y2="625" switchableId="1" color="#008000" />
-    <foothold id="27" x1="600" x2="700" y1="224" y2="201" switchableId="2" color="#008000" />
-    <foothold id="28" x1="850" x2="875" y1="550" y2="325" switchableId="3" color="#008000" />
-    <foothold id="29" x1="600" x2="700" y1="199" y2="176" switchableId="4" color="#ffa500" />
-    <foothold id="30" x1="1000" x2="1100" y1="600" y2="580" switchableId="5" color="#ffa500" />
-    <foothold id="31" x1="600" x2="700" y1="174" y2="151" switchableId="6" color="#ffc0cb" />
-    <foothold id="32" x1="925" x2="950" y1="550" y2="375" switchableId="7" color="#ffc0cb" activated="true" />
-    <foothold id="33" x1="1901" x2="1933" y1="825" y2="660" switchableId="8" color="#d2b48c" />
-    <foothold id="34" x1="2150" x2="2180" y1="825" y2="660" switchableId="9" color="#d2b48c" />
-    <foothold id="35" x1="1935" x2="1966" y1="825" y2="660" switchableId="10" color="#800080" />
-    <foothold id="36" x1="2183" x2="2213" y1="825" y2="660" switchableId="11" color="#800080" activated="true"/>
-    <foothold id="37" x1="1967" x2="2000" y1="825" y2="660" switchableId="12" color="#ffff00" activated="true"/>
-    <foothold id="38" x1="2216" x2="2246" y1="825" y2="660" switchableId="13" color="#ffff00" />
+    <!-- Long piece -->
+    <foothold id="4" x1="0" x2="800" y1="700" y2="600" />
+    <!-- Small rectangle above -->
+    <foothold id="5" x1="0" x2="200" y1="740" y2="700" />
+    <!-- Small piece to left above small rectangle -->
+    <foothold id="6" x1="0" x2="25" y1="920" y2="740" />
+    <!-- Small piece to right above small rectangle -->
+    <foothold id="7" x1="175" x2="200" y1="920" y2="780" />
+    <!-- Long piece upwards -->
+    <foothold id="8" x1="0" x2="200" y1="1600" y2="920" />
+    <!-- Platform extends out -->
+    <foothold id="9" x1="200" x2="250" y1="1450" y2="1400" />
+    <!-- Left guarding door -->
+    <foothold id="10" x1="800" x2="850" y1="1700" y2="1550" />
+    <foothold id="11" x1="800" x2="850" y1="1550" y2="1400" switchableId="1" color="#0000ff" />
+    <!-- Bottom guarding door -->
+    <foothold id="12" x1="800" x2="1100" y1="1400" y2="1350" />
+    <!-- Right guarding door -->
+    <foothold id="13" x1="1050" x2="1100" y1="1700" y2="1400" />
+    <!-- Top guarding door -->
+    <foothold id="14" x1="800" x2="1100" y1="1700" y2="1650" />
   </footholds>
   <entities>
-    <avatar x="300" y="0" />
-    <box x="151" y="0" scaleInit="0.3" scaleMin="0.3" scaleMax="0.5" />
-    <box x="221" y="0" scaleInit="0.3" scaleMin="0.3" scaleMax="0.5" />
-    <nbox x="1075" y="1200" />
-    <button x="0" y="200" color="#ffa500">
-      <buttontrigger switchableId="4" />
-      <buttontrigger switchableId="5" />
-    </button>
-    <button x="100" y="200" color="#008000">
+    <avatar x="100" y="100" />
+    <box x="650" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="0.75" />
+    <box x="800" y="0" scaleInit="0.5" scaleMin="0.5" scaleMax="0.75" />
+    <box x="725" y="100" scaleInit="0.5" scaleMin="0.5" scaleMax="0.75" />
+    <box x="26" y="740" scaleInit="0.5" scaleMin="0.1" scaleMax="0.75" />
+    <button x="201" y="1450" color="#0000ff">
       <buttontrigger switchableId="1" />
-      <buttontrigger switchableId="2" />
-      <buttontrigger switchableId="3" />
     </button>
-    <button x="400" y="500" color="#ffc0cb">
-      <buttontrigger switchableId="6" />
-      <buttontrigger switchableId="7" />
-    </button>
-    <button x="1450" y="660" color="#d2b48c">
-      <buttontrigger switchableId="8" />
-      <buttontrigger switchableId="9" />
-    </button>
-    <button x="1375" y="660" color="#800080">
-      <buttontrigger switchableId="10" />
-      <buttontrigger switchableId="11" />
-    </button>
-    <button x="1300" y="660" color="#ffff00">
-      <buttontrigger switchableId="12" />
-      <buttontrigger switchableId="13" />
-    </button>
-    <exit x="2300" y="660" />
+    <exit x="851" y="1401" />
   </entities>
 </level>
