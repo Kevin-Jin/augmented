@@ -1,0 +1,16 @@
+* Create folder Amplified in Eclipse workspace directory.
+* git clone https://github.com/Kevin-Jin/augmented to newly created Amplified folder.
+* Open Eclipse
+** File -> New -> Java Project
+*** We don't know how up-to-date TCNJ's Java is, so make sure under JRE, either
+**** "Use an execution environment JRE:" is selected and JavaSE-1.6 is in the list.
+**** Or "Use a project specific JRE:" is selected and jre6 is in the list.
+**** Otherwise, you don't have Java 6 installed and should go get it from Oracle's site. It can be safely installed alongside JDK/JRE 7.
+*** Project name: Amplified. Eclipse should now say it will automatically configure the JRE and project based on the existing source.
+*** Hit Next >.
+*** Libraries tab.
+**** Make sure jogg-0.0.7.jar, jorbis-0.0.15.jar, lwjgl_util.jar, lwjgl.jar, and slick-util.jar are in the list. If not, then click Add JARs, expand Amplified, expand lib, shift select all .jar files and click OK.
+**** Expand lwjgl.jar by clicking arrow to its left. Double click "Native library location: (None)." Hit Workspace..., expand Amplified, expand lib, double click native.
+**** If JRE System Libary is not [JavaSE-1.6] or [jre6], double click the entry and fix it.
+*** Finish.
+** Open class amplified.Launch and test to see if it works.
